@@ -55,19 +55,19 @@ public class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingSt
     public BigDecimal calculateExpectedUtility(int playerIndex, Map<C, Integer> weightsMap, int totalWeight) {
         final Map<C, Integer> utilities = individualUtilities.get(playerIndex);
 
-        BigDecimal totalDecimal = new BigDecimal(totalWeight);
-        BigDecimal expectedUtility = new BigDecimal(0);
+        long numerator = 0;
 
         for (Map.Entry<C, Integer> entry : weightsMap.entrySet()) {
-            Integer util = utilities.get(entry.getKey());
-            Integer weight = entry.getValue();
-            BigDecimal weightTimesUtility = new BigDecimal(util * weight);
+            long util = utilities.get(entry.getKey());
+            long weight = entry.getValue();
 
-            BigDecimal addition = weightTimesUtility.divide(totalDecimal, 20, RoundingMode.DOWN);
-
-            expectedUtility = expectedUtility.add(addition);
+            numerator += util * weight;
         }
 
-        return expectedUtility;
+        BigDecimal totalDecimal = new BigDecimal(totalWeight);
+        final BigDecimal numeratorDecimal = new BigDecimal(numerator);
+
+        return numeratorDecimal.divide(totalDecimal, 10, RoundingMode.HALF_UP)
+                .negate();
     }
 }

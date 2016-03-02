@@ -30,8 +30,10 @@ public class SimpleNashEquilibriumFinderTest {
 
         final Optional<? extends VotingState<Integer>> ne = neFinder.findNE(initialState);
 
-        ne.ifPresent(s -> {
-            System.out.println("******************");
+        System.out.println("******************");
+
+        if (ne.isPresent()) {
+            final VotingState<Integer> s = ne.get();
             System.out.println("NE FOUND:");
             System.out.println(s);
             System.out.println("Utilities: ");
@@ -40,6 +42,10 @@ public class SimpleNashEquilibriumFinderTest {
             System.out.println(cachedUtilityCalculator.calculateUtility(s, 2));
             System.out.println(cachedUtilityCalculator.calculateUtility(s, 3));
             System.out.println(cachedUtilityCalculator.calculateUtility(s, 4));
-        });
+        }
+        else {
+            System.out.println("NE NOT FOUND!");
+        }
+
     }
 }
