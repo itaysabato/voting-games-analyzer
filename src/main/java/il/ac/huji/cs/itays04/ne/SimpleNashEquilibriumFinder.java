@@ -1,7 +1,6 @@
 package il.ac.huji.cs.itays04.ne;
 
 import java.io.PrintStream;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
 
@@ -61,13 +60,8 @@ public class SimpleNashEquilibriumFinder<T extends GameState<T>> implements Nash
 
     private boolean isNash(T state) {
         for (int i = 0; i < state.getNumberOfPlayers(); i++) {
-            Collection<? extends T> moves = state.getPossibleMovesForPlayer(i);
 
-            final int finalI = i;
-            Optional<? extends T> improvement = moves.stream()
-                    .sequential()
-                    .filter(m -> utilityCalculator.compare(m, state, finalI) > 0)
-                    .findAny();
+            Optional<? extends T> improvement = utilityCalculator.getImprovement(state, i);
 
             if (improvement.isPresent()) {
                 printStream.println((++counter) + " - Player "+ i + " can improve:\t" + state + "\t>>>>>\t" + improvement.get());

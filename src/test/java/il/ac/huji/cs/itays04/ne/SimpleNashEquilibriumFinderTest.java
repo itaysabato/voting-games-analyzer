@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import il.ac.huji.cs.itays04.voting.VotingState;
 import il.ac.huji.cs.itays04.voting.quadratic.QuadraticFactory;
 import il.ac.huji.cs.itays04.voting.quadratic.QuadraticUtilityCalculator;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
@@ -47,5 +48,6 @@ public class SimpleNashEquilibriumFinderTest {
             System.out.println("NE NOT FOUND!");
         }
 
+        Assert.assertFalse("should be no NE.", ne.isPresent());
     }
 }

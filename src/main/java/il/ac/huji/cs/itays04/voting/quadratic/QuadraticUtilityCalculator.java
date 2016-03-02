@@ -17,12 +17,12 @@ public class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingSt
     }
 
     @Override
-    public BigDecimal calculateUtility(VotingState<C> gameState, int player) {
+    public BigDecimal calculateUtility(VotingState<C> gameState, int playerIndex) {
         final Map<C, Integer> histogram = calculateHistogram(gameState);
 
         int total = QuadrifyHistogram(histogram);
 
-        return calculateExpectedUtility(player, histogram, total);
+        return calculateExpectedUtility(playerIndex, histogram, total);
     }
 
     private Map<C, Integer> calculateHistogram(VotingState<C> gameState) {

@@ -25,8 +25,8 @@ public class CachedUtilityCalculator<T extends GameState<T>> implements UtilityC
     }
 
     @Override
-    public BigDecimal calculateUtility(T gameState, int player) {
-        return utilityCache.getUnchecked(new StateAndPlayer<>(gameState, player));
+    public BigDecimal calculateUtility(T gameState, int playerIndex) {
+        return utilityCache.getUnchecked(new StateAndPlayer<>(gameState, playerIndex));
     }
 
     private static class StateAndPlayer<T extends GameState<T>> {
