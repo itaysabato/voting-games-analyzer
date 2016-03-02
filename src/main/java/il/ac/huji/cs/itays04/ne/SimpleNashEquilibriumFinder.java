@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Optional;
 
 public class SimpleNashEquilibriumFinder<T extends GameState<T>> implements NashEquilibriumFinder<T> {
+    private long counter = 0;
     private final PrintStream printStream;
     private final UtilityCalculator<T> utilityCalculator;
 
@@ -16,6 +17,8 @@ public class SimpleNashEquilibriumFinder<T extends GameState<T>> implements Nash
 
     @Override
     public Optional<? extends T> findNE(T initialState) {
+        counter = 0;
+
         HashSet<T> toVisit = new HashSet<>();
         toVisit.add(initialState);
 
@@ -47,7 +50,8 @@ public class SimpleNashEquilibriumFinder<T extends GameState<T>> implements Nash
 
                 state.getAllPossibleMoves()
                         .stream()
-                        .filter(s -> !visited.contains(s))
+                        .sequential()
+                        .filter(s -> !toVisit.contains(s) && !visited.contains(s))
                         .forEach(nextToVisit::add);
             }
         }
@@ -61,11 +65,12 @@ public class SimpleNashEquilibriumFinder<T extends GameState<T>> implements Nash
 
             final int finalI = i;
             Optional<? extends T> improvement = moves.stream()
+                    .sequential()
                     .filter(m -> utilityCalculator.compare(m, state, finalI) > 0)
                     .findAny();
 
             if (improvement.isPresent()) {
-                printStream.println("Player "+ i + " can improve:\t" + state + "\t>>>>>\t" + improvement.get());
+                printStream.println((++counter) + " - Player "+ i + " can improve:\t" + state + "\t>>>>>\t" + improvement.get());
                 return false;
             }
         }

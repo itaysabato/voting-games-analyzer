@@ -1,8 +1,6 @@
-package il.ac.huji.cs.itays04;
+package il.ac.huji.cs.itays04.ne;
 
 import com.google.common.collect.Lists;
-import il.ac.huji.cs.itays04.ne.CachedUtilityCalculator;
-import il.ac.huji.cs.itays04.ne.SimpleNashEquilibriumFinder;
 import il.ac.huji.cs.itays04.voting.VotingState;
 import il.ac.huji.cs.itays04.voting.quadratic.QuadraticFactory;
 import il.ac.huji.cs.itays04.voting.quadratic.QuadraticUtilityCalculator;

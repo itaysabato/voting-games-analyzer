@@ -5,7 +5,7 @@ import il.ac.huji.cs.itays04.ne.GameState;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class VotingState<C> implements GameState<VotingState<C>> {
+public final class VotingState<C> implements GameState<VotingState<C>> {
     private final List<C> votes;
     private final Set<C> allCandidates;
 
@@ -28,6 +28,7 @@ public class VotingState<C> implements GameState<VotingState<C>> {
         final C currentVote = votes.get(index);
 
         return allCandidates.stream()
+                .sequential()
                 .filter(candidate -> !currentVote.equals(candidate))
                 .map(candidate -> makeMove(index, candidate))
                 .collect(Collectors.toCollection(() -> new ArrayList<>(allCandidates.size() - 1)));
