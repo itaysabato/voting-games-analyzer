@@ -1,6 +1,7 @@
 package il.ac.huji.cs.itays04.ne;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import il.ac.huji.cs.itays04.voting.VotingState;
 import il.ac.huji.cs.itays04.voting.quadratic.QuadraticFactory;
 import il.ac.huji.cs.itays04.voting.quadratic.QuadraticUtilityCalculator;
@@ -8,6 +9,7 @@ import org.junit.Test;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 
 public class SimpleNashEquilibriumFinderTest {
@@ -15,7 +17,7 @@ public class SimpleNashEquilibriumFinderTest {
     @Test
     public void testTheorem12() {
         final List<Integer> voterPositions = Lists.newArrayList(4, 32, 34, 48, 67);
-        final List<Integer> candidatePositions = Lists.newArrayList(14, 32, 42, 60, 93);
+        final Set<Integer> candidatePositions = Sets.newHashSet(14, 32, 42, 60, 93);
 
         final QuadraticUtilityCalculator<Integer> utilityCalculator = QuadraticFactory.getInstance()
                 .createDistanceBasedCalculator(voterPositions, candidatePositions);

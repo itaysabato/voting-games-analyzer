@@ -15,7 +15,7 @@ public class QuadraticFactory {
         return ourInstance;
     }
 
-    public QuadraticUtilityCalculator<Integer> createDistanceBasedCalculator(List<Integer> voterPositions, List<Integer> candidatePositions) {
+    public QuadraticUtilityCalculator<Integer> createDistanceBasedCalculator(List<Integer> voterPositions, Set<Integer> candidatePositions) {
 
         ArrayList<Map<Integer, Integer>> individualUtilities = voterPositions.stream()
                 .sequential()
@@ -25,7 +25,7 @@ public class QuadraticFactory {
         return new QuadraticUtilityCalculator<>(individualUtilities);
     }
 
-    private Map<Integer, Integer> calculateUtilities(Integer voterPosition, List<Integer> candidatePositions) {
+    private Map<Integer, Integer> calculateUtilities(Integer voterPosition, Set<Integer> candidatePositions) {
         final Map<Integer, Integer> utils = new HashMap<>();
 
         for (Integer candidatePosition : candidatePositions) {
@@ -35,9 +35,9 @@ public class QuadraticFactory {
         return utils;
     }
 
-    public VotingState<Integer> createSomeDistanceBasedState(List<Integer> voterPositions, List<Integer> candidatePositions) {
+    public VotingState<Integer> createSomeDistanceBasedState(List<Integer> voterPositions, Set<Integer> candidatePositions) {
 
-        ArrayList<Integer> votes = new ArrayList<>(candidatePositions.subList(0, voterPositions.size()));
+        List<Integer> votes = new ArrayList<>(candidatePositions).subList(0, voterPositions.size());
         HashSet<Integer> allCandidates = new HashSet<>(candidatePositions);
 
         return new VotingState<>(votes, allCandidates);
