@@ -19,6 +19,10 @@ public class VotingState<C> implements GameState<VotingState<C>> {
         return votes.size();
     }
 
+    public C getVote(int playerIndex) {
+        return votes.get(playerIndex);
+    }
+
     @Override
     public Collection<? extends VotingState<C>> getPossibleMovesForPlayer(int index) {
         final C currentVote = votes.get(index);

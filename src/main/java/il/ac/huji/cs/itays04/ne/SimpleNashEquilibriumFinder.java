@@ -65,7 +65,7 @@ public class SimpleNashEquilibriumFinder<T extends GameState<T>> implements Nash
                     .findAny();
 
             if (improvement.isPresent()) {
-                printStream.println("Player "+ i + " can improve:\t" + state + "\t>>>>>\t" + improvement);
+                printStream.println("Player "+ i + " can improve:\t" + state + "\t>>>>>\t" + improvement.get());
                 return false;
             }
         }
