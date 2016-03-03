@@ -1,6 +1,6 @@
 package il.ac.huji.cs.itays04.voting;
 
-import il.ac.huji.cs.itays04.ne.GameState;
+import il.ac.huji.cs.itays04.games.GameState;
 
 import java.util.*;
 import java.util.stream.Collectors;

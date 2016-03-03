@@ -1,4 +1,4 @@
-package il.ac.huji.cs.itays04.ne;
+package il.ac.huji.cs.itays04.games;
 
 import java.util.Collection;
 import java.util.LinkedList;
