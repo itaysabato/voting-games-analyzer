@@ -5,11 +5,11 @@ import il.ac.huji.cs.itays04.ne.GameState;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public final class VotingState<C> implements GameState<VotingState<C>> {
+public final class VotingGameState<C> implements GameState<VotingGameState<C>> {
     private final List<C> votes;
     private final Set<C> allCandidates;
 
-    public VotingState(List<C> votes, Set<C> allCandidates) {
+    public VotingGameState(List<C> votes, Set<C> allCandidates) {
         this.votes = votes;
         this.allCandidates = allCandidates;
     }
@@ -24,7 +24,7 @@ public final class VotingState<C> implements GameState<VotingState<C>> {
     }
 
     @Override
-    public Collection<? extends VotingState<C>> getPossibleMovesForPlayer(int index) {
+    public Collection<? extends VotingGameState<C>> getPossibleMovesForPlayer(int index) {
         final C currentVote = votes.get(index);
 
         return allCandidates.stream()
@@ -34,19 +34,19 @@ public final class VotingState<C> implements GameState<VotingState<C>> {
                 .collect(Collectors.toCollection(() -> new ArrayList<>(allCandidates.size() - 1)));
     }
 
-    private VotingState<C> makeMove(int index, C candidate) {
+    private VotingGameState<C> makeMove(int index, C candidate) {
 
         final ArrayList<C> newVotes = new ArrayList<>(votes);
         newVotes.set(index, candidate);
 
-        return new VotingState<>(newVotes, allCandidates);
+        return new VotingGameState<>(newVotes, allCandidates);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        VotingState<?> that = (VotingState<?>) o;
+        VotingGameState<?> that = (VotingGameState<?>) o;
         return Objects.equals(votes, that.votes) &&
                 Objects.equals(allCandidates, that.allCandidates);
     }

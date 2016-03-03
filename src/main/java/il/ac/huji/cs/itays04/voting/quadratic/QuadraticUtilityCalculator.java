@@ -1,7 +1,7 @@
 package il.ac.huji.cs.itays04.voting.quadratic;
 
 import il.ac.huji.cs.itays04.ne.UtilityCalculator;
-import il.ac.huji.cs.itays04.voting.VotingState;
+import il.ac.huji.cs.itays04.voting.VotingGameState;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingState<C>> {
+public class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingGameState<C>> {
     private final List<Map<C, Integer>> individualUtilities;
 
     public QuadraticUtilityCalculator(List<Map<C, Integer>> individualUtilities) {
@@ -17,7 +17,7 @@ public class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingSt
     }
 
     @Override
-    public BigDecimal calculateUtility(VotingState<C> gameState, int playerIndex) {
+    public BigDecimal calculateUtility(VotingGameState<C> gameState, int playerIndex) {
         final Map<C, Integer> histogram = calculateHistogram(gameState);
 
         int total = QuadrifyHistogram(histogram);
@@ -25,7 +25,7 @@ public class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingSt
         return calculateExpectedUtility(playerIndex, histogram, total);
     }
 
-    private Map<C, Integer> calculateHistogram(VotingState<C> gameState) {
+    private Map<C, Integer> calculateHistogram(VotingGameState<C> gameState) {
         final Map<C, Integer> histogram = new HashMap<>();
 
         for (int i = 0; i < gameState.getNumberOfPlayers(); i++) {

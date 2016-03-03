@@ -3,7 +3,7 @@ package il.ac.huji.cs.itays04.ne;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import edu.princeton.cs.algs4.Digraph;
-import il.ac.huji.cs.itays04.voting.VotingState;
+import il.ac.huji.cs.itays04.voting.VotingGameState;
 import il.ac.huji.cs.itays04.voting.quadratic.QuadraticFactory;
 import il.ac.huji.cs.itays04.voting.quadratic.QuadraticUtilityCalculator;
 import org.junit.Assert;
@@ -24,18 +24,18 @@ public class SimpleNashEquilibriumFinderTest {
         final QuadraticUtilityCalculator<Integer> utilityCalculator = QuadraticFactory.getInstance()
                 .createDistanceBasedCalculator(voterPositions, candidatePositions);
 
-        final CachedUtilityCalculator<VotingState<Integer>> cachedUtilityCalculator = new CachedUtilityCalculator<>(utilityCalculator, 1000);
-        final SimpleNashEquilibriumFinder<VotingState<Integer>> neFinder = new SimpleNashEquilibriumFinder<>(System.out, cachedUtilityCalculator);
+        final CachedUtilityCalculator<VotingGameState<Integer>> cachedUtilityCalculator = new CachedUtilityCalculator<>(utilityCalculator, 1000);
+        final SimpleNashEquilibriumFinder<VotingGameState<Integer>> neFinder = new SimpleNashEquilibriumFinder<>(System.out, cachedUtilityCalculator);
 
-        final VotingState<Integer> initialState = QuadraticFactory.getInstance()
+        final VotingGameState<Integer> initialState = QuadraticFactory.getInstance()
                 .createSomeDistanceBasedState(voterPositions, candidatePositions);
 
-        final Optional<? extends VotingState<Integer>> ne = neFinder.findNE(initialState);
+        final Optional<? extends VotingGameState<Integer>> ne = neFinder.findNE(initialState);
 
         System.out.println("******************");
 
         if (ne.isPresent()) {
-            final VotingState<Integer> s = ne.get();
+            final VotingGameState<Integer> s = ne.get();
             System.out.println("NE FOUND:");
             System.out.println(s);
             System.out.println("Utilities: ");
