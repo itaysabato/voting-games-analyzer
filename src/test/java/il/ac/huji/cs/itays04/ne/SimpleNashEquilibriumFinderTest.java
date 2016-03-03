@@ -2,6 +2,7 @@ package il.ac.huji.cs.itays04.ne;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import edu.princeton.cs.algs4.Digraph;
 import il.ac.huji.cs.itays04.voting.VotingState;
 import il.ac.huji.cs.itays04.voting.quadratic.QuadraticFactory;
 import il.ac.huji.cs.itays04.voting.quadratic.QuadraticUtilityCalculator;
@@ -49,5 +50,13 @@ public class SimpleNashEquilibriumFinderTest {
         }
 
         Assert.assertFalse("should be no NE.", ne.isPresent());
+    }
+
+    @Test
+    public void testDigraph() {
+        final Digraph digraph = new Digraph(10);
+
+        digraph.addEdge(0,2);
+        System.out.println(digraph);
     }
 }
