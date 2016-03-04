@@ -4,28 +4,27 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
-import java.math.BigDecimal;
 import java.util.Objects;
 
-public class CachedUtilityCalculator<T extends GameState<T>> implements UtilityCalculator<T> {
+public class CachedUtilityCalculator<T extends GameState<T>, U extends Comparable<U>> implements UtilityCalculator<T,U> {
 
-    private final LoadingCache<StateAndPlayer<T>, BigDecimal> utilityCache;
+    private final LoadingCache<StateAndPlayer<T>, U> utilityCache;
 
-    public CachedUtilityCalculator(UtilityCalculator<T> utilityCalculator, int maxCacheSize) {
+    public CachedUtilityCalculator(UtilityCalculator<T, U> utilityCalculator, int maxCacheSize) {
 
         utilityCache = CacheBuilder.newBuilder()
                 .maximumSize(maxCacheSize)
-                .build(new CacheLoader<StateAndPlayer<T>, BigDecimal>() {
+                .build(new CacheLoader<StateAndPlayer<T>, U>() {
 
                     @Override
-                    public BigDecimal load(StateAndPlayer<T> key) throws Exception {
+                    public U load(StateAndPlayer<T> key) throws Exception {
                         return utilityCalculator.calculateUtility(key.state, key.player);
                     }
                 });
     }
 
     @Override
-    public BigDecimal calculateUtility(T gameState, int playerIndex) {
+    public U calculateUtility(T gameState, int playerIndex) {
         return utilityCache.getUnchecked(new StateAndPlayer<>(gameState, playerIndex));
     }
 

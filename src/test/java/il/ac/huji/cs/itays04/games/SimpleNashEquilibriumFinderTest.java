@@ -24,7 +24,7 @@ public class SimpleNashEquilibriumFinderTest {
         final QuadraticUtilityCalculator<Integer> utilityCalculator = QuadraticFactory.getInstance()
                 .createDistanceBasedCalculator(voterPositions, candidatePositions);
 
-        final CachedUtilityCalculator<VotingGameState<Integer>> cachedUtilityCalculator = new CachedUtilityCalculator<>(utilityCalculator, 1000);
+        final CachedUtilityCalculator<VotingGameState<Integer>, ?> cachedUtilityCalculator = new CachedUtilityCalculator<>(utilityCalculator, 1000);
         final SimpleNashEquilibriumFinder<VotingGameState<Integer>> neFinder = new SimpleNashEquilibriumFinder<>(System.out, cachedUtilityCalculator);
 
         final VotingGameState<Integer> initialState = QuadraticFactory.getInstance()

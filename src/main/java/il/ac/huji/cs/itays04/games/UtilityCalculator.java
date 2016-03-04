@@ -1,16 +1,15 @@
 package il.ac.huji.cs.itays04.games;
 
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Optional;
 
-public interface UtilityCalculator<T extends GameState<T>> {
+public interface UtilityCalculator<T extends GameState<T>, U extends Comparable<U>> {
 
-    BigDecimal calculateUtility(T gameState, int playerIndex);
+    U calculateUtility(T gameState, int playerIndex);
 
     default int compare(T s1, T s2, int playerIndex) {
-        BigDecimal u1 = calculateUtility(s1, playerIndex);
-        BigDecimal u2 = calculateUtility(s2, playerIndex);
+        U u1 = calculateUtility(s1, playerIndex);
+        U u2 = calculateUtility(s2, playerIndex);
         return u1.compareTo(u2);
     }
 

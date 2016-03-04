@@ -7,9 +7,9 @@ import java.util.Optional;
 public class SimpleNashEquilibriumFinder<T extends GameState<T>> implements NashEquilibriumFinder<T> {
     private long counter = 0;
     private final PrintStream printStream;
-    private final UtilityCalculator<T> utilityCalculator;
+    private final UtilityCalculator<T, ?> utilityCalculator;
 
-    public SimpleNashEquilibriumFinder(PrintStream printStream, UtilityCalculator<T> utilityCalculator) {
+    public SimpleNashEquilibriumFinder(PrintStream printStream, UtilityCalculator<T, ?> utilityCalculator) {
         this.printStream = printStream;
         this.utilityCalculator = utilityCalculator;
     }

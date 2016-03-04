@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingGameState<C>> {
+public class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingGameState<C>, BigDecimal> {
     private final List<Map<C, Integer>> individualUtilities;
 
     public QuadraticUtilityCalculator(List<Map<C, Integer>> individualUtilities) {
