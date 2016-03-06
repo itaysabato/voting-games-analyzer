@@ -1,5 +1,6 @@
 package il.ac.huji.cs.itays04.games.impl;
 
+import il.ac.huji.cs.itays04.games.api.Game;
 import il.ac.huji.cs.itays04.games.api.GameState;
 import il.ac.huji.cs.itays04.games.api.NashEquilibriumFinder;
 import il.ac.huji.cs.itays04.games.api.UtilityCalculator;
@@ -19,18 +20,18 @@ public class SimpleNashEquilibriumFinder<T extends GameState<T>> implements Nash
     }
 
     @Override
-    public Optional<? extends T> findNE(T initialState) {
+    public Optional<? extends T> findNE(Game<T> game) {
         counter = 0;
 
         HashSet<T> toVisit = new HashSet<>();
-        toVisit.add(initialState);
+        toVisit.addAll(game.getInitialStates());
 
         final HashSet<T> visited = new HashSet<>();
 
         while(!toVisit.isEmpty()) {
             final HashSet<T> nextToVisit = new HashSet<>();
 
-            Optional<T> ne = expand(toVisit, visited, nextToVisit);
+            Optional<T> ne = expand(game, toVisit, visited, nextToVisit);
 
             if (ne.isPresent()) {
                 return ne;
@@ -42,16 +43,16 @@ public class SimpleNashEquilibriumFinder<T extends GameState<T>> implements Nash
         return Optional.empty();
     }
 
-    private Optional<T> expand(HashSet<T> toVisit, HashSet<T> visited, HashSet<T> nextToVisit) {
+    private Optional<T> expand(Game<T> game, HashSet<T> toVisit, HashSet<T> visited, HashSet<T> nextToVisit) {
         for (T state : toVisit) {
 
-            if (isNash(state)) {
+            if (isNash(game, state)) {
                 return Optional.of(state);
             }
             else {
                 visited.add(state);
 
-                state.getAllPossibleMoves()
+                game.getAllPossibleMoves(state)
                         .stream()
                         .sequential()
                         .filter(s -> !toVisit.contains(s) && !visited.contains(s))
@@ -62,10 +63,10 @@ public class SimpleNashEquilibriumFinder<T extends GameState<T>> implements Nash
         return Optional.empty();
     }
 
-    private boolean isNash(T state) {
-        for (int i = 0; i < state.getNumberOfPlayers(); i++) {
+    private boolean isNash(Game<T> game, T state) {
+        for (int i = 0; i < game.getNumberOfPlayers(); i++) {
 
-            Optional<? extends T> improvement = utilityCalculator.getImprovement(state, i);
+            Optional<? extends T> improvement = utilityCalculator.getImprovement(game, state, i);
 
             if (improvement.isPresent()) {
                 printStream.println((++counter) + " - Player "+ i + " can improve:\t" + state + "\t>>>>>\t" + improvement.get());

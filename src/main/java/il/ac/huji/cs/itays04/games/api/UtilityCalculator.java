@@ -13,9 +13,9 @@ public interface UtilityCalculator<T extends GameState<T>, U extends Comparable<
         return u1.compareTo(u2);
     }
 
-    default Optional<? extends T> getImprovement(T state, final int playerIndex) {
+    default Optional<? extends T> getImprovement(Game<T> game, T state, final int playerIndex) {
 
-        Collection<? extends T> moves = state.getPossibleMovesForPlayer(playerIndex);
+        Collection<? extends T> moves = game.getPossibleMovesForPlayer(state, playerIndex);
 
         return moves.stream()
                 .sequential()

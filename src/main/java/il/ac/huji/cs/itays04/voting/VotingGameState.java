@@ -1,45 +1,20 @@
 package il.ac.huji.cs.itays04.voting;
 
+import com.google.common.collect.ImmutableList;
 import il.ac.huji.cs.itays04.games.api.GameState;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Objects;
 
 public final class VotingGameState<C> implements GameState<VotingGameState<C>> {
-    private final List<C> votes;
-    private final Set<C> allCandidates;
+    private final ImmutableList<C> votes;
 
-    public VotingGameState(List<C> votes, Set<C> allCandidates) {
+    VotingGameState(ImmutableList<C> votes) {
         this.votes = votes;
-        this.allCandidates = allCandidates;
     }
 
-    @Override
-    public int getNumberOfPlayers() {
-        return votes.size();
-    }
-
-    public C getVote(int playerIndex) {
-        return votes.get(playerIndex);
-    }
-
-    @Override
-    public Collection<? extends VotingGameState<C>> getPossibleMovesForPlayer(int index) {
-        final C currentVote = votes.get(index);
-
-        return allCandidates.stream()
-                .sequential()
-                .filter(candidate -> !currentVote.equals(candidate))
-                .map(candidate -> makeMove(index, candidate))
-                .collect(Collectors.toCollection(() -> new ArrayList<>(allCandidates.size() - 1)));
-    }
-
-    private VotingGameState<C> makeMove(int index, C candidate) {
-
-        final ArrayList<C> newVotes = new ArrayList<>(votes);
-        newVotes.set(index, candidate);
-
-        return new VotingGameState<>(newVotes, allCandidates);
+    public List<C> getVotes() {
+        return votes;
     }
 
     @Override
@@ -47,8 +22,7 @@ public final class VotingGameState<C> implements GameState<VotingGameState<C>> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         VotingGameState<?> that = (VotingGameState<?>) o;
-        return Objects.equals(votes, that.votes) &&
-                Objects.equals(allCandidates, that.allCandidates);
+        return Objects.equals(votes, that.votes);
     }
 
     @Override

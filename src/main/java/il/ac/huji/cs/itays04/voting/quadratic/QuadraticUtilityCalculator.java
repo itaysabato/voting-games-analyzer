@@ -26,12 +26,11 @@ public class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingGa
     }
 
     private Map<C, Integer> calculateHistogram(VotingGameState<C> gameState) {
+        final List<C> votes = gameState.getVotes();
         final Map<C, Integer> histogram = new HashMap<>();
 
-        for (int i = 0; i < gameState.getNumberOfPlayers(); i++) {
-            C candidate = gameState.getVote(i);
+        for (C candidate : votes) {
             Integer count = histogram.getOrDefault(candidate, 0);
-
             histogram.put(candidate, count + 1);
         }
 
