@@ -2,14 +2,14 @@ package il.ac.huji.cs.itays04.voting.quadratic;
 
 import il.ac.huji.cs.itays04.games.UtilityCalculator;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
+import org.apache.commons.math3.fraction.BigFraction;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingGameState<C>, BigDecimal> {
+public class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingGameState<C>, BigFraction> {
     private final List<Map<C, Integer>> individualUtilities;
 
     public QuadraticUtilityCalculator(List<Map<C, Integer>> individualUtilities) {
@@ -17,7 +17,7 @@ public class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingGa
     }
 
     @Override
-    public BigDecimal calculateUtility(VotingGameState<C> gameState, int playerIndex) {
+    public BigFraction calculateUtility(VotingGameState<C> gameState, int playerIndex) {
         final Map<C, Integer> histogram = calculateHistogram(gameState);
 
         int total = QuadrifyHistogram(histogram);
@@ -52,22 +52,20 @@ public class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingGa
         return total;
     }
 
-    public BigDecimal calculateExpectedUtility(int playerIndex, Map<C, Integer> weightsMap, int totalWeight) {
+    public BigFraction calculateExpectedUtility(int playerIndex, Map<C, Integer> weightsMap, int totalWeight) {
         final Map<C, Integer> utilities = individualUtilities.get(playerIndex);
 
-        long numerator = 0;
+        BigInteger numerator = BigInteger.ZERO;
 
         for (Map.Entry<C, Integer> entry : weightsMap.entrySet()) {
             long util = utilities.get(entry.getKey());
             long weight = entry.getValue();
 
-            numerator += util * weight;
+            numerator = numerator.add(BigInteger.valueOf(util * weight));
         }
 
-        BigDecimal totalDecimal = new BigDecimal(totalWeight);
-        final BigDecimal numeratorDecimal = new BigDecimal(numerator);
+        final BigFraction expectedDistance = new BigFraction(numerator, BigInteger.valueOf(totalWeight));
 
-        return numeratorDecimal.divide(totalDecimal, 10, RoundingMode.HALF_UP)
-                .negate();
+        return expectedDistance.negate();
     }
 }

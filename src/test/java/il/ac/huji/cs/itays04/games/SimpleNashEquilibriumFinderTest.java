@@ -49,6 +49,8 @@ public class SimpleNashEquilibriumFinderTest {
             System.out.println("NE NOT FOUND!");
         }
 
+        System.out.println("******************");
+
         Assert.assertFalse("should be no NE.", ne.isPresent());
     }
 
