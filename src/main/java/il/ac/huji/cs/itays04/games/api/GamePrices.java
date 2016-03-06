@@ -2,16 +2,18 @@ package il.ac.huji.cs.itays04.games.api;
 
 import com.google.common.base.MoreObjects;
 
+import java.util.Optional;
+
 public class GamePrices<W extends Comparable<W>> {
     private final W socialOptimum;
-    private final W priceOfAnarchy;
     private final W priceOfSinking;
-    private final W priceOfStability;
+    private final Optional<W> priceOfAnarchy;
+    private final Optional<W> priceOfStability;
 
-    public GamePrices(W socialOptimum, W priceOfAnarchy, W priceOfSinking, W priceOfStability) {
+    public GamePrices(W socialOptimum, W priceOfSinking, Optional<W> priceOfAnarchy, Optional<W> priceOfStability) {
         this.socialOptimum = socialOptimum;
-        this.priceOfAnarchy = priceOfAnarchy;
         this.priceOfSinking = priceOfSinking;
+        this.priceOfAnarchy = priceOfAnarchy;
         this.priceOfStability = priceOfStability;
     }
 
@@ -19,15 +21,15 @@ public class GamePrices<W extends Comparable<W>> {
         return socialOptimum;
     }
 
-    public W getPriceOfAnarchy() {
-        return priceOfAnarchy;
-    }
-
     public W getPriceOfSinking() {
         return priceOfSinking;
     }
 
-    public W getPriceOfStability() {
+    public Optional<W> getPriceOfAnarchy() {
+        return priceOfAnarchy;
+    }
+
+    public Optional<W> getPriceOfStability() {
         return priceOfStability;
     }
 
@@ -35,8 +37,8 @@ public class GamePrices<W extends Comparable<W>> {
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("socialOptimum", socialOptimum)
-                .add("priceOfAnarchy", priceOfAnarchy)
                 .add("priceOfSinking", priceOfSinking)
+                .add("priceOfAnarchy", priceOfAnarchy)
                 .add("priceOfStability", priceOfStability)
                 .toString();
     }

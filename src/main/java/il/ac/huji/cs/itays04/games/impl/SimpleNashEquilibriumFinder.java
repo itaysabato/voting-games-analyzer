@@ -11,56 +11,23 @@ import java.util.Optional;
 
 public class SimpleNashEquilibriumFinder<T extends GameState<T>> implements NashEquilibriumFinder<T> {
     private long counter = 0;
+
     private final PrintStream printStream;
+    private final SimpleGameTraverser simpleGameTraverser;
     private final UtilityCalculator<T, ?> utilityCalculator;
 
-    public SimpleNashEquilibriumFinder(PrintStream printStream, UtilityCalculator<T, ?> utilityCalculator) {
+    public SimpleNashEquilibriumFinder(PrintStream printStream,
+                                       SimpleGameTraverser simpleGameTraverser,
+                                       UtilityCalculator<T, ?> utilityCalculator) {
         this.printStream = printStream;
+        this.simpleGameTraverser = simpleGameTraverser;
         this.utilityCalculator = utilityCalculator;
     }
 
     @Override
     public Optional<? extends T> findNE(Game<T> game) {
         counter = 0;
-
-        HashSet<T> toVisit = new HashSet<>();
-        toVisit.addAll(game.getInitialStates());
-
-        final HashSet<T> visited = new HashSet<>();
-
-        while(!toVisit.isEmpty()) {
-            final HashSet<T> nextToVisit = new HashSet<>();
-
-            Optional<T> ne = expand(game, toVisit, visited, nextToVisit);
-
-            if (ne.isPresent()) {
-                return ne;
-            }
-
-            toVisit = nextToVisit;
-        }
-
-        return Optional.empty();
-    }
-
-    private Optional<T> expand(Game<T> game, HashSet<T> toVisit, HashSet<T> visited, HashSet<T> nextToVisit) {
-        for (T state : toVisit) {
-
-            if (isNash(game, state)) {
-                return Optional.of(state);
-            }
-            else {
-                visited.add(state);
-
-                game.getAllPossibleMoves(state)
-                        .stream()
-                        .sequential()
-                        .filter(s -> !toVisit.contains(s) && !visited.contains(s))
-                        .forEach(nextToVisit::add);
-            }
-        }
-
-        return Optional.empty();
+        return simpleGameTraverser.traverseGameUntil(game, new HashSet<>(), s -> isNash(game, s));
     }
 
     private boolean isNash(Game<T> game, T state) {

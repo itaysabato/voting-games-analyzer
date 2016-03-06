@@ -1,8 +1,14 @@
 package il.ac.huji.cs.itays04.games.api;
 
-public interface GameAnalyzer<T extends GameState<T>> {
-    GameStateGraph<T> calculateBestResponseGraph(Game<T> game, UtilityCalculator<T, ?> utilityCalculator);
+import il.ac.huji.cs.itays04.utils.ImmutableDirectedGraphWithScc;
 
-    <W extends Comparable<W>> GamePrices<W> getPrices(GameStateGraph<T> bestResponseGraph, SocialWelfareCalculator<T,W> calculator);
+public interface GameAnalyzer {
+    <T extends GameState<T>, U extends Comparable<U>> ImmutableDirectedGraphWithScc<T> calculateBestResponseGraph(
+            Game<T> game,
+            UtilityCalculator<T, U> utilityCalculator);
+
+    <T extends GameState<T>, W extends Comparable<W>> GamePrices<W> getPrices(
+            ImmutableDirectedGraphWithScc<T> bestResponseGraph,
+            SocialWelfareCalculator<T,W> calculator);
 
 }

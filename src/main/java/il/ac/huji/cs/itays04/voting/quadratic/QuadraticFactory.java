@@ -6,14 +6,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class QuadraticFactory {
-    private static QuadraticFactory ourInstance = new QuadraticFactory();
-
-    private QuadraticFactory() {
-    }
-
-    public static QuadraticFactory getInstance() {
-        return ourInstance;
-    }
 
     public QuadraticUtilityCalculator<Integer> createDistanceBasedCalculator(List<Integer> voterPositions, Set<Integer> candidatePositions) {
 

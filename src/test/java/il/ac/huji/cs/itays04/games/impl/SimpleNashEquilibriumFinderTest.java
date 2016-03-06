@@ -2,7 +2,6 @@ package il.ac.huji.cs.itays04.games.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import edu.princeton.cs.algs4.Digraph;
 import il.ac.huji.cs.itays04.voting.VotingGame;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
 import il.ac.huji.cs.itays04.voting.quadratic.QuadraticFactory;
@@ -22,14 +21,19 @@ public class SimpleNashEquilibriumFinderTest {
         final List<Integer> voterPositions = Lists.newArrayList(4, 32, 34, 48, 67);
         final Set<Integer> candidatePositions = Sets.newHashSet(14, 32, 42, 60, 93);
 
-        final QuadraticUtilityCalculator<Integer> utilityCalculator = QuadraticFactory.getInstance()
+        final QuadraticFactory quadraticFactory = StaticContext.getInstance().getQuadraticFactory();
+        final QuadraticUtilityCalculator<Integer> utilityCalculator = quadraticFactory
                 .createDistanceBasedCalculator(voterPositions, candidatePositions);
 
-        final CachedUtilityCalculator<VotingGameState<Integer>, ?> cachedUtilityCalculator = new CachedUtilityCalculator<>(utilityCalculator, 1000);
-        final SimpleNashEquilibriumFinder<VotingGameState<Integer>> neFinder = new SimpleNashEquilibriumFinder<>(System.out, cachedUtilityCalculator);
+        final CachedUtilityCalculator<VotingGameState<Integer>, ?> cachedUtilityCalculator =
+                new CachedUtilityCalculator<>(utilityCalculator, 1000);
 
-        final VotingGame<Integer> game = QuadraticFactory.getInstance()
-                .createDistanceBasedGame(voterPositions, candidatePositions);
+        final SimpleNashEquilibriumFinder<VotingGameState<Integer>> neFinder = new SimpleNashEquilibriumFinder<>(
+                System.out,
+                StaticContext.getInstance().getSimpleGameTraverser(),
+                cachedUtilityCalculator);
+
+        final VotingGame<Integer> game = quadraticFactory.createDistanceBasedGame(voterPositions, candidatePositions);
 
         final Optional<? extends VotingGameState<Integer>> ne = neFinder.findNE(game);
 
@@ -53,13 +57,5 @@ public class SimpleNashEquilibriumFinderTest {
         System.out.println("******************");
 
         Assert.assertFalse("should be no NE.", ne.isPresent());
-    }
-
-    @Test
-    public void testDigraph() {
-        final Digraph digraph = new Digraph(10);
-
-        digraph.addEdge(0,2);
-        System.out.println(digraph);
     }
 }
