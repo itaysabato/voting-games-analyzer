@@ -7,8 +7,11 @@ public interface GameAnalyzer {
             Game<T> game,
             UtilityCalculator<T, U> utilityCalculator);
 
+    //todo: change prices to full report (including all sinks)
+
     <T extends GameState<T>, W extends Comparable<W>> GamePrices<W> getPrices(
+            Game<T> game,
             ImmutableDirectedGraphWithScc<T> bestResponseGraph,
-            SocialWelfareCalculator<T,W> calculator);
+            SocialWelfareCalculator<T, W> calculator);
 
 }

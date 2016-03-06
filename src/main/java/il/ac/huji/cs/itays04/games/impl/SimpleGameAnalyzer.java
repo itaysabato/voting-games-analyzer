@@ -64,17 +64,19 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
 
     @Override
     public <T extends GameState<T>, W extends Comparable<W>> GamePrices<W> getPrices(
+            Game<T> game,
             ImmutableDirectedGraphWithScc<T> brg,
             SocialWelfareCalculator<T, W> calculator) {
 
-        W socialOptimum = findSocialOptimum(brg, calculator);
+        W socialOptimum = findSocialOptimum(game, brg, calculator);
         final Set<StronglyConnectedComponent<T>> sinks = collectSinks(brg);
 
 
-        return calculatePrices(socialOptimum, sinks, calculator);
+        return calculatePrices(game, socialOptimum, sinks, calculator);
     }
 
     private <T extends GameState<T>, W extends Comparable<W>> GamePrices<W> calculatePrices(
+            Game<T> game,
             W socialOptimum,
             Set<StronglyConnectedComponent<T>> sinks,
             SocialWelfareCalculator<T, W> calculator) {
@@ -86,7 +88,7 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
         for (StronglyConnectedComponent<T> sink : sinks) {
             final Set<T> nodes = sink.getNodes();
 
-            final W sinkWelfare = calculator.calculateAverageWelfare(nodes);
+            final W sinkWelfare = calculator.calculateAverageWelfare(game, nodes);
 
             final W ratio = calculator.getRatio(socialOptimum, sinkWelfare);
             final Optional<W> optionalRatio = Optional.of(ratio);
@@ -133,6 +135,7 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
     }
 
     private <T extends GameState<T>, W extends Comparable<W>> W findSocialOptimum(
+            Game<T> game,
             ImmutableDirectedGraphWithScc<T> brg,
             SocialWelfareCalculator<T, W> calculator) {
 
@@ -140,7 +143,7 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
                 .getNodes()
                 .stream()
                 .sequential()
-                .map(calculator::calculateWelfare)
+                .map(s -> calculator.calculateWelfare(game, s))
                 .max(Comparator.naturalOrder())
                 .get();
     }

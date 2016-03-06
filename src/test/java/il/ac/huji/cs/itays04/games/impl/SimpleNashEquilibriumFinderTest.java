@@ -26,7 +26,7 @@ public class SimpleNashEquilibriumFinderTest {
                 .createDistanceBasedCalculator(voterPositions, candidatePositions);
 
         final CachedUtilityCalculator<VotingGameState<Integer>, ?> cachedUtilityCalculator =
-                new CachedUtilityCalculator<>(utilityCalculator, 1000);
+                new CachedUtilityCalculator<>(utilityCalculator, 3125);
 
         final SimpleNashEquilibriumFinder<VotingGameState<Integer>> neFinder = new SimpleNashEquilibriumFinder<>(
                 System.out,
