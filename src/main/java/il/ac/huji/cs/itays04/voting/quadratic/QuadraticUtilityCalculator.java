@@ -1,6 +1,6 @@
 package il.ac.huji.cs.itays04.voting.quadratic;
 
-import il.ac.huji.cs.itays04.games.UtilityCalculator;
+import il.ac.huji.cs.itays04.games.api.UtilityCalculator;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
 import org.apache.commons.math3.fraction.BigFraction;
 

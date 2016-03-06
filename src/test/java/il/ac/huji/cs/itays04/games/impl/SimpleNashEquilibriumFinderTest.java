@@ -1,4 +1,4 @@
-package il.ac.huji.cs.itays04.games;
+package il.ac.huji.cs.itays04.games.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;

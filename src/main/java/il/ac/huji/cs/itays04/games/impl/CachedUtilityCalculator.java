@@ -1,8 +1,10 @@
-package il.ac.huji.cs.itays04.games;
+package il.ac.huji.cs.itays04.games.impl;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import il.ac.huji.cs.itays04.games.api.GameState;
+import il.ac.huji.cs.itays04.games.api.UtilityCalculator;
 
 import java.util.Objects;
 

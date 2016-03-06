@@ -1,4 +1,8 @@
-package il.ac.huji.cs.itays04.games;
+package il.ac.huji.cs.itays04.games.impl;
+
+import il.ac.huji.cs.itays04.games.api.GameState;
+import il.ac.huji.cs.itays04.games.api.NashEquilibriumFinder;
+import il.ac.huji.cs.itays04.games.api.UtilityCalculator;
 
 import java.io.PrintStream;
 import java.util.HashSet;

@@ -1,4 +1,4 @@
-package il.ac.huji.cs.itays04.games;
+package il.ac.huji.cs.itays04.games.api;
 
 import java.util.Optional;
 
