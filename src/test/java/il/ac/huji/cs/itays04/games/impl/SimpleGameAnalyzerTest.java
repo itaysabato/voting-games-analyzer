@@ -3,8 +3,8 @@ package il.ac.huji.cs.itays04.games.impl;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import il.ac.huji.cs.itays04.games.api.BigFractionAverageSocialWelfareCalculator;
+import il.ac.huji.cs.itays04.games.api.GameAnalysis;
 import il.ac.huji.cs.itays04.games.api.GameAnalyzer;
-import il.ac.huji.cs.itays04.games.api.GamePrices;
 import il.ac.huji.cs.itays04.utils.ImmutableDirectedGraphWithScc;
 import il.ac.huji.cs.itays04.voting.VotingGame;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
@@ -38,8 +38,9 @@ public class SimpleGameAnalyzerTest {
 
         final GameAnalyzer gameAnalyzer = StaticContext.getInstance().getGameAnalyzer();
         final ImmutableDirectedGraphWithScc<VotingGameState<Integer>> brg = gameAnalyzer.calculateBestResponseGraph(game, cachedUtilityCalculator);
-        final GamePrices<BigFraction> prices = gameAnalyzer.getPrices(game, brg, welfareCalculator);
 
-        System.out.println(prices);
+        final GameAnalysis<VotingGameState<Integer>, BigFraction> gameAnalysis = gameAnalyzer.analyze(game, brg, welfareCalculator);
+
+        StaticContext.getInstance().getGameAnalysisReporter().printReport(game, gameAnalysis, System.out);
     }
 }

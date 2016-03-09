@@ -44,4 +44,12 @@ public class VotingGame<C> implements Game<VotingGameState<C>> {
 
         return new VotingGameState<>(ImmutableList.copyOf(newVotes));
     }
+
+    @Override
+    public String toString() {
+        return "Type: Voting Game"
+                + ";\tNumber of players: " + initialState.getVotes().size()
+                + ";\tCandidates: " + allCandidates +
+                ";\tInitial State: " + initialState;
+    }
 }

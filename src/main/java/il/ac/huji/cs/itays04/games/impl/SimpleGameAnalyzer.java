@@ -7,10 +7,7 @@ import il.ac.huji.cs.itays04.utils.ImmutableDirectedGraph;
 import il.ac.huji.cs.itays04.utils.ImmutableDirectedGraphWithScc;
 import il.ac.huji.cs.itays04.utils.StronglyConnectedComponent;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SimpleGameAnalyzer implements GameAnalyzer {
@@ -63,7 +60,7 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
     }
 
     @Override
-    public <T extends GameState<T>, W extends Comparable<W>> GamePrices<W> getPrices(
+    public <T extends GameState<T>, W extends Comparable<W>> GameAnalysis<T, W> analyze(
             Game<T> game,
             ImmutableDirectedGraphWithScc<T> brg,
             SocialWelfareCalculator<T, W> calculator) {
@@ -72,14 +69,17 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
         final Set<StronglyConnectedComponent<T>> sinks = collectSinks(brg);
 
 
-        return calculatePrices(game, socialOptimum, sinks, calculator);
+        return calculatePrices(game, socialOptimum, brg, sinks, calculator);
     }
 
-    private <T extends GameState<T>, W extends Comparable<W>> GamePrices<W> calculatePrices(
+    private <T extends GameState<T>, W extends Comparable<W>> GameAnalysis<T, W> calculatePrices(
             Game<T> game,
             W socialOptimum,
+            ImmutableDirectedGraphWithScc<T> brg,
             Set<StronglyConnectedComponent<T>> sinks,
             SocialWelfareCalculator<T, W> calculator) {
+
+        final HashMap<StronglyConnectedComponent<T>, W> sinksWithWelfare = new HashMap<>();
 
         Optional<W> worstRatio = Optional.empty(),
                 worstNeRatio = Optional.empty(),
@@ -89,6 +89,7 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
             final Set<T> nodes = sink.getNodes();
 
             final W sinkWelfare = calculator.calculateAverageWelfare(game, nodes);
+            sinksWithWelfare.put(sink, sinkWelfare);
 
             final W ratio = calculator.getRatio(socialOptimum, sinkWelfare);
             final Optional<W> optionalRatio = Optional.of(ratio);
@@ -119,7 +120,8 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
             }
         }
 
-        return new GamePrices<>(socialOptimum, worstRatio.get(), worstNeRatio, bestNeRatio);
+        final GamePrices<W> gamePrices = new GamePrices<>(socialOptimum, worstRatio.get(), worstNeRatio, bestNeRatio);
+        return new GameAnalysis<>(gamePrices, brg, sinksWithWelfare);
     }
 
     private <T extends GameState<T>> Set<StronglyConnectedComponent<T>> collectSinks(ImmutableDirectedGraphWithScc<T> brg) {

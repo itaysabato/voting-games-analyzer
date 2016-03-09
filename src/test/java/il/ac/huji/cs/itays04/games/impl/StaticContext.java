@@ -1,5 +1,6 @@
 package il.ac.huji.cs.itays04.games.impl;
 
+import il.ac.huji.cs.itays04.games.api.GameAnalysisReporter;
 import il.ac.huji.cs.itays04.games.api.GameAnalyzer;
 import il.ac.huji.cs.itays04.utils.DirectedGraphFactory;
 import il.ac.huji.cs.itays04.utils.PrincetonDirectedGraphFactory;
@@ -10,6 +11,7 @@ public class StaticContext {
 
     private final QuadraticFactory quadraticFactory = new QuadraticFactory();
     private final SimpleGameTraverser simpleGameTraverser = new SimpleGameTraverser();
+    private final GameAnalysisReporter gameAnalysisReporter = new SimpleGameAnalysisReporter();
     private final DirectedGraphFactory directedGraphFactory = new PrincetonDirectedGraphFactory();
     private final GameAnalyzer gameAnalyzer = new SimpleGameAnalyzer(simpleGameTraverser, directedGraphFactory);
 
@@ -34,5 +36,9 @@ public class StaticContext {
 
     public GameAnalyzer getGameAnalyzer() {
         return gameAnalyzer;
+    }
+
+    public GameAnalysisReporter getGameAnalysisReporter() {
+        return gameAnalysisReporter;
     }
 }
