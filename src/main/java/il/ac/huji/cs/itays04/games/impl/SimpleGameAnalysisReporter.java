@@ -6,11 +6,12 @@ import il.ac.huji.cs.itays04.utils.StronglyConnectedComponent;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
     @Override
-    public <T extends GameState<T>, W extends Comparable<W>> void printReport(
+    public <T extends GameState<T>, W extends Number & Comparable<W>> void printReport(
             Game<T> game, GameAnalysis<T, W> gameAnalysis, PrintStream printStream) {
 
         printStream.println("********************************");
@@ -25,22 +26,45 @@ public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
         printStream.println();
 
         final GamePrices<W> prices = gameAnalysis.getPrices();
-        printStream.println("Optimal social welfare: " + prices.getSocialOptimum());
-        printStream.println("Price of Anarchy: " + prices.getPriceOfAnarchy());
-        printStream.println("Price of Sinking: " + prices.getPriceOfSinking());
-        printStream.println("Price of Stability: " + prices.getPriceOfStability());
-        printStream.println();
+        printWelfareWithLabel(printStream, "Social optimum", prices.getSocialOptimum());
+
+        final Optional<W> priceOfAnarchy = prices.getPriceOfAnarchy();
+        printStream.print("Price of Anarchy: ");
+
+        if (priceOfAnarchy.isPresent()) {
+            printStream.println(priceOfAnarchy.get() + " (" + priceOfAnarchy.get().doubleValue() + ")");
+        }
+        else {
+            printStream.println("N/A");
+        }
+
+        printWelfareWithLabel(printStream, "Price of Sinking", prices.getPriceOfSinking());
+
+        final Optional<W> priceOfStability = prices.getPriceOfStability();
+        printStream.print("Price of Stability: ");
+
+        if (priceOfStability.isPresent()) {
+            printStream.println(priceOfStability.get() + " (" + priceOfStability.get().doubleValue() + ")");
+        }
+        else {
+            printStream.println("N/A");
+        }
 
         printStream.println("---------------------------------");
-        printStream.println("Sinks:");
+        printStream.println("Sinks");
         printStream.println("---------------------------------");
 
+        int j = 1;
         for (Map.Entry<StronglyConnectedComponent<T>, W> entry : gameAnalysis.getSinksWithWelfare().entrySet()) {
             final StronglyConnectedComponent<T> sink = entry.getKey();
             final Set<T> states = sink.getNodes();
 
+            printStream.println("Sink #" + j++);
+            printStream.println();
+
             printStream.println("Number of states:" + states.size());
-            printStream.println("Average welfare: " + entry.getValue());
+            printWelfareWithLabel(printStream, "Average welfare", entry.getValue());
+
             printStream.println();
 
             printStream.println("States:");
@@ -62,7 +86,9 @@ public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
                     .entries()
                     .stream()
                     .filter(e -> states.contains(e.getKey()))
-                    .forEach(edge -> {
+                    //todo: perhaps should be optional to improve efficiency:
+                    .sorted((e1,e2) -> stateToId.get(e1.getKey()) - stateToId.get(e2.getKey()))
+                    .forEachOrdered(edge -> {
                         final Integer source = stateToId.get(edge.getKey());
                         final Integer target = stateToId.get(edge.getValue());
                         printStream.println(source + " => " + target);
@@ -71,5 +97,9 @@ public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
 
             printStream.println("---------------------------------");
         }
+    }
+
+    public <W extends Number & Comparable<W>> void printWelfareWithLabel(PrintStream printStream, String label, W value) {
+        printStream.println(label + ": " + value + " (" + value.doubleValue() + ")" );
     }
 }

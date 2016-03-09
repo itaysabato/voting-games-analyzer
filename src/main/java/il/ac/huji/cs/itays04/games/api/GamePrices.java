@@ -4,7 +4,7 @@ import com.google.common.base.MoreObjects;
 
 import java.util.Optional;
 
-public class GamePrices<W extends Comparable<W>> {
+public class GamePrices<W extends Number & Comparable<W>> {
     private final W socialOptimum;
     private final W priceOfSinking;
     private final Optional<W> priceOfAnarchy;

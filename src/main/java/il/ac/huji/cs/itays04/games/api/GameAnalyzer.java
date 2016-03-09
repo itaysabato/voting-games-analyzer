@@ -7,7 +7,7 @@ public interface GameAnalyzer {
             Game<T> game,
             UtilityCalculator<T, U> utilityCalculator);
 
-    <T extends GameState<T>, W extends Comparable<W>> GameAnalysis<T, W> analyze(
+    <T extends GameState<T>, W extends Number & Comparable<W>> GameAnalysis<T, W> analyze(
             Game<T> game,
             ImmutableDirectedGraphWithScc<T> bestResponseGraph,
             SocialWelfareCalculator<T, W> calculator);

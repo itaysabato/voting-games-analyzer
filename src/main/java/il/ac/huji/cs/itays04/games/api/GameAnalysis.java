@@ -6,7 +6,7 @@ import il.ac.huji.cs.itays04.utils.StronglyConnectedComponent;
 
 import java.util.Map;
 
-public class GameAnalysis<T extends GameState<T>, W extends Comparable<W>> {
+public class GameAnalysis<T extends GameState<T>, W extends Number & Comparable<W>> {
     private final GamePrices<W> prices;
     private final ImmutableDirectedGraphWithScc<T> bestResponseGraph;
     private final ImmutableMap<StronglyConnectedComponent<T>, W> sinksWithWelfare;

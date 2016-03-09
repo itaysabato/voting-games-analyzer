@@ -60,7 +60,7 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
     }
 
     @Override
-    public <T extends GameState<T>, W extends Comparable<W>> GameAnalysis<T, W> analyze(
+    public <T extends GameState<T>, W extends Number & Comparable<W>> GameAnalysis<T, W> analyze(
             Game<T> game,
             ImmutableDirectedGraphWithScc<T> brg,
             SocialWelfareCalculator<T, W> calculator) {
@@ -72,7 +72,7 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
         return calculatePrices(game, socialOptimum, brg, sinks, calculator);
     }
 
-    private <T extends GameState<T>, W extends Comparable<W>> GameAnalysis<T, W> calculatePrices(
+    private <T extends GameState<T>, W extends Number & Comparable<W>> GameAnalysis<T, W> calculatePrices(
             Game<T> game,
             W socialOptimum,
             ImmutableDirectedGraphWithScc<T> brg,
@@ -136,7 +136,7 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
-    private <T extends GameState<T>, W extends Comparable<W>> W findSocialOptimum(
+    private <T extends GameState<T>, W extends Number & Comparable<W>> W findSocialOptimum(
             Game<T> game,
             ImmutableDirectedGraphWithScc<T> brg,
             SocialWelfareCalculator<T, W> calculator) {
