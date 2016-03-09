@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public interface Game<T extends GameState<T>> {
+    //todo: move utility calculator (and welfare calculator?) here
+    //todo: string representation of utilities (and truthful profile when relevant)
     int getNumberOfPlayers();
     Set<? extends T> getInitialStates();
 
