@@ -5,15 +5,26 @@ import il.ac.huji.cs.itays04.voting.VotingGameState;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingGameState<C>, BigFraction> {
+    private final List<C> truthfulProfile;
     private final List<Map<C, Integer>> individualUtilities;
 
     public QuadraticUtilityCalculator(List<Map<C, Integer>> individualUtilities) {
-        this.individualUtilities = individualUtilities;
+        this.individualUtilities = Collections.unmodifiableList(individualUtilities);
+
+        truthfulProfile = new ArrayList<>(individualUtilities.size());
+
+        for (Map<C, Integer> utilities : individualUtilities) {
+            final C favorite = utilities.entrySet()
+                    .stream()
+                    .max(Comparator.comparingInt(Map.Entry::getValue))
+                    .get()
+                    .getKey();
+
+            truthfulProfile.add(favorite);
+        }
     }
 
     @Override
@@ -37,7 +48,7 @@ public class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingGa
         return histogram;
     }
 
-    public int QuadrifyHistogram(Map<C, Integer> histogram) {
+    private int QuadrifyHistogram(Map<C, Integer> histogram) {
         int total = 0;
 
         for (Map.Entry<C, Integer> entry : histogram.entrySet()) {
@@ -51,7 +62,7 @@ public class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingGa
         return total;
     }
 
-    public BigFraction calculateExpectedUtility(int playerIndex, Map<C, Integer> weightsMap, int totalWeight) {
+    private BigFraction calculateExpectedUtility(int playerIndex, Map<C, Integer> weightsMap, int totalWeight) {
         final Map<C, Integer> utilities = individualUtilities.get(playerIndex);
 
         BigInteger numerator = BigInteger.ZERO;
@@ -63,14 +74,16 @@ public class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingGa
             numerator = numerator.add(BigInteger.valueOf(util * weight));
         }
 
-        final BigFraction expectedDistance = new BigFraction(numerator, BigInteger.valueOf(totalWeight));
+        return new BigFraction(numerator, BigInteger.valueOf(totalWeight));
+    }
 
-        return expectedDistance.negate();
+    public List<C> getTruthfulProfile() {
+        return truthfulProfile;
     }
 
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder("Quadratic expected utility based on individual preferences: ");
+        final StringBuilder builder = new StringBuilder("Quadratic expected utility based on individual preferences:\n");
 
         for (int i = 0; i < individualUtilities.size(); i++) {
             final Map<C, Integer> utilities = individualUtilities.get(i);
@@ -80,10 +93,11 @@ public class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingGa
                         .append(i)
                         .append(",")
                         .append(entry.getKey())
-                        .append(")=")
+                        .append(") = ")
                         .append(entry.getValue())
                         .append("; ");
             }
+            builder.append("\n");
         }
 
         return builder.toString();

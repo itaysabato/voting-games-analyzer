@@ -6,8 +6,6 @@ import il.ac.huji.cs.itays04.games.api.BigFractionAverageSocialWelfareCalculator
 import il.ac.huji.cs.itays04.voting.VotingGame;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
 import il.ac.huji.cs.itays04.voting.quadratic.QuadraticFactory;
-import il.ac.huji.cs.itays04.voting.quadratic.QuadraticUtilityCalculator;
-import org.apache.commons.math3.fraction.BigFraction;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -24,11 +22,6 @@ public class SimpleNashEquilibriumFinderTest {
         final Set<Integer> candidatePositions = Sets.newHashSet(14, 32, 42, 60, 93);
 
         final QuadraticFactory quadraticFactory = StaticContext.getInstance().getQuadraticFactory();
-        final QuadraticUtilityCalculator<Integer> utilityCalculator = quadraticFactory
-                .createDistanceBasedCalculator(voterPositions, candidatePositions);
-
-        final CachedUtilityCalculator<VotingGameState<Integer>, BigFraction> cachedUtilityCalculator =
-                new CachedUtilityCalculator<>(utilityCalculator, 3125);
 
         final SimpleNashEquilibriumFinder neFinder = new SimpleNashEquilibriumFinder(
                 System.out,
@@ -38,7 +31,7 @@ public class SimpleNashEquilibriumFinderTest {
                 new BigFractionAverageSocialWelfareCalculator<>();
 
         final VotingGame<Integer, ?, ?> game = quadraticFactory.createDistanceBasedGame(
-                voterPositions, candidatePositions, cachedUtilityCalculator, socialWelfareCalculator);
+                voterPositions, candidatePositions, socialWelfareCalculator);
 
         final Optional<? extends VotingGameState<Integer>> ne = neFinder.findNE(game);
 
@@ -49,11 +42,11 @@ public class SimpleNashEquilibriumFinderTest {
             System.out.println("NE FOUND:");
             System.out.println(s);
             System.out.println("Utilities: ");
-            System.out.println(cachedUtilityCalculator.calculateUtility(s, 0));
-            System.out.println(cachedUtilityCalculator.calculateUtility(s, 1));
-            System.out.println(cachedUtilityCalculator.calculateUtility(s, 2));
-            System.out.println(cachedUtilityCalculator.calculateUtility(s, 3));
-            System.out.println(cachedUtilityCalculator.calculateUtility(s, 4));
+            System.out.println(game.getUtilityCalculator().calculateUtility(s, 0));
+            System.out.println(game.getUtilityCalculator().calculateUtility(s, 1));
+            System.out.println(game.getUtilityCalculator().calculateUtility(s, 2));
+            System.out.println(game.getUtilityCalculator().calculateUtility(s, 3));
+            System.out.println(game.getUtilityCalculator().calculateUtility(s, 4));
         }
         else {
             System.out.println("NE NOT FOUND!");

@@ -9,7 +9,6 @@ import il.ac.huji.cs.itays04.utils.ImmutableDirectedGraphWithScc;
 import il.ac.huji.cs.itays04.voting.VotingGame;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
 import il.ac.huji.cs.itays04.voting.quadratic.QuadraticFactory;
-import il.ac.huji.cs.itays04.voting.quadratic.QuadraticUtilityCalculator;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.junit.Test;
 
@@ -20,22 +19,21 @@ import java.util.Set;
 public class SimpleGameAnalyzerTest {
 
     @Test
-    public void testTheorem12Prices() {
+    public void analyzeTheorem12Example() {
         final List<Integer> voterPositions = Lists.newArrayList(4, 32, 34, 48, 67);
         final Set<Integer> candidatePositions = Sets.newHashSet(14, 32, 42, 60, 93);
 
-        final QuadraticFactory quadraticFactory = StaticContext.getInstance().getQuadraticFactory();
-        final QuadraticUtilityCalculator<Integer> utilityCalculator = quadraticFactory
-                .createDistanceBasedCalculator(voterPositions, candidatePositions);
+        analyzeAndReport(voterPositions, candidatePositions);
+    }
 
-        final CachedUtilityCalculator<VotingGameState<Integer>, BigFraction> cachedUtilityCalculator =
-                new CachedUtilityCalculator<>(utilityCalculator, 3125);
+    public void analyzeAndReport(List<Integer> voterPositions, Set<Integer> candidatePositions) {
+        final QuadraticFactory quadraticFactory = StaticContext.getInstance().getQuadraticFactory();
 
         final BigFractionAverageSocialWelfareCalculator<VotingGameState<Integer>> welfareCalculator =
                 new BigFractionAverageSocialWelfareCalculator<>();
 
         final VotingGame<Integer, BigFraction, BigFraction> game = quadraticFactory.createDistanceBasedGame(
-                voterPositions, candidatePositions, cachedUtilityCalculator, welfareCalculator);
+                voterPositions, candidatePositions, welfareCalculator);
 
         final GameAnalyzer gameAnalyzer = StaticContext.getInstance().getGameAnalyzer();
         final ImmutableDirectedGraphWithScc<VotingGameState<Integer>> brg = gameAnalyzer.calculateBestResponseGraph(game);
