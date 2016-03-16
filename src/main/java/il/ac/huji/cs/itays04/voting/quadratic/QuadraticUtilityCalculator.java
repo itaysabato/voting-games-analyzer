@@ -67,4 +67,25 @@ public class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingGa
 
         return expectedDistance.negate();
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder("Quadratic expected utility based on individual preferences: ");
+
+        for (int i = 0; i < individualUtilities.size(); i++) {
+            final Map<C, Integer> utilities = individualUtilities.get(i);
+
+            for (Map.Entry<C, Integer> entry : utilities.entrySet()) {
+                builder.append("U(")
+                        .append(i)
+                        .append(",")
+                        .append(entry.getKey())
+                        .append(")=")
+                        .append(entry.getValue())
+                        .append("; ");
+            }
+        }
+
+        return builder.toString();
+    }
 }

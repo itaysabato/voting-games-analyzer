@@ -8,11 +8,13 @@ import il.ac.huji.cs.itays04.games.api.UtilityCalculator;
 
 import java.util.Objects;
 
-public class CachedUtilityCalculator<T extends GameState<T>, U extends Comparable<U>> implements UtilityCalculator<T,U> {
+public class CachedUtilityCalculator<T extends GameState<T>, U extends Number & Comparable<U>> implements UtilityCalculator<T,U> {
 
+    private final UtilityCalculator<T, U> utilityCalculator;
     private final LoadingCache<StateAndPlayer<T>, U> utilityCache;
 
     public CachedUtilityCalculator(UtilityCalculator<T, U> utilityCalculator, int maxCacheSize) {
+        this.utilityCalculator = utilityCalculator;
 
         utilityCache = CacheBuilder.newBuilder()
                 .maximumSize(maxCacheSize)
@@ -28,6 +30,11 @@ public class CachedUtilityCalculator<T extends GameState<T>, U extends Comparabl
     @Override
     public U calculateUtility(T gameState, int playerIndex) {
         return utilityCache.getUnchecked(new StateAndPlayer<>(gameState, playerIndex));
+    }
+
+    @Override
+    public String toString() {
+        return utilityCalculator.toString();
     }
 
     private static class StateAndPlayer<T extends GameState<T>> {

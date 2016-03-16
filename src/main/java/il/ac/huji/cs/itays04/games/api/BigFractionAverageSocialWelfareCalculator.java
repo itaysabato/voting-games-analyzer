@@ -4,12 +4,8 @@ import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.Set;
 
-public class BigFractionAverageSocialWelfareCalculator<T extends GameState<T>> implements SocialWelfareCalculator<T, BigFraction> {
-    private final UtilityCalculator<T, BigFraction> utilityCalculator;
-
-    public BigFractionAverageSocialWelfareCalculator(UtilityCalculator<T, BigFraction> utilityCalculator) {
-        this.utilityCalculator = utilityCalculator;
-    }
+public class BigFractionAverageSocialWelfareCalculator<T extends GameState<T>>
+        implements SocialWelfareCalculator<T, BigFraction, BigFraction> {
 
     @Override
     public BigFraction getRatio(BigFraction w1, BigFraction w2) {
@@ -34,11 +30,11 @@ public class BigFractionAverageSocialWelfareCalculator<T extends GameState<T>> i
     }
 
     @Override
-    public BigFraction calculateWelfare(Game<T> game, T gameState) {
+    public BigFraction calculateWelfare(Game<T, BigFraction, BigFraction> game, T gameState) {
         BigFraction sum = BigFraction.ZERO;
 
         for (int i = 0; i < game.getNumberOfPlayers(); i++) {
-            final BigFraction utility = utilityCalculator.calculateUtility(gameState, i);
+            final BigFraction utility = game.getUtilityCalculator().calculateUtility(gameState, i);
             sum = sum.add(utility);
         }
 
@@ -46,7 +42,7 @@ public class BigFractionAverageSocialWelfareCalculator<T extends GameState<T>> i
     }
 
     @Override
-    public BigFraction calculateAverageWelfare(Game<T> game, Set<T> states) {
+    public BigFraction calculateAverageWelfare(Game<T, BigFraction, BigFraction> game, Set<T> states) {
         BigFraction sum = BigFraction.ZERO;
 
         for (T state : states) {
@@ -55,5 +51,10 @@ public class BigFractionAverageSocialWelfareCalculator<T extends GameState<T>> i
         }
 
         return sum.divide(states.size());
+    }
+
+    @Override
+    public String toString() {
+        return "Average";
     }
 }

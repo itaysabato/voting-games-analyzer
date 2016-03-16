@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public interface UtilityCalculator<T extends GameState<T>, U extends Comparable<U>> {
+public interface UtilityCalculator<T extends GameState<T>, U extends Number & Comparable<U>> {
 
     U calculateUtility(T gameState, int playerIndex);
 
@@ -14,7 +14,7 @@ public interface UtilityCalculator<T extends GameState<T>, U extends Comparable<
         return u1.compareTo(u2);
     }
 
-    default Stream<? extends T> streamImprovements(Game<T> game, T state, final int playerIndex) {
+    default Stream<? extends T> streamImprovements(Game<T, U, ?> game, T state, final int playerIndex) {
 
         Collection<? extends T> moves = game.getPossibleMovesForPlayer(state, playerIndex);
 
@@ -23,7 +23,7 @@ public interface UtilityCalculator<T extends GameState<T>, U extends Comparable<
                 .filter(move -> compare(move, state, playerIndex) > 0);
     }
 
-    default Optional<? extends T> getImprovement(Game<T> game, T state, final int playerIndex) {
+    default Optional<? extends T> getImprovement(Game<T, U, ?> game, T state, final int playerIndex) {
         return streamImprovements(game, state, playerIndex).findAny();
     }
 }

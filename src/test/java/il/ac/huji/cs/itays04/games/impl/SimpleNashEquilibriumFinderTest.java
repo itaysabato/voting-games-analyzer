@@ -2,10 +2,12 @@ package il.ac.huji.cs.itays04.games.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import il.ac.huji.cs.itays04.games.api.BigFractionAverageSocialWelfareCalculator;
 import il.ac.huji.cs.itays04.voting.VotingGame;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
 import il.ac.huji.cs.itays04.voting.quadratic.QuadraticFactory;
 import il.ac.huji.cs.itays04.voting.quadratic.QuadraticUtilityCalculator;
+import org.apache.commons.math3.fraction.BigFraction;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,15 +27,18 @@ public class SimpleNashEquilibriumFinderTest {
         final QuadraticUtilityCalculator<Integer> utilityCalculator = quadraticFactory
                 .createDistanceBasedCalculator(voterPositions, candidatePositions);
 
-        final CachedUtilityCalculator<VotingGameState<Integer>, ?> cachedUtilityCalculator =
+        final CachedUtilityCalculator<VotingGameState<Integer>, BigFraction> cachedUtilityCalculator =
                 new CachedUtilityCalculator<>(utilityCalculator, 3125);
 
-        final SimpleNashEquilibriumFinder<VotingGameState<Integer>> neFinder = new SimpleNashEquilibriumFinder<>(
+        final SimpleNashEquilibriumFinder neFinder = new SimpleNashEquilibriumFinder(
                 System.out,
-                StaticContext.getInstance().getSimpleGameTraverser(),
-                cachedUtilityCalculator);
+                StaticContext.getInstance().getSimpleGameTraverser());
 
-        final VotingGame<Integer> game = quadraticFactory.createDistanceBasedGame(voterPositions, candidatePositions);
+        final BigFractionAverageSocialWelfareCalculator<VotingGameState<Integer>> socialWelfareCalculator =
+                new BigFractionAverageSocialWelfareCalculator<>();
+
+        final VotingGame<Integer, ?, ?> game = quadraticFactory.createDistanceBasedGame(
+                voterPositions, candidatePositions, cachedUtilityCalculator, socialWelfareCalculator);
 
         final Optional<? extends VotingGameState<Integer>> ne = neFinder.findNE(game);
 

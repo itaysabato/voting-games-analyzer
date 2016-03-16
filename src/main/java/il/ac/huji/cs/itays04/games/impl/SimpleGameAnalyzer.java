@@ -21,15 +21,16 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
     }
 
     @Override
-    public <T extends GameState<T>, U extends Comparable<U>> ImmutableDirectedGraphWithScc<T> calculateBestResponseGraph(
-            Game<T> game,
-            UtilityCalculator<T, U> utilityCalculator) {
+    public <T extends GameState<T>, U extends Number & Comparable<U>> ImmutableDirectedGraphWithScc<T> calculateBestResponseGraph(
+            Game<T, U, ?> game) {
 
-        final ImmutableDirectedGraph<T> originalGraph = createBestResponseGraph(game, utilityCalculator);
+        final ImmutableDirectedGraph<T> originalGraph = createBestResponseGraph(game);
         return directedGraphFactory.createImmutableDirectedGraphWithScc(originalGraph);
     }
 
-    public <T extends GameState<T>, U extends Comparable<U>> ImmutableDirectedGraph<T> createBestResponseGraph(Game<T> game, UtilityCalculator<T, U> utilityCalculator) {
+    public <T extends GameState<T>, U extends Number & Comparable<U>>
+    ImmutableDirectedGraph<T> createBestResponseGraph(Game<T, U, ?> game) {
+
         final HashSet<T> states = new HashSet<>();
         simpleGameTraverser.traverseGameUntil(game, states, s -> false);
 
@@ -37,7 +38,7 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
         final HashMultimap<T, T> backEdges = HashMultimap.create();
 
         for (T state : states) {
-            final Set<T> improvements = getImprovements(state, game, utilityCalculator);
+            final Set<T> improvements = getImprovements(state, game);
             edges.putAll(state, improvements);
 
             for (T improvement : improvements) {
@@ -48,11 +49,13 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
         return new ImmutableDirectedGraph<>(states, edges, backEdges);
     }
 
-    private <T extends GameState<T>, U extends Comparable<U>> Set<T> getImprovements(T state, Game<T> game, UtilityCalculator<T, U> utilityCalculator) {
+    private <T extends GameState<T>, U extends Number & Comparable<U>>
+    Set<T> getImprovements(T state, Game<T, U, ?> game) {
+
         final HashSet<T> improvements = new HashSet<>();
 
         for (int i = 0; i < game.getNumberOfPlayers(); i++) {
-            utilityCalculator.streamImprovements(game, state, i)
+            game.getUtilityCalculator().streamImprovements(game, state, i)
                     .collect(Collectors.toCollection(()->improvements));
         }
 
@@ -61,24 +64,23 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
 
     @Override
     public <T extends GameState<T>, W extends Number & Comparable<W>> GameAnalysis<T, W> analyze(
-            Game<T> game,
-            ImmutableDirectedGraphWithScc<T> brg,
-            SocialWelfareCalculator<T, W> calculator) {
+            Game<T, ?, W> game,
+            ImmutableDirectedGraphWithScc<T> brg) {
 
-        W socialOptimum = findSocialOptimum(game, brg, calculator);
+        W socialOptimum = findSocialOptimum(game, brg);
         final Set<StronglyConnectedComponent<T>> sinks = collectSinks(brg);
 
 
-        return calculatePrices(game, socialOptimum, brg, sinks, calculator);
+        return calculatePrices(game, socialOptimum, brg, sinks);
     }
 
-    private <T extends GameState<T>, W extends Number & Comparable<W>> GameAnalysis<T, W> calculatePrices(
-            Game<T> game,
+    private <T extends GameState<T>, U extends Number & Comparable<U>, W extends Number & Comparable<W>> GameAnalysis<T, W> calculatePrices(
+            Game<T, U, W> game,
             W socialOptimum,
             ImmutableDirectedGraphWithScc<T> brg,
-            Set<StronglyConnectedComponent<T>> sinks,
-            SocialWelfareCalculator<T, W> calculator) {
+            Set<StronglyConnectedComponent<T>> sinks) {
 
+        final SocialWelfareCalculator<T, U, W> calculator = game.getSocialWelfareCalculator();
         final HashMap<StronglyConnectedComponent<T>, W> sinksWithWelfare = new HashMap<>();
 
         Optional<W> worstRatio = Optional.empty(),
@@ -136,16 +138,14 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
-    private <T extends GameState<T>, W extends Number & Comparable<W>> W findSocialOptimum(
-            Game<T> game,
-            ImmutableDirectedGraphWithScc<T> brg,
-            SocialWelfareCalculator<T, W> calculator) {
+    private <T extends GameState<T>, U extends Number & Comparable<U>, W extends Number & Comparable<W>>
+    W findSocialOptimum(Game<T, U, W> game, ImmutableDirectedGraphWithScc<T> brg) {
 
         return brg.getOriginalGraph()
                 .getNodes()
                 .stream()
                 .sequential()
-                .map(s -> calculator.calculateWelfare(game, s))
+                .map(s -> game.getSocialWelfareCalculator().calculateWelfare(game, s))
                 .max(Comparator.naturalOrder())
                 .get();
     }

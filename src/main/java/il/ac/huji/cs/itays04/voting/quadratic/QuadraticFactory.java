@@ -1,6 +1,9 @@
 package il.ac.huji.cs.itays04.voting.quadratic;
 
+import il.ac.huji.cs.itays04.games.api.SocialWelfareCalculator;
+import il.ac.huji.cs.itays04.games.api.UtilityCalculator;
 import il.ac.huji.cs.itays04.voting.VotingGame;
+import il.ac.huji.cs.itays04.voting.VotingGameState;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,10 +30,15 @@ public class QuadraticFactory {
         return utils;
     }
 
-    public VotingGame<Integer> createDistanceBasedGame(List<Integer> voterPositions, Set<Integer> candidatePositions) {
+    public <U extends Number & Comparable<U>, W extends Number & Comparable<W>>
+    VotingGame<Integer, U, W> createDistanceBasedGame(
+            List<Integer> voterPositions,
+            Set<Integer> candidatePositions,
+            UtilityCalculator<VotingGameState<Integer>, U> utilityCalculator,
+            SocialWelfareCalculator<VotingGameState<Integer>, U, W> socialWelfareCalculator) {
 
-        List<Integer> votes = new ArrayList<>(candidatePositions).subList(0, voterPositions.size());
+        final List<Integer> votes = new ArrayList<>(candidatePositions).subList(0, voterPositions.size());
 
-        return new VotingGame<>(candidatePositions,votes);
+        return new VotingGame<>(candidatePositions, votes, utilityCalculator, socialWelfareCalculator);
     }
 }

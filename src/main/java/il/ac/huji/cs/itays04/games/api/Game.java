@@ -4,10 +4,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-public interface Game<T extends GameState<T>> {
-    //todo: move utility calculator (and welfare calculator?) here
-    //todo: string representation of utilities (and truthful profile when relevant)
+public interface Game<T extends GameState<T>, U extends Number & Comparable<U>, W extends Number & Comparable<W>> {
     int getNumberOfPlayers();
+
     Set<? extends T> getInitialStates();
 
     Set<? extends T> getPossibleMovesForPlayer(T state, int playerIndex);
@@ -23,4 +22,8 @@ public interface Game<T extends GameState<T>> {
 
         return gameStates;
     }
+
+    UtilityCalculator<T, U> getUtilityCalculator();
+
+    SocialWelfareCalculator<T, U, W> getSocialWelfareCalculator();
 }

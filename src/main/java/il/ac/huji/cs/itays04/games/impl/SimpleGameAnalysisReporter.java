@@ -10,9 +10,10 @@ import java.util.Optional;
 import java.util.Set;
 
 public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
+
     @Override
     public <T extends GameState<T>, W extends Number & Comparable<W>> void printReport(
-            Game<T> game, GameAnalysis<T, W> gameAnalysis, PrintStream printStream) {
+            Game<T, ?, W> game, GameAnalysis<T, W> gameAnalysis, PrintStream printStream) {
 
         printStream.println("********************************");
         printStream.println("Game Analysis");

@@ -32,14 +32,15 @@ public class SimpleGameAnalyzerTest {
                 new CachedUtilityCalculator<>(utilityCalculator, 3125);
 
         final BigFractionAverageSocialWelfareCalculator<VotingGameState<Integer>> welfareCalculator =
-                new BigFractionAverageSocialWelfareCalculator<>(cachedUtilityCalculator);
+                new BigFractionAverageSocialWelfareCalculator<>();
 
-        final VotingGame<Integer> game = quadraticFactory.createDistanceBasedGame(voterPositions, candidatePositions);
+        final VotingGame<Integer, BigFraction, BigFraction> game = quadraticFactory.createDistanceBasedGame(
+                voterPositions, candidatePositions, cachedUtilityCalculator, welfareCalculator);
 
         final GameAnalyzer gameAnalyzer = StaticContext.getInstance().getGameAnalyzer();
-        final ImmutableDirectedGraphWithScc<VotingGameState<Integer>> brg = gameAnalyzer.calculateBestResponseGraph(game, cachedUtilityCalculator);
+        final ImmutableDirectedGraphWithScc<VotingGameState<Integer>> brg = gameAnalyzer.calculateBestResponseGraph(game);
 
-        final GameAnalysis<VotingGameState<Integer>, BigFraction> gameAnalysis = gameAnalyzer.analyze(game, brg, welfareCalculator);
+        final GameAnalysis<VotingGameState<Integer>, BigFraction> gameAnalysis = gameAnalyzer.analyze(game, brg);
 
         StaticContext.getInstance().getGameAnalysisReporter().printReport(game, gameAnalysis, System.out);
     }
