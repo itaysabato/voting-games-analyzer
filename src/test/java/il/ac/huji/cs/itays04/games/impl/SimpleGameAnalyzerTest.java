@@ -18,6 +18,8 @@ import java.util.Set;
 
 public class SimpleGameAnalyzerTest {
 
+    //todo: add asserts
+
     @Test
     public void analyzeProposition5Example() {
         final List<Integer> voterPositions = Lists.newArrayList(14,7,12);
@@ -32,6 +34,14 @@ public class SimpleGameAnalyzerTest {
         final Set<Integer> candidatePositions = Sets.newHashSet(5,1,19,8);
 
         analyzeAndReport(voterPositions, candidatePositions, "Theorem 8 example");
+    }
+
+    @Test
+    public void analyzeTheorem10Example() {
+        final List<Integer> voterPositions = Lists.newArrayList(400, 47, 92, 92, 92, 0, 0, 0, 0);
+        final Set<Integer> candidatePositions = Sets.newHashSet(0,92,400);
+
+        analyzeAndReport(voterPositions, candidatePositions, "Theorem 10 example");
     }
 
     @Test
