@@ -90,9 +90,9 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
         final SocialWelfareCalculator<T, U, W> calculator = game.getSocialWelfareCalculator();
         final HashSet<SinkWithWelfare<T, W>> sinksWithWelfare = new HashSet<>();
 
-        Optional<W> worstRatio = Optional.empty(),
-                worstNeRatio = Optional.empty(),
-                bestNeRatio = Optional.empty();
+        Optional<W> worstPrice = Optional.empty(),
+                worstNePrice = Optional.empty(),
+                bestNePrice = Optional.empty();
 
         for (StronglyConnectedComponent<T> sink : sinks) {
             final Set<T> nodes = sink.getNodes();
@@ -105,32 +105,32 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
             final Optional<W> optionalRatio = Optional.of(ratio);
 
             if (nodes.size() == 1) {
-                if (bestNeRatio.isPresent()) {
-                    if (ratio.compareTo(bestNeRatio.get()) > 0) {
-                        bestNeRatio = optionalRatio;
+                if (bestNePrice.isPresent()) {
+                    if (ratio.compareTo(bestNePrice.get()) < 0) {
+                        bestNePrice = optionalRatio;
                     }
 
-                    if (ratio.compareTo(worstNeRatio.get()) < 0) {
-                        worstNeRatio = optionalRatio;
+                    if (ratio.compareTo(worstNePrice.get()) > 0) {
+                        worstNePrice = optionalRatio;
                     }
                 }
                 else {
-                    bestNeRatio = optionalRatio;
-                    worstNeRatio = optionalRatio;
+                    bestNePrice = optionalRatio;
+                    worstNePrice = optionalRatio;
                 }
             }
 
-            if (worstRatio.isPresent()) {
-                if (ratio.compareTo(worstRatio.get()) < 0) {
-                    worstRatio = optionalRatio;
+            if (worstPrice.isPresent()) {
+                if (ratio.compareTo(worstPrice.get()) > 0) {
+                    worstPrice = optionalRatio;
                 }
             }
             else {
-                worstRatio = optionalRatio;
+                worstPrice = optionalRatio;
             }
         }
 
-        final GamePrices<W> gamePrices = new GamePrices<>(socialOptimum, worstRatio.get(), worstNeRatio, bestNeRatio);
+        final GamePrices<W> gamePrices = new GamePrices<>(socialOptimum, worstPrice.get(), worstNePrice, bestNePrice);
 
         final long neCount = sinksWithWelfare.stream()
                 .filter(sink -> sink.getSink().getNodes().size() == 1)

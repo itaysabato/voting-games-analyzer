@@ -73,7 +73,12 @@ public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
             printStream.println("Component id: " + sink.getId());
 
             printStream.println("Number of states:" + states.size());
-            printWelfareWithLabel(printStream, "Average welfare", sinkWithWelfare.getWelfare());
+
+            final W welfare = sinkWithWelfare.getWelfare();
+            printWelfareWithLabel(printStream, "Average welfare", welfare);
+
+            final W ratio = game.getSocialWelfareCalculator().getRatio(prices.getSocialOptimum(), welfare);
+            printWelfareWithLabel(printStream, "Ratio to social optimum", ratio);
 
             printStream.println();
 
@@ -129,6 +134,7 @@ public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
 
             printStream.println("---------------------------------");
         }
+        printStream.println();
     }
 
     public <W extends Number & Comparable<W>> void printWelfareWithLabel(PrintStream printStream, String label, W value) {

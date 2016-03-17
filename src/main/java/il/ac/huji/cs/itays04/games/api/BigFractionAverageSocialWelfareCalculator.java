@@ -16,6 +16,7 @@ public class BigFractionAverageSocialWelfareCalculator<T extends GameState<T>>
                 ratio = BigFraction.ONE;
             }
             else {
+                //todo: got a better idea?
                 ratio = new BigFraction(666);
             }
         }
