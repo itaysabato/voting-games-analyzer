@@ -73,7 +73,7 @@ public class VotingGame<C, U extends Number & Comparable<U>, W extends Number & 
         return "Type: Voting Game"
                 + "\nNumber of voters: " + initialState.getVotes().size()
                 + "\nCandidates: " + allCandidates
-                + "\nUtility function: " + utilityCalculator
+                + "\n\nUtility function: " + utilityCalculator
                 + "\nSocial welfare function: " + socialWelfareCalculator
                 + "\nInitial State: " + initialState;
     }

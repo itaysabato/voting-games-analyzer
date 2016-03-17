@@ -16,7 +16,7 @@ public class QuadraticFactory {
 
     public QuadraticUtilityCalculator<Integer> createDistanceBasedCalculator(List<Integer> voterPositions, Set<Integer> candidatePositions) {
 
-        List<Map<Integer, Integer>> individualUtilities = voterPositions.stream()
+        List<Map<Integer, Long>> individualUtilities = voterPositions.stream()
                 .sequential()
                 .map(p -> calculateUtilities(p, candidatePositions))
                 .collect(Collectors.toList());
@@ -24,11 +24,11 @@ public class QuadraticFactory {
         return new QuadraticUtilityCalculator<>(individualUtilities);
     }
 
-    private Map<Integer, Integer> calculateUtilities(Integer voterPosition, Set<Integer> candidatePositions) {
-        final Map<Integer, Integer> utils = new HashMap<>();
+    private Map<Integer, Long> calculateUtilities(Integer voterPosition, Set<Integer> candidatePositions) {
+        final Map<Integer, Long> utils = new HashMap<>();
 
         for (Integer candidatePosition : candidatePositions) {
-            utils.put(candidatePosition, -Math.abs(voterPosition-candidatePosition));
+            utils.put(candidatePosition, -Math.abs(((long) voterPosition) - ((long) candidatePosition)));
         }
 
         return utils;

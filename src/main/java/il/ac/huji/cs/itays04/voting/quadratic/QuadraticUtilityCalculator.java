@@ -9,17 +9,17 @@ import java.util.*;
 
 public class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingGameState<C>, BigFraction> {
     private final List<C> truthfulProfile;
-    private final List<Map<C, Integer>> individualUtilities;
+    private final List<Map<C, Long>> individualUtilities;
 
-    public QuadraticUtilityCalculator(List<Map<C, Integer>> individualUtilities) {
+    public QuadraticUtilityCalculator(List<Map<C, Long>> individualUtilities) {
         this.individualUtilities = Collections.unmodifiableList(individualUtilities);
 
         truthfulProfile = new ArrayList<>(individualUtilities.size());
 
-        for (Map<C, Integer> utilities : individualUtilities) {
+        for (Map<C, Long> utilities : individualUtilities) {
             final C favorite = utilities.entrySet()
                     .stream()
-                    .max(Comparator.comparingInt(Map.Entry::getValue))
+                    .max(Comparator.comparingLong(Map.Entry::getValue))
                     .get()
                     .getKey();
 
@@ -63,15 +63,18 @@ public class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingGa
     }
 
     private BigFraction calculateExpectedUtility(int playerIndex, Map<C, Integer> weightsMap, int totalWeight) {
-        final Map<C, Integer> utilities = individualUtilities.get(playerIndex);
+        final Map<C, Long> utilities = individualUtilities.get(playerIndex);
 
         BigInteger numerator = BigInteger.ZERO;
 
         for (Map.Entry<C, Integer> entry : weightsMap.entrySet()) {
             long util = utilities.get(entry.getKey());
-            long weight = entry.getValue();
+            final BigInteger bigUtil = BigInteger.valueOf(util);
 
-            numerator = numerator.add(BigInteger.valueOf(util * weight));
+            long weight = entry.getValue();
+            final BigInteger bigWeight = BigInteger.valueOf(weight);
+
+            numerator = numerator.add(bigUtil.multiply(bigWeight));
         }
 
         return new BigFraction(numerator, BigInteger.valueOf(totalWeight));
@@ -86,9 +89,9 @@ public class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingGa
         final StringBuilder builder = new StringBuilder("Quadratic expected utility based on individual preferences:\n");
 
         for (int i = 0; i < individualUtilities.size(); i++) {
-            final Map<C, Integer> utilities = individualUtilities.get(i);
+            final Map<C, Long> utilities = individualUtilities.get(i);
 
-            for (Map.Entry<C, Integer> entry : utilities.entrySet()) {
+            for (Map.Entry<C, Long> entry : utilities.entrySet()) {
                 builder.append("U(")
                         .append(i)
                         .append(",")
