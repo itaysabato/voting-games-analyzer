@@ -66,9 +66,10 @@ public class PrincetonDirectedGraphFactory implements DirectedGraphFactory {
         for (Map.Entry<Integer, Collection<T>> entry : sccMultimap.asMap().entrySet()) {
 
             final ImmutableSet<T> copy = ImmutableSet.copyOf(entry.getValue());
-            final StronglyConnectedComponent<T> scc = new StronglyConnectedComponent<>(copy);
+            final StronglyConnectedComponent<T> scc = new StronglyConnectedComponent<>(entry.getKey(), copy);
             sccMap.put(entry.getKey(), scc);
         }
+
         return sccMap;
     }
 

@@ -8,8 +8,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Stream;
 
 public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
+
+    private static final String N_A = "N/A";
 
     @Override
     public <T extends GameState<T>, W extends Number & Comparable<W>> void printReport(
@@ -36,7 +40,7 @@ public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
             printStream.println(priceOfAnarchy.get() + " (" + priceOfAnarchy.get().doubleValue() + ")");
         }
         else {
-            printStream.println("N/A");
+            printStream.println(N_A);
         }
 
         printWelfareWithLabel(printStream, "Price of Sinking", prices.getPriceOfSinking());
@@ -48,7 +52,7 @@ public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
             printStream.println(priceOfStability.get() + " (" + priceOfStability.get().doubleValue() + ")");
         }
         else {
-            printStream.println("N/A");
+            printStream.println(N_A);
         }
 
         printStream.println("---------------------------------");
@@ -61,7 +65,7 @@ public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
             final Set<T> states = sink.getNodes();
 
             printStream.println("Sink #" + j++);
-            printStream.println();
+            printStream.println("Component id: " + sink.getId());
 
             printStream.println("Number of states:" + states.size());
             printWelfareWithLabel(printStream, "Average welfare", entry.getValue());
@@ -81,20 +85,26 @@ public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
 
             printStream.println("Sink edges:");
 
-            gameAnalysis.getBestResponseGraph()
+            final Stream<Map.Entry<T, T>> sinkEdges = gameAnalysis.getBestResponseGraph()
                     .getOriginalGraph()
                     .getEdges()
                     .entries()
                     .stream()
                     .filter(e -> states.contains(e.getKey()))
                     //todo: perhaps should be optional to improve efficiency:
-                    .sorted((e1,e2) -> stateToId.get(e1.getKey()) - stateToId.get(e2.getKey()))
-                    .forEachOrdered(edge -> {
-                        final Integer source = stateToId.get(edge.getKey());
-                        final Integer target = stateToId.get(edge.getValue());
-                        printStream.println(source + " => " + target);
-                    });
+                    .sorted((e1, e2) -> stateToId.get(e1.getKey()) - stateToId.get(e2.getKey()));
 
+            final AtomicBoolean hasEdges = new AtomicBoolean(false);
+            sinkEdges.forEachOrdered(edge -> {
+                hasEdges.set(true);
+                final Integer source = stateToId.get(edge.getKey());
+                final Integer target = stateToId.get(edge.getValue());
+                printStream.println(source + " => " + target);
+            });
+
+            if (!hasEdges.get()) {
+                printStream.println(N_A);
+            }
 
             printStream.println("---------------------------------");
         }

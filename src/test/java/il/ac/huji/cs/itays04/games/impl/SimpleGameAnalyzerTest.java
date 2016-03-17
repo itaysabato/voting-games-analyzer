@@ -23,10 +23,19 @@ public class SimpleGameAnalyzerTest {
         final List<Integer> voterPositions = Lists.newArrayList(4, 32, 34, 48, 67);
         final Set<Integer> candidatePositions = Sets.newHashSet(14, 32, 42, 60, 93);
 
-        analyzeAndReport(voterPositions, candidatePositions);
+        analyzeAndReport(voterPositions, candidatePositions, "Theorem 12 example");
     }
 
-    public void analyzeAndReport(List<Integer> voterPositions, Set<Integer> candidatePositions) {
+    @Test
+    public void analyzeProposition5Example() {
+        final List<Integer> voterPositions = Lists.newArrayList(14,7,12);
+        final Set<Integer> candidatePositions = Sets.newHashSet(17,2,10);
+
+        analyzeAndReport(voterPositions, candidatePositions, "Proposition 5 example");
+    }
+
+    public void analyzeAndReport(List<Integer> voterPositions, Set<Integer> candidatePositions, String gameDescription) {
+        System.out.println("Analyzing " + gameDescription + " with voters: " + voterPositions);
         final QuadraticFactory quadraticFactory = StaticContext.getInstance().getQuadraticFactory();
 
         final BigFractionAverageSocialWelfareCalculator<VotingGameState<Integer>> welfareCalculator =
