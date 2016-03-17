@@ -101,8 +101,6 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
             final ImmutableList<StronglyConnectedComponent<T>> longestPath = calculateLongestPath(brg, sink);
             sinksWithWelfare.add(new SinkWithWelfare<>(sinkWelfare, sink, longestPath));
 
-
-
             final W ratio = calculator.getRatio(socialOptimum, sinkWelfare);
             final Optional<W> optionalRatio = Optional.of(ratio);
 

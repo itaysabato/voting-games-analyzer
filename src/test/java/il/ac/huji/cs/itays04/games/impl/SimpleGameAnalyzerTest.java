@@ -19,19 +19,27 @@ import java.util.Set;
 public class SimpleGameAnalyzerTest {
 
     @Test
-    public void analyzeTheorem12Example() {
-        final List<Integer> voterPositions = Lists.newArrayList(4, 32, 34, 48, 67);
-        final Set<Integer> candidatePositions = Sets.newHashSet(14, 32, 42, 60, 93);
-
-        analyzeAndReport(voterPositions, candidatePositions, "Theorem 12 example");
-    }
-
-    @Test
     public void analyzeProposition5Example() {
         final List<Integer> voterPositions = Lists.newArrayList(14,7,12);
         final Set<Integer> candidatePositions = Sets.newHashSet(17,2,10);
 
         analyzeAndReport(voterPositions, candidatePositions, "Proposition 5 example");
+    }
+
+    @Test
+    public void analyzeTheorem8Example() {
+        final List<Integer> voterPositions = Lists.newArrayList(16,4,1,7);
+        final Set<Integer> candidatePositions = Sets.newHashSet(5,1,19,8);
+
+        analyzeAndReport(voterPositions, candidatePositions, "Theorem 8 example");
+    }
+
+    @Test
+    public void analyzeTheorem12Example() {
+        final List<Integer> voterPositions = Lists.newArrayList(4, 32, 34, 48, 67);
+        final Set<Integer> candidatePositions = Sets.newHashSet(14, 32, 42, 60, 93);
+
+        analyzeAndReport(voterPositions, candidatePositions, "Theorem 12 example");
     }
 
     public void analyzeAndReport(List<Integer> voterPositions, Set<Integer> candidatePositions, String gameDescription) {
