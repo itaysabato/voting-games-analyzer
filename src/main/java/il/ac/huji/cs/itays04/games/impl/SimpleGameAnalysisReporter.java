@@ -1,6 +1,7 @@
 package il.ac.huji.cs.itays04.games.impl;
 
 import il.ac.huji.cs.itays04.games.api.*;
+import il.ac.huji.cs.itays04.utils.ImmutableDirectedGraphWithScc;
 import il.ac.huji.cs.itays04.utils.StronglyConnectedComponent;
 
 import java.io.PrintStream;
@@ -9,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
@@ -25,9 +27,12 @@ public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
         printStream.println(game);
         printStream.println();
 
-        printStream.println("Number of possible states: " + gameAnalysis.getBestResponseGraph().getOriginalGraph().getNodes().size());
+        final ImmutableDirectedGraphWithScc<T> bestResponseGraph = gameAnalysis.getBestResponseGraph();
+        printStream.println("Number of possible states: " + bestResponseGraph.getOriginalGraph().getNodes().size());
+        printStream.println("Number of strongly connected components: " + bestResponseGraph.getSccGraph().getNodes().size());
+        printStream.println("Number of components with cycles: " + gameAnalysis.getNumberOfNonSingularSccs());
         printStream.println("Number of pure Nash equilibria: " + gameAnalysis.getNeCount());
-        printStream.println("Number of sink-equilibria: " + gameAnalysis.getSinksWithWelfare().keySet().size());
+        printStream.println("Number of sink-equilibria: " + gameAnalysis.getSinksWithWelfare().size());
         printStream.println();
 
         final GamePrices<W> prices = gameAnalysis.getPrices();
@@ -60,15 +65,15 @@ public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
         printStream.println("---------------------------------");
 
         int j = 1;
-        for (Map.Entry<StronglyConnectedComponent<T>, W> entry : gameAnalysis.getSinksWithWelfare().entrySet()) {
-            final StronglyConnectedComponent<T> sink = entry.getKey();
+        for (SinkWithWelfare<T, W> sinkWithWelfare : gameAnalysis.getSinksWithWelfare()) {
+            final StronglyConnectedComponent<T> sink = sinkWithWelfare.getSink();
             final Set<T> states = sink.getNodes();
 
             printStream.println("Sink #" + j++);
             printStream.println("Component id: " + sink.getId());
 
             printStream.println("Number of states:" + states.size());
-            printWelfareWithLabel(printStream, "Average welfare", entry.getValue());
+            printWelfareWithLabel(printStream, "Average welfare", sinkWithWelfare.getWelfare());
 
             printStream.println();
 
@@ -85,7 +90,7 @@ public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
 
             printStream.println("Sink edges:");
 
-            final Stream<Map.Entry<T, T>> sinkEdges = gameAnalysis.getBestResponseGraph()
+            final Stream<Map.Entry<T, T>> sinkEdges = bestResponseGraph
                     .getOriginalGraph()
                     .getEdges()
                     .entries()
@@ -104,7 +109,23 @@ public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
 
             if (!hasEdges.get()) {
                 printStream.println(N_A);
+                printStream.println();
             }
+
+            printStream.println("Longest path to sink length: " + sinkWithWelfare.getLongestPathToSinkLength());
+            final String path = sinkWithWelfare.getLongestPathToSink()
+                    .stream()
+                    .sequential()
+                    .map(scc -> {
+                        if (scc.getNodes().size() == 1) {
+                            return scc.getNodes().iterator().next().toString();
+                        }
+                        else {
+                            return "SCC#" + scc.getId();
+                        }
+                    }).collect(Collectors.joining(" => "));
+
+            printStream.println("Longest path to sink: " + path);
 
             printStream.println("---------------------------------");
         }

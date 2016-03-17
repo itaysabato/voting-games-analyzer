@@ -1,6 +1,12 @@
 package il.ac.huji.cs.itays04.games.impl;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
+import edu.princeton.cs.algs4.AcyclicLP;
+import edu.princeton.cs.algs4.DirectedEdge;
+import edu.princeton.cs.algs4.EdgeWeightedDigraph;
 import il.ac.huji.cs.itays04.games.api.*;
 import il.ac.huji.cs.itays04.utils.DirectedGraphFactory;
 import il.ac.huji.cs.itays04.utils.ImmutableDirectedGraph;
@@ -9,6 +15,7 @@ import il.ac.huji.cs.itays04.utils.StronglyConnectedComponent;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class SimpleGameAnalyzer implements GameAnalyzer {
 
@@ -81,7 +88,7 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
             Set<StronglyConnectedComponent<T>> sinks) {
 
         final SocialWelfareCalculator<T, U, W> calculator = game.getSocialWelfareCalculator();
-        final HashMap<StronglyConnectedComponent<T>, W> sinksWithWelfare = new HashMap<>();
+        final HashSet<SinkWithWelfare<T, W>> sinksWithWelfare = new HashSet<>();
 
         Optional<W> worstRatio = Optional.empty(),
                 worstNeRatio = Optional.empty(),
@@ -89,9 +96,12 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
 
         for (StronglyConnectedComponent<T> sink : sinks) {
             final Set<T> nodes = sink.getNodes();
-
             final W sinkWelfare = calculator.calculateAverageWelfare(game, nodes);
-            sinksWithWelfare.put(sink, sinkWelfare);
+
+            final ImmutableList<StronglyConnectedComponent<T>> longestPath = calculateLongestPath(brg, sink);
+            sinksWithWelfare.add(new SinkWithWelfare<>(sinkWelfare, sink, longestPath));
+
+
 
             final W ratio = calculator.getRatio(socialOptimum, sinkWelfare);
             final Optional<W> optionalRatio = Optional.of(ratio);
@@ -123,7 +133,72 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
         }
 
         final GamePrices<W> gamePrices = new GamePrices<>(socialOptimum, worstRatio.get(), worstNeRatio, bestNeRatio);
-        return new GameAnalysis<>(gamePrices, brg, sinksWithWelfare);
+
+        final long neCount = sinksWithWelfare.stream()
+                .filter(sink -> sink.getSink().getNodes().size() == 1)
+                .count();
+
+        return new GameAnalysis<>(neCount, gamePrices, brg, sinksWithWelfare);
+    }
+
+    private <T extends GameState<T>> ImmutableList<StronglyConnectedComponent<T>> calculateLongestPath(
+            ImmutableDirectedGraphWithScc<T> brg, StronglyConnectedComponent<T> sink) {
+
+        final ImmutableDirectedGraph<StronglyConnectedComponent<T>> sccGraph = brg.getSccGraph();
+        final Set<StronglyConnectedComponent<T>> sccSet = sccGraph.getNodes();
+
+        final BiMap<Integer, StronglyConnectedComponent<T>> idToNode = HashBiMap.create(sccSet.size());
+        final Map<StronglyConnectedComponent<T>, Double> weights = new HashMap<>();
+
+        for (StronglyConnectedComponent<T> scc : sccSet) {
+            idToNode.put(scc.getId(), scc);
+            weights.put(scc, (double) scc.getNodes().size());
+        }
+
+        return getLongestPathToSink(sink, weights, idToNode, sccGraph);
+    }
+
+    private <E> ImmutableList<E> getLongestPathToSink(
+            E sink,
+            Map<E, Double> weights,
+            BiMap<Integer, E> idToNode,
+            ImmutableDirectedGraph<E> sccGraph) {
+
+        final BiMap<E, Integer> nodeToId = idToNode.inverse();
+
+        final Set<E> sccSet = sccGraph.getNodes();
+        final EdgeWeightedDigraph edgeWeightedDigraph = new EdgeWeightedDigraph(sccSet.size());
+
+        for (Map.Entry<E, E> edge : sccGraph.getEdges().entries()) {
+            final E originalSource = edge.getKey();
+            final E originalTarget = edge.getValue();
+
+            final DirectedEdge reverseEdge = new DirectedEdge(
+                    nodeToId.get(originalTarget),
+                    nodeToId.get(originalSource),
+                    weights.get(originalSource));
+
+            edgeWeightedDigraph.addEdge(reverseEdge);
+        }
+
+        final AcyclicLP acyclicLP = new AcyclicLP(edgeWeightedDigraph, nodeToId.get(sink));
+
+        final Optional<Iterable<DirectedEdge>> longestPath = sccSet.stream()
+                .sequential()
+                .map(nodeToId::get)
+                .max(Comparator.comparingDouble(acyclicLP::distTo))
+                .map(acyclicLP::pathTo);
+
+        //todo: if the whole graph is strongly connected, this will fail:
+        final List<E> path = StreamSupport.stream(longestPath.get().spliterator(), false)
+                .map(DirectedEdge::to)
+                .map(idToNode::get)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        Collections.reverse(path);
+        path.add(sink);
+
+        return ImmutableList.copyOf(path);
     }
 
     private <T extends GameState<T>> Set<StronglyConnectedComponent<T>> collectSinks(ImmutableDirectedGraphWithScc<T> brg) {

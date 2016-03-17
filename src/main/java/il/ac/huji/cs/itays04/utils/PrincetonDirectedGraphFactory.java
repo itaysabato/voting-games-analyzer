@@ -28,7 +28,12 @@ public class PrincetonDirectedGraphFactory implements DirectedGraphFactory {
         return new ImmutableDirectedGraphWithScc<>(originalGraph, sccGraph);
     }
 
-    private <T> ImmutableDirectedGraph<StronglyConnectedComponent<T>> addSccEdges(ImmutableDirectedGraph<T> originalGraph, HashBiMap<T, Integer> nodeToId, TarjanSCC tarjanSCC, HashMap<Integer, StronglyConnectedComponent<T>> sccMap) {
+    private <T> ImmutableDirectedGraph<StronglyConnectedComponent<T>> addSccEdges(
+            ImmutableDirectedGraph<T> originalGraph,
+            HashBiMap<T, Integer> nodeToId,
+            TarjanSCC tarjanSCC,
+            HashMap<Integer, StronglyConnectedComponent<T>> sccMap) {
+
         final HashMultimap<StronglyConnectedComponent<T>, StronglyConnectedComponent<T>> sccEdges = HashMultimap.create();
         final HashMultimap<StronglyConnectedComponent<T>, StronglyConnectedComponent<T>> sccBackEdges = HashMultimap.create();
 
@@ -53,7 +58,11 @@ public class PrincetonDirectedGraphFactory implements DirectedGraphFactory {
         return new ImmutableDirectedGraph<>(sccMap.values(), sccEdges, sccBackEdges);
     }
 
-    private <T> HashMap<Integer, StronglyConnectedComponent<T>> createSccMap(ImmutableDirectedGraph<T> originalGraph, HashBiMap<T, Integer> nodeToId, TarjanSCC tarjanSCC) {
+    private <T> HashMap<Integer, StronglyConnectedComponent<T>> createSccMap(
+            ImmutableDirectedGraph<T> originalGraph,
+            HashBiMap<T, Integer> nodeToId,
+            TarjanSCC tarjanSCC) {
+
         final HashMultimap<Integer, T> sccMultimap = HashMultimap.create();
 
         for (T node : originalGraph.getNodes()) {
