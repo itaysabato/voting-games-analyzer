@@ -45,6 +45,14 @@ public class SimpleGameAnalyzerTest {
     }
 
     @Test
+    public void analyzeTheorem11Example() {
+        final List<Integer> voterPositions = Lists.newArrayList(15, 55, 42, 66, 74);
+        final Set<Integer> candidatePositions = Sets.newHashSet(15, 55, 42, 66, 74);
+
+        analyzeAndReport(voterPositions, candidatePositions, "Theorem 11 example");
+    }
+
+    @Test
     public void analyzeTheorem12Example() {
         final List<Integer> voterPositions = Lists.newArrayList(4, 32, 34, 48, 67);
         final Set<Integer> candidatePositions = Sets.newHashSet(14, 32, 42, 60, 93);
