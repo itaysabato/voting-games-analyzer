@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
 
 public class QuadraticFactory {
 
-    public QuadraticUtilityCalculator<Integer> createDistanceBasedCalculator(List<Integer> voterPositions, Set<Integer> candidatePositions) {
+    public QuadraticUtilityCalculator<BigFraction> createDistanceBasedCalculator(List<BigFraction> voterPositions, Set<BigFraction> candidatePositions) {
 
-        List<Map<Integer, Long>> individualUtilities = voterPositions.stream()
+        List<Map<BigFraction, BigFraction>> individualUtilities = voterPositions.stream()
                 .sequential()
                 .map(p -> calculateUtilities(p, candidatePositions))
                 .collect(Collectors.toList());
@@ -24,28 +24,34 @@ public class QuadraticFactory {
         return new QuadraticUtilityCalculator<>(individualUtilities);
     }
 
-    private Map<Integer, Long> calculateUtilities(Integer voterPosition, Set<Integer> candidatePositions) {
-        final Map<Integer, Long> utils = new HashMap<>();
+    private Map<BigFraction, BigFraction> calculateUtilities(BigFraction voterPosition, Set<BigFraction> candidatePositions) {
+        final Map<BigFraction, BigFraction> utils = new HashMap<>();
 
-        for (Integer candidatePosition : candidatePositions) {
-            utils.put(candidatePosition, -Math.abs(((long) voterPosition) - ((long) candidatePosition)));
+        for (BigFraction candidatePosition : candidatePositions) {
+            final BigFraction util = voterPosition.subtract(candidatePosition)
+                    .abs()
+                    .negate();
+
+            utils.put(candidatePosition, util);
         }
 
         return utils;
     }
 
     public <W extends Number & Comparable<W>>
-    VotingGame<Integer, BigFraction, W> createDistanceBasedGame(
-            List<Integer> voterPositions,
-            Set<Integer> candidatePositions,
-            SocialWelfareCalculator<VotingGameState<Integer>, BigFraction, W> socialWelfareCalculator) {
+    VotingGame<BigFraction, BigFraction, W> createDistanceBasedGame(
+            List<BigFraction> voterPositions,
+            Set<BigFraction> candidatePositions,
+            SocialWelfareCalculator<VotingGameState<BigFraction>, BigFraction, W> socialWelfareCalculator) {
 
         final double numberOfStates = Math.ceil(Math.pow(candidatePositions.size(), voterPositions.size()));
 
-        final QuadraticUtilityCalculator<Integer> utilityCalculator = createDistanceBasedCalculator(voterPositions, candidatePositions);
-        final List<Integer> truthfulProfile = utilityCalculator.getTruthfulProfile();
+        final QuadraticUtilityCalculator<BigFraction> utilityCalculator = createDistanceBasedCalculator(
+                voterPositions, candidatePositions);
+        
+        final List<BigFraction> truthfulProfile = utilityCalculator.getTruthfulProfile();
 
-        final CachedUtilityCalculator<VotingGameState<Integer>, BigFraction> cachedUtilityCalculator =
+        final CachedUtilityCalculator<VotingGameState<BigFraction>, BigFraction> cachedUtilityCalculator =
                 new CachedUtilityCalculator<>(utilityCalculator, (int) numberOfStates);
 
         return new VotingGame<>(candidatePositions, truthfulProfile, cachedUtilityCalculator, socialWelfareCalculator);

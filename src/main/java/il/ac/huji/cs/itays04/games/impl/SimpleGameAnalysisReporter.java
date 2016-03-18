@@ -137,7 +137,11 @@ public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
         printStream.println();
     }
 
-    public <W extends Number & Comparable<W>> void printWelfareWithLabel(PrintStream printStream, String label, W value) {
-        printStream.println(label + ": " + value + " (" + value.doubleValue() + ")" );
+    private <W extends Number> void printWelfareWithLabel(PrintStream printStream, String label, W value) {
+        printStream.println(label + ": " + numberToString(value));
+    }
+
+    private <W extends Number> String numberToString(W value) {
+        return value + " (" + value.doubleValue() + ")";
     }
 }
