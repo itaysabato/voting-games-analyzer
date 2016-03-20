@@ -6,6 +6,7 @@ import il.ac.huji.cs.itays04.games.api.GameAnalysis;
 import il.ac.huji.cs.itays04.games.api.GameAnalyzer;
 import il.ac.huji.cs.itays04.games.api.GamePrices;
 import il.ac.huji.cs.itays04.utils.ImmutableDirectedGraphWithScc;
+import il.ac.huji.cs.itays04.utils.NumberUtils;
 import il.ac.huji.cs.itays04.voting.VotingGame;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
 import il.ac.huji.cs.itays04.voting.quadratic.QuadraticFactory;
@@ -197,6 +198,21 @@ public class SimpleGameAnalyzerTest {
     }
 
     @Test
+    public void analyze4VotersPoA3SmootherExample() {
+        final List<Integer> voterPositions = voters(660, 660, 1123, 1123);
+//        final Set<Integer> candidatePositions = candidates(0, 1151, 1522);
+        final Set<Integer> candidatePositions = candidates(-110, 1125 , 1738);
+
+        final GameAnalysis<?, BigFraction> analysis = analyzeAndReportInts(
+                voterPositions, candidatePositions, "4 voters and 5 candidates PoA=3 example");
+
+//        assertConvergence(analysis, false);
+        assertNash(analysis, true);
+
+        Assert.assertTrue(analysis.getPrices().getPriceOfAnarchy().get().compareTo(new BigFraction(3)) >= 0);
+    }
+
+    @Test
     @Ignore
     public void analyzeInfiniteRandomVotersExample() {
         BigFraction worstPriceOfAnarchy = BigFraction.ZERO, worstPriceOfSinking = BigFraction.ZERO;
@@ -295,7 +311,20 @@ public class SimpleGameAnalyzerTest {
             Set<BigFraction> candidatePositions,
             String gameDescription) {
 
-        System.out.println("Analyzing " + gameDescription + " with voters: " + voterPositions);
+        System.out.println("Analyzing " + gameDescription + " with voters: ");
+        for (int i = 0; i < voterPositions.size(); i++) {
+            System.out.println("V" + i + " = " + NumberUtils.fractionToString(voterPositions.get(i)));
+        }
+
+        System.out.println();
+
+        final String candidatesString = candidatePositions.stream()
+                .sequential()
+                .map(NumberUtils::fractionToString)
+                .collect(Collectors.joining("\n", "\n", "\n"));
+
+        System.out.println("and candidates: " + candidatesString);
+
         final QuadraticFactory quadraticFactory = StaticContext.getInstance().getQuadraticFactory();
 
         final BigFractionAverageSocialWelfareCalculator<VotingGameState<BigFraction>> welfareCalculator =

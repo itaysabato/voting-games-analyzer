@@ -2,6 +2,7 @@ package il.ac.huji.cs.itays04.games.impl;
 
 import il.ac.huji.cs.itays04.games.api.*;
 import il.ac.huji.cs.itays04.utils.ImmutableDirectedGraphWithScc;
+import il.ac.huji.cs.itays04.utils.NumberUtils;
 import il.ac.huji.cs.itays04.utils.StronglyConnectedComponent;
 
 import java.io.PrintStream;
@@ -94,7 +95,7 @@ public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
             final Map<T, Integer> stateToId = new HashMap<>(states.size());
 
             for (T state : states) {
-                printStream.println(i + " - " + state);
+                printStream.println("S" + i + " - " + state);
                 stateToId.put(state, i);
                 i++;
             }
@@ -116,7 +117,7 @@ public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
                 hasEdges.set(true);
                 final Integer source = stateToId.get(edge.getKey());
                 final Integer target = stateToId.get(edge.getValue());
-                printStream.println(source + " => " + target);
+                printStream.println("S" + source + " => " + "S" + target);
             });
 
             if (!hasEdges.get()) {
@@ -144,11 +145,7 @@ public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
         printStream.println();
     }
 
-    private <W extends Number> void printWelfareWithLabel(PrintStream printStream, String label, W value) {
-        printStream.println(label + ": " + numberToString(value));
-    }
-
-    private <W extends Number> String numberToString(W value) {
-        return value + " (" + value.doubleValue() + ")";
+    private void printWelfareWithLabel(PrintStream printStream, String label, Number value) {
+        printStream.println(label + ": " + NumberUtils.numberToString(value));
     }
 }

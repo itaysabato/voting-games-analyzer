@@ -1,6 +1,7 @@
 package il.ac.huji.cs.itays04.voting.quadratic;
 
 import il.ac.huji.cs.itays04.games.api.UtilityCalculator;
+import il.ac.huji.cs.itays04.utils.NumberUtils;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
 import org.apache.commons.math3.fraction.BigFraction;
 
@@ -91,23 +92,17 @@ public class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingGa
             final Map<C, BigFraction> utilities = individualUtilities.get(i);
 
             for (Map.Entry<C, BigFraction> entry : utilities.entrySet()) {
-                builder.append("U(")
+                builder.append("U(V")
                         .append(i)
                         .append(",")
                         .append(entry.getKey())
                         .append(") = ")
-                        .append(fracToString(entry.getValue()))
+                        .append(NumberUtils.fractionToString(entry.getValue()))
                         .append("; ");
             }
             builder.append("\n");
         }
 
         return builder.toString();
-    }
-
-    //todo: move to util class and use everywhere!
-    private String fracToString(BigFraction value) {
-        return value + (value.getDenominator().equals(BigInteger.ONE) ?
-                "" : " (" + value.doubleValue() + ")");
     }
 }
