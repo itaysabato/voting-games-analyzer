@@ -60,6 +60,13 @@ public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
             printStream.println(N_A);
         }
 
+        printStream.println();
+        printStream.println("Socially optimal states:");
+        int k = 1;
+        for (T state : gameAnalysis.getOptimalStates()) {
+            printStream.println(k++ + " - " + state);
+        }
+
         printStream.println("---------------------------------");
         printStream.println("Sinks");
         printStream.println("---------------------------------");

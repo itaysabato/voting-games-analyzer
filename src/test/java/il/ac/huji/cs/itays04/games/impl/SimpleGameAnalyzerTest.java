@@ -1,10 +1,10 @@
 package il.ac.huji.cs.itays04.games.impl;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import il.ac.huji.cs.itays04.games.api.BigFractionAverageSocialWelfareCalculator;
 import il.ac.huji.cs.itays04.games.api.GameAnalysis;
 import il.ac.huji.cs.itays04.games.api.GameAnalyzer;
+import il.ac.huji.cs.itays04.games.api.GamePrices;
 import il.ac.huji.cs.itays04.utils.ImmutableDirectedGraphWithScc;
 import il.ac.huji.cs.itays04.voting.VotingGame;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
@@ -14,10 +14,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.List;
-import java.util.OptionalInt;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -26,8 +23,8 @@ public class SimpleGameAnalyzerTest {
 
     @Test
     public void analyzeTheorem5Example() {
-        final List<Integer> voterPositions = Lists.newArrayList(14,7,12);
-        final Set<Integer> candidatePositions = Sets.newHashSet(17,2,10);
+        final List<Integer> voterPositions = voters(14,7,12);
+        final Set<Integer> candidatePositions = candidates(17,2,10);
 
         final GameAnalysis<?, ?> analysis = analyzeAndReportInts(
                 voterPositions, candidatePositions, "Theorem 5 example");
@@ -51,8 +48,8 @@ public class SimpleGameAnalyzerTest {
 
     @Test
     public void analyzeTheorem8Example() {
-        final List<Integer> voterPositions = Lists.newArrayList(16,4,1,7);
-        final Set<Integer> candidatePositions = Sets.newHashSet(5,1,19,8);
+        final List<Integer> voterPositions = voters(16, 4, 1, 7);
+        final Set<Integer> candidatePositions = candidates(5,1,19,8);
 
         final GameAnalysis<?, ?> analysis = analyzeAndReportInts(
                 voterPositions, candidatePositions, "Theorem 8 example");
@@ -62,9 +59,21 @@ public class SimpleGameAnalyzerTest {
     }
 
     @Test
+    public void analyzeTheorem8WorseExample() {
+        final List<Integer> voterPositions = voters(500, 4, 1, 7);
+        final Set<Integer> candidatePositions = candidates(5,1,500,8);
+
+        final GameAnalysis<?, ?> analysis = analyzeAndReportInts(
+                voterPositions, candidatePositions, "Theorem 8 worse example");
+
+        assertConvergence(analysis, false);
+        assertNash(analysis, true);
+    }
+
+    @Test
     public void analyzeTheorem10Example() {
-        final List<Integer> voterPositions = Lists.newArrayList(400, 47, 92, 92, 92, 0, 0, 0, 0);
-        final Set<Integer> candidatePositions = Sets.newHashSet(0,92,400);
+        final List<Integer> voterPositions = voters(400, 47, 92, 92, 92, 0, 0, 0, 0);
+        final Set<Integer> candidatePositions = candidates(0,92,400);
 
         final GameAnalysis<?, ?> analysis = analyzeAndReportInts(
                 voterPositions, candidatePositions, "Theorem 10 example");
@@ -75,8 +84,8 @@ public class SimpleGameAnalyzerTest {
 
     @Test
     public void analyzeTheorem11Example() {
-        final List<Integer> voterPositions = Lists.newArrayList(15, 55, 42, 66, 74);
-        final Set<Integer> candidatePositions = Sets.newHashSet(15, 55, 42, 66, 74);
+        final List<Integer> voterPositions = voters(15, 55, 42, 66, 74);
+        final Set<Integer> candidatePositions = candidates(15, 55, 42, 66, 74);
 
         final GameAnalysis<?, ?> analysis = analyzeAndReportInts(
                 voterPositions, candidatePositions, "Theorem 11 example");
@@ -87,8 +96,8 @@ public class SimpleGameAnalyzerTest {
 
     @Test
     public void analyzeTheorem12Example() {
-        final List<Integer> voterPositions = Lists.newArrayList(4, 32, 34, 48, 67);
-        final Set<Integer> candidatePositions = Sets.newHashSet(14, 32, 42, 60, 93);
+        final List<Integer> voterPositions = voters(4, 32, 34, 48, 67);
+        final Set<Integer> candidatePositions = candidates(14, 32, 42, 60, 93);
 
         final GameAnalysis<?, ?> analysis = analyzeAndReportInts(
                 voterPositions, candidatePositions, "Theorem 12 example");
@@ -99,8 +108,8 @@ public class SimpleGameAnalyzerTest {
 
     @Test
     public void analyzeTheorem12Without93Example() {
-        final List<Integer> voterPositions = Lists.newArrayList(4, 32, 34, 48, 67);
-        final Set<Integer> candidatePositions = Sets.newHashSet(14, 32, 42, 60);
+        final List<Integer> voterPositions = voters(4, 32, 34, 48, 67);
+        final Set<Integer> candidatePositions = candidates(14, 32, 42, 60);
 
         final GameAnalysis<?, ?> analysis = analyzeAndReportInts(
                 voterPositions, candidatePositions, "Theorem 12 without candidate 93");
@@ -112,8 +121,8 @@ public class SimpleGameAnalyzerTest {
     @Test
     @Ignore
     public void analyze4Voters5CandidatesFailedNoNeExample() {
-        final List<Integer> voterPositions = Lists.newArrayList(447892247, 1807778634, -1386396308, -800174363);
-        final Set<Integer> candidatePositions = Sets.newHashSet(-2006359767, -534226103, -1292843788, -821544891, -463640637);
+        final List<Integer> voterPositions = voters(447892247, 1807778634, -1386396308, -800174363);
+        final Set<Integer> candidatePositions = candidates(-2006359767, -534226103, -1292843788, -821544891, -463640637);
 
         final GameAnalysis<?, ?> analysis = analyzeAndReportInts(
                 voterPositions, candidatePositions, "4 voters and 5 candidates with no NE example");
@@ -125,8 +134,8 @@ public class SimpleGameAnalyzerTest {
     @Test
     @Ignore
     public void analyze4Voters4CandidatesFailedNoNeExample() {
-        final List<Integer> voterPositions = Lists.newArrayList(447892247, 1807778634, -1386396308, -800174363);
-        final Set<Integer> candidatePositions = Sets.newHashSet(-2006359767, -1292843788, -821544891, -463640637);
+        final List<Integer> voterPositions = voters(447892247, 1807778634, -1386396308, -800174363);
+        final Set<Integer> candidatePositions = candidates(-2006359767, -1292843788, -821544891, -463640637);
 
         final GameAnalysis<?, ?> analysis = analyzeAndReportInts(
                 voterPositions, candidatePositions, "4 voters and 4 candidates with no NE example");
@@ -137,8 +146,8 @@ public class SimpleGameAnalyzerTest {
 
     @Test
     public void analyze4Voters4CandidatesNoNeExample() {
-        final List<Integer> voterPositions = Lists.newArrayList(-1421648613, 933478673, -283196042, 2113642072);
-        final Set<Integer> candidatePositions = Sets.newHashSet(-1411103600, -10658440, 653699683, 1613807734);
+        final List<Integer> voterPositions = voters(-1421648613, 933478673, -283196042, 2113642072);
+        final Set<Integer> candidatePositions = candidates(-1411103600, -10658440, 653699683, 1613807734);
 
         final GameAnalysis<?, ?> analysis = analyzeAndReportInts(
                 voterPositions, candidatePositions, "4 voters and 4 candidates with no NE example");
@@ -149,46 +158,92 @@ public class SimpleGameAnalyzerTest {
 
     @Test
     public void analyze4Voters4CandidatesNoNeSmoothExample() {
-//        final List<BigFraction> voterPositions = Lists.newArrayList(ofDiv(0, 3535290685L), ofDiv(2355127286L, 3535290685L), ofDiv(1138452571, 3535290685L), ofDiv(3535290685L, 3535290685L));
-//        final Set<BigFraction> candidatePositions = Sets.newHashSet(ofDiv(10545013, 3535290685L), ofDiv(1410990173, 3535290685L), ofDiv(2075348296, 3535290685L), ofDiv(3035456347L, 3535290685L));
+        final List<Integer> voterPositions = voters(0, 66, 32, 100);
+        final Set<Integer> candidatePositions = candidates(0, 39, 58, 85);
 
-        final List<BigFraction> voterPositions = Lists.newArrayList(ofDiv(0, 1), ofDiv(66, 1), ofDiv(32, 1), ofDiv(100, 1));
-        final Set<BigFraction> candidatePositions = Sets.newHashSet(ofDiv(0, 1), ofDiv(39, 1), ofDiv(58, 1), ofDiv(85, 1));
-
-//        final List<BigFraction> voterPositions = Lists.newArrayList(ofDiv(0, 1), ofDiv(7, 10), ofDiv(3, 10), ofDiv(1, 1));
-//        final Set<BigFraction> candidatePositions = Sets.newHashSet(ofDiv(0, 1), ofDiv(4, 10), ofDiv(6, 10), ofDiv(85, 100));
-
-        final GameAnalysis<?, ?> analysis = analyzeAndReport(
+        final GameAnalysis<?, ?> analysis = analyzeAndReportInts(
                 voterPositions, candidatePositions, "4 voters and 4 candidates with no NE smooth example");
 
         assertConvergence(analysis, false);
         assertNash(analysis, false);
     }
 
-    private BigFraction ofDiv(long num, long denom) {
-//        final BigFraction bigFraction = new BigFraction(num, denom);
-//        System.out.println(bigFraction.doubleValue());
+    @Test
+    public void analyze4VotersPoA3Example() {
+        final List<Integer> voterPositions = voters(-76449421, 1131956366, -52576629, 1177352783);
+        final Set<Integer> candidatePositions = candidates(-1205708878, 2011356870, -1659967173, 1996515385, 1115606866);
 
-        return new BigFraction(num, denom);
+        final GameAnalysis<?, BigFraction> analysis = analyzeAndReportInts(
+                voterPositions, candidatePositions, "4 voters and 5 candidates PoA=3 example");
+
+//        assertConvergence(analysis, false);
+        assertNash(analysis, true);
+
+        Assert.assertTrue(analysis.getPrices().getPriceOfAnarchy().get().compareTo(new BigFraction(3)) >= 0);
+    }
+
+    @Test
+    public void analyze4VotersPoA3SmoothExample() {
+        final List<BigFraction> voterPositions = voters(new BigFraction(-76449421, 1205708878), new BigFraction(1131956366, 1205708878), new BigFraction(-52576629, 1205708878), new BigFraction(1177352783, 1205708878));
+        final Set<BigFraction> candidatePositions = candidates(new BigFraction(-1), new BigFraction(2011356870, 1205708878), new BigFraction(-1659967173, 1205708878), new BigFraction(1996515385, 1205708878), new BigFraction(1115606866, 1205708878));
+
+        final GameAnalysis<?, BigFraction> analysis = analyzeAndReport(
+                voterPositions, candidatePositions, "4 voters and 5 candidates PoA=3 example");
+
+//        assertConvergence(analysis, false);
+        assertNash(analysis, true);
+
+        Assert.assertTrue(analysis.getPrices().getPriceOfAnarchy().get().compareTo(new BigFraction(3)) >= 0);
     }
 
     @Test
     @Ignore
-    public void analyzeInfiniteRandom4VotersExample() {
+    public void analyzeInfiniteRandomVotersExample() {
+        BigFraction worstPriceOfAnarchy = BigFraction.ZERO, worstPriceOfSinking = BigFraction.ZERO;
+
         //noinspection InfiniteLoopStatement
         while (true) {
-            analyzeRandomExample(4, 3, 6);
+
+            final GameAnalysis<VotingGameState<BigFraction>, BigFraction> analysis = analyzeRandomExample(4, 3, 6);
+            final GamePrices<BigFraction> prices = analysis.getPrices();
+            final Optional<BigFraction> priceOfAnarchy = prices.getPriceOfAnarchy();
+
+            if (priceOfAnarchy.isPresent()
+                    && worstPriceOfAnarchy.compareTo(priceOfAnarchy.get()) < 0) {
+
+                worstPriceOfAnarchy = priceOfAnarchy.get();
+                System.out.println("Worst POA yet: " + worstPriceOfAnarchy + " (" + worstPriceOfAnarchy.doubleValue() + ")");
+            }
+
+            final BigFraction priceOfSinking = prices.getPriceOfSinking();
+            if (worstPriceOfSinking.compareTo(priceOfSinking) < 0) {
+
+                worstPriceOfSinking = priceOfSinking;
+                System.out.println("Worst POSink yet: " + worstPriceOfSinking + " (" + worstPriceOfSinking.doubleValue() + ")");
+            }
         }
     }
 
-    public void analyzeRandomExample(int numberOfVoters, int minNumberOfCandidates, int maxNumberOfCandidates) {
+    @SafeVarargs
+    public final <T extends Comparable<T>> List<T> voters(T... positions) {
+        final ArrayList<T> voters = Lists.newArrayList(positions);
+        Collections.sort(voters);
+        return voters;
+    }
+
+    @SafeVarargs
+    public final <T extends Comparable<T>> Set<T> candidates(T... positions) {
+        final ArrayList<T> candidates = Lists.newArrayList(positions);
+        Collections.sort(candidates);
+        return new LinkedHashSet<>(candidates);
+    }
+
+    public GameAnalysis<VotingGameState<BigFraction>, BigFraction> analyzeRandomExample(int numberOfVoters, int minNumberOfCandidates, int maxNumberOfCandidates) {
         final List<Integer> voterPositions = getRandomVoters(numberOfVoters);
         final Set<Integer> candidatePositions = getRandomCandidates(minNumberOfCandidates, maxNumberOfCandidates);
 
-        final GameAnalysis<VotingGameState<BigFraction>, BigFraction> analysis = analyzeAndReportInts(
+        return analyzeAndReportInts(
                 voterPositions, candidatePositions, "Random " + numberOfVoters + " voters example");
-
-        assertNash(analysis, true);
     }
 
     private Set<Integer> getRandomCandidates(int min, int max) {
@@ -228,8 +283,9 @@ public class SimpleGameAnalyzerTest {
                 .collect(Collectors.toList());
 
         final Set<BigFraction> candidateFractions = candidatePositions.stream()
+                .sequential()
                 .map(BigFraction::new)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
 
         return analyzeAndReport(voterFractions, candidateFractions, gameDescription);
     }
@@ -254,6 +310,11 @@ public class SimpleGameAnalyzerTest {
         final GameAnalysis<VotingGameState<BigFraction>, BigFraction> gameAnalysis = gameAnalyzer.analyze(game, brg);
 
         StaticContext.getInstance().getGameAnalysisReporter().printReport(game, gameAnalysis, System.out);
+
+//        if (gameAnalysis.getPrices().getPriceOfSinking().compareTo(new BigFraction(3)) >= 0) {
+//            System.out.println("Analyzing " + gameDescription + " with voters: " + voterPositions);
+//            StaticContext.getInstance().getGameAnalysisReporter().printReport(game, gameAnalysis, System.out);
+//        }
 
         return gameAnalysis;
     }

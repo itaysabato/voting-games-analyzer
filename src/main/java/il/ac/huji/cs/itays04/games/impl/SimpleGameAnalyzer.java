@@ -136,7 +136,16 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
                 .filter(sink -> sink.getSink().getNodes().size() == 1)
                 .count();
 
-        return new GameAnalysis<>(neCount, gamePrices, brg, sinksWithWelfare);
+        final Set<T> optimalStates = brg.getOriginalGraph()
+                .getNodes()
+                .stream()
+                .sequential()
+                .filter(s -> game.getSocialWelfareCalculator()
+                        .calculateWelfare(game, s)
+                        .compareTo(socialOptimum) >= 0)
+                .collect(Collectors.toSet());
+
+        return new GameAnalysis<>(neCount, gamePrices, brg, sinksWithWelfare, optimalStates);
     }
 
     private <T extends GameState<T>> ImmutableList<StronglyConnectedComponent<T>> calculateLongestPath(

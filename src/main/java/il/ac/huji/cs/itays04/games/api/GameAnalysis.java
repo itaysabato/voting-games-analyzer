@@ -12,12 +12,14 @@ public class GameAnalysis<T extends GameState<T>, W extends Number & Comparable<
     private final long numberOfNonSingularSccs;
     private final ImmutableDirectedGraphWithScc<T> bestResponseGraph;
     private final ImmutableSet<SinkWithWelfare<T,W>> sinksWithWelfare;
+    private final ImmutableSet<T> optimalStates;
 
     public GameAnalysis(
             long neCount,
             GamePrices<W> prices,
             ImmutableDirectedGraphWithScc<T> bestResponseGraph,
-            Set<SinkWithWelfare<T,W>> sinksWithWelfare) {
+            Set<SinkWithWelfare<T, W>> sinksWithWelfare,
+            Set<T> optimalStates) {
 
         this.prices = prices;
         this.neCount = neCount;
@@ -30,6 +32,8 @@ public class GameAnalysis<T extends GameState<T>, W extends Number & Comparable<
                 .mapToInt(Set::size)
                 .filter(s -> s > 1)
                 .count();
+
+        this.optimalStates = ImmutableSet.copyOf(optimalStates);
 
     }
 
@@ -49,7 +53,11 @@ public class GameAnalysis<T extends GameState<T>, W extends Number & Comparable<
         return bestResponseGraph;
     }
 
-    public ImmutableSet<SinkWithWelfare<T, W>> getSinksWithWelfare() {
+    public Set<SinkWithWelfare<T, W>> getSinksWithWelfare() {
         return sinksWithWelfare;
+    }
+
+    public Set<T> getOptimalStates() {
+        return optimalStates;
     }
 }
