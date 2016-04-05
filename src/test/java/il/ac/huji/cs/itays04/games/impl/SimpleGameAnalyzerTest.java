@@ -211,6 +211,7 @@ public class SimpleGameAnalyzerTest {
     }
 
     @Test
+    @Ignore
     public void analyze10VotersPoA10Example() {
         final List<BigFraction> voterPositions = voters(19, 19, 19, 19, 19, 21, 21, 21, 21, 21);
         final Set<BigFraction> candidatePositions = candidates(10, 20 , 30);
@@ -242,6 +243,59 @@ public class SimpleGameAnalyzerTest {
     @Test
     public void analyze2VotersPoA2Example() {
         test2kPoA(1);
+    }
+
+    @Test
+    public void analyze4VotersPoS1Example() {
+        test2kPoS1(2);
+    }
+
+    @Test
+    public void analyze6VotersPoS1Example() {
+        test2kPoS1(3);
+    }
+
+    @Test
+    public void analyze6VotersPoSNot1Example() {
+        test2kPoSNot1(3);
+    }
+
+    private void test2kPoS1(int k) {
+        final int n = 2 * k;
+        GameAnalysis<?, BigFraction> analysis = test2kDelta(k, new BigFraction(n, n - 1), true);
+
+        final BigFraction poa = analysis.getPrices().getPriceOfAnarchy().get();
+        Assert.assertTrue(poa.compareTo(new BigFraction(2, 5*n)) >= 0);
+    }
+
+    private void test2kPoSNot1(int k) {
+        BigFraction delta = new BigFraction(2 * k, 2 * k - 1)
+                .subtract(new BigFraction(1, 100));
+        test2kDelta(k, delta, false);
+    }
+
+    private GameAnalysis<?, BigFraction> test2kDelta(int k, BigFraction delta, boolean pos1) {
+        assert k > 1;
+        final int n = 2 * k;
+        final BigFraction a = new BigFraction(-n), b = delta.negate(), d = new BigFraction(n);
+
+        final BigFraction[] voters = new BigFraction[n];
+        voters[0] = a;
+        Arrays.fill(voters, 1, k, b);
+        Arrays.fill(voters, k, n-1, delta);
+        voters[n-1] = d;
+
+        final List<BigFraction> voterPositions = voters(voters);
+        final Set<BigFraction> candidatePositions = candidates(a, b, delta, d);
+
+        final GameAnalysis<?, BigFraction> analysis = analyzeAndReport(
+                voterPositions, candidatePositions, n + " voters and 4 candidates PoS=1 example");
+
+        assertNash(analysis, true);
+        final BigFraction pos = analysis.getPrices().getPriceOfStability().get();
+        Assert.assertTrue(pos1 == (pos.compareTo(new BigFraction(1)) == 0));
+
+        return analysis;
     }
 
     public void test2kPoA(int k) {
