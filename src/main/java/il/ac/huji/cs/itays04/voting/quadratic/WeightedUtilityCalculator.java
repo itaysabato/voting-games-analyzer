@@ -14,10 +14,6 @@ public class WeightedUtilityCalculator<C> implements UtilityCalculator<VotingGam
     private final Set<List<C>> truthfulProfiles;
     private final List<Map<C, BigFraction>> individualUtilities;
 
-    WeightedUtilityCalculator(List<Map<C, BigFraction>> individualUtilities) {
-        this(individualUtilities, true);
-    }
-
     WeightedUtilityCalculator(List<Map<C, BigFraction>> individualUtilities, boolean quadratic) {
         this.quadratic = quadratic;
         this.individualUtilities = Collections.unmodifiableList(individualUtilities);
@@ -140,14 +136,16 @@ public class WeightedUtilityCalculator<C> implements UtilityCalculator<VotingGam
 
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder("Quadratic expected utility based on individual preferences:\n");
+        final StringBuilder builder = new StringBuilder();
+        builder.append(quadratic ? "Quadratic" : "Randomized dictatorship")
+                .append(" expected utility based on individual preferences:\n");
 
         for (int i = 0; i < individualUtilities.size(); i++) {
             final Map<C, BigFraction> utilities = individualUtilities.get(i);
 
             for (Map.Entry<C, BigFraction> entry : utilities.entrySet()) {
                 builder.append("U(V")
-                        .append(i)
+                        .append(i+1)
                         .append(",")
                         .append(entry.getKey())
                         .append(") = ")

@@ -36,7 +36,7 @@ public final class VotingGameState<C> implements GameState<VotingGameState<C>> {
 
         for (int i = 0; i < votes.size(); i++) {
             builder.append("V")
-                    .append(i)
+                    .append(i+1)
                     .append(" votes [")
                     .append(votes.get(i))
                     .append("], ");

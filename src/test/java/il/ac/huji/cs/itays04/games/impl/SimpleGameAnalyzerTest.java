@@ -545,9 +545,10 @@ public class SimpleGameAnalyzerTest {
             boolean quiet) {
 
         if (!quiet) {
+            System.out.println("********************************");
             System.out.println("Analyzing " + gameDescription + " with voters: ");
             for (int i = 0; i < voterPositions.size(); i++) {
-                System.out.println("V" + i + " = " + NumberUtils.fractionToString(voterPositions.get(i)));
+                System.out.println("V" + (i+1) + " = " + NumberUtils.fractionToString(voterPositions.get(i)));
             }
 
             System.out.println();
@@ -578,6 +579,8 @@ public class SimpleGameAnalyzerTest {
                     voterPositions, candidatePositions, false);
 
             System.out.println("Truthful profiles:");
+            System.out.println();
+
             game.getTruthfulStates()
                     .entrySet()
                     .stream()
@@ -589,23 +592,12 @@ public class SimpleGameAnalyzerTest {
                                 game, randomDicCalc, entry.getKey());
 
                         System.out.println("Randomized dictatorship SW = " + NumberUtils.fractionToString(randomDicSW));
+                        System.out.println();
                     });
 
-            System.out.println();
             StaticContext.getInstance().getGameAnalysisReporter().printReport(game, gameAnalysis, System.out);
         }
 
         return gameAnalysis;
-    }
-
-    private BigFraction randomDicSW(VotingGameState<BigFraction> state) {
-        final List<BigFraction> votes = state.getVotes();
-
-        final Optional<BigFraction> sw = votes.stream()
-                .reduce(BigFraction::add)
-                .map(sum -> sum.divide(votes.size()));
-
-        assert sw.isPresent();
-        return sw.get();
     }
 }
