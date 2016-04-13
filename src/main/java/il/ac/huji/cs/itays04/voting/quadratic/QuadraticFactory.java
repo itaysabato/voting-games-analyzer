@@ -6,7 +6,7 @@ import il.ac.huji.cs.itays04.voting.VotingGame;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
 import org.apache.commons.math3.fraction.BigFraction;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class QuadraticFactory {
 
-    public QuadraticUtilityCalculator<BigFraction> createDistanceBasedCalculator(List<BigFraction> voterPositions, Set<BigFraction> candidatePositions) {
+    private QuadraticUtilityCalculator<BigFraction> createDistanceBasedCalculator(List<BigFraction> voterPositions, Set<BigFraction> candidatePositions) {
 
         List<Map<BigFraction, BigFraction>> individualUtilities = voterPositions.stream()
                 .sequential()
@@ -25,7 +25,7 @@ public class QuadraticFactory {
     }
 
     private Map<BigFraction, BigFraction> calculateUtilities(BigFraction voterPosition, Set<BigFraction> candidatePositions) {
-        final Map<BigFraction, BigFraction> utils = new HashMap<>();
+        final Map<BigFraction, BigFraction> utils = new LinkedHashMap<>();
 
         for (BigFraction candidatePosition : candidatePositions) {
             final BigFraction util = voterPosition.subtract(candidatePosition)

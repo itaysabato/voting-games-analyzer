@@ -9,8 +9,8 @@ import java.util.Objects;
 public final class VotingGameState<C> implements GameState<VotingGameState<C>> {
     private final ImmutableList<C> votes;
 
-    VotingGameState(ImmutableList<C> votes) {
-        this.votes = votes;
+    public VotingGameState(List<C> votes) {
+        this.votes = ImmutableList.copyOf(votes);
     }
 
     public List<C> getVotes() {

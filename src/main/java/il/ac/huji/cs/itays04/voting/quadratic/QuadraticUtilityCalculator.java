@@ -8,20 +8,22 @@ import org.apache.commons.math3.fraction.BigFraction;
 import java.math.BigInteger;
 import java.util.*;
 
-public class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingGameState<C>, BigFraction> {
+class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingGameState<C>, BigFraction> {
     private final List<C> truthfulProfile;
     private final List<Map<C, BigFraction>> individualUtilities;
 
-    public QuadraticUtilityCalculator(List<Map<C, BigFraction>> individualUtilities) {
+    QuadraticUtilityCalculator(List<Map<C, BigFraction>> individualUtilities) {
         this.individualUtilities = Collections.unmodifiableList(individualUtilities);
 
         truthfulProfile = new ArrayList<>(individualUtilities.size());
 
         for (Map<C, BigFraction> utilities : individualUtilities) {
-            final C favorite = utilities.entrySet()
+            final Optional<Map.Entry<C, BigFraction>> max = utilities.entrySet()
                     .stream()
-                    .max(Comparator.comparing(Map.Entry::getValue))
-                    .get()
+                    .max(Comparator.comparing(Map.Entry::getValue));
+
+            assert max.isPresent();
+            final C favorite = max.get()
                     .getKey();
 
             truthfulProfile.add(favorite);

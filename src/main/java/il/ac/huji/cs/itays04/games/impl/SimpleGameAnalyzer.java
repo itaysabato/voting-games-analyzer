@@ -35,7 +35,7 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
         return directedGraphFactory.createImmutableDirectedGraphWithScc(originalGraph);
     }
 
-    public <T extends GameState<T>, U extends Number & Comparable<U>>
+    private <T extends GameState<T>, U extends Number & Comparable<U>>
     ImmutableDirectedGraph<T> createBestResponseGraph(Game<T, U, ?> game) {
 
         final HashSet<T> states = new HashSet<>();
@@ -71,7 +71,7 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
 
     @Override
     public <T extends GameState<T>, W extends Number & Comparable<W>> GameAnalysis<T, W> analyze(
-            Game<T, ?, W> game,
+            Game<T, W, W> game,
             ImmutableDirectedGraphWithScc<T> brg) {
 
         W socialOptimum = findSocialOptimum(game, brg);
@@ -110,6 +110,7 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
                         bestNePrice = optionalRatio;
                     }
 
+                    assert worstNePrice.isPresent();
                     if (ratio.compareTo(worstNePrice.get()) > 0) {
                         worstNePrice = optionalRatio;
                     }
@@ -130,6 +131,7 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
             }
         }
 
+        assert worstPrice.isPresent();
         final GamePrices<W> gamePrices = new GamePrices<>(socialOptimum, worstPrice.get(), worstNePrice, bestNePrice);
 
         final long neCount = sinksWithWelfare.stream()
@@ -196,8 +198,11 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
                 .max(Comparator.comparingDouble(acyclicLP::distTo))
                 .map(acyclicLP::pathTo);
 
-        //todo: if the whole graph is strongly connected, this will fail:
-        final List<E> path = StreamSupport.stream(longestPath.get().spliterator(), false)
+
+        final Spliterator<DirectedEdge> spliterator = longestPath.orElse(Collections.emptySet())
+                .spliterator();
+
+        final List<E> path = StreamSupport.stream(spliterator, false)
                 .map(DirectedEdge::to)
                 .map(idToNode::get)
                 .collect(Collectors.toCollection(ArrayList::new));
@@ -223,12 +228,14 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
     private <T extends GameState<T>, U extends Number & Comparable<U>, W extends Number & Comparable<W>>
     W findSocialOptimum(Game<T, U, W> game, ImmutableDirectedGraphWithScc<T> brg) {
 
-        return brg.getOriginalGraph()
+        final Optional<W> max = brg.getOriginalGraph()
                 .getNodes()
                 .stream()
                 .sequential()
                 .map(s -> game.getSocialWelfareCalculator().calculateWelfare(game, s))
-                .max(Comparator.naturalOrder())
-                .get();
+                .max(Comparator.naturalOrder());
+
+        assert max.isPresent();
+        return max.get();
     }
 }

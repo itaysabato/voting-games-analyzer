@@ -1,10 +1,10 @@
 package il.ac.huji.cs.itays04.voting;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import il.ac.huji.cs.itays04.games.api.Game;
 import il.ac.huji.cs.itays04.games.api.SocialWelfareCalculator;
 import il.ac.huji.cs.itays04.games.api.UtilityCalculator;
+import il.ac.huji.cs.itays04.utils.NumberUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 public class VotingGame<C, U extends Number & Comparable<U>, W extends Number & Comparable<W>>
         implements Game<VotingGameState<C>, U, W> {
 
+    private final W initialWelfare;
     private final ImmutableSet<C> allCandidates;
     private final VotingGameState<C> initialState;
     private final UtilityCalculator<VotingGameState<C>, U> utilityCalculator;
@@ -26,7 +27,8 @@ public class VotingGame<C, U extends Number & Comparable<U>, W extends Number & 
         this.utilityCalculator = utilityCalculator;
         this.socialWelfareCalculator = socialWelfareCalculator;
         this.allCandidates = ImmutableSet.copyOf(allCandidates);
-        this.initialState = new VotingGameState<>(ImmutableList.copyOf(initialVotes));
+        this.initialState = new VotingGameState<>(initialVotes);
+        initialWelfare = socialWelfareCalculator.calculateWelfare(this, initialState);
     }
 
     @Override
@@ -65,7 +67,7 @@ public class VotingGame<C, U extends Number & Comparable<U>, W extends Number & 
         final ArrayList<C> newVotes = new ArrayList<>(state.getVotes());
         newVotes.set(playerIndex, candidate);
 
-        return new VotingGameState<>(ImmutableList.copyOf(newVotes));
+        return new VotingGameState<>(newVotes);
     }
 
     @Override
@@ -75,6 +77,7 @@ public class VotingGame<C, U extends Number & Comparable<U>, W extends Number & 
                 + "\nCandidates: " + allCandidates
                 + "\n\nUtility function: " + utilityCalculator
                 + "\nSocial welfare function: " + socialWelfareCalculator
-                + "\nInitial State: " + initialState;
+                + "\nInitial State: " + initialState
+                + "\nInitial State welfare: " + NumberUtils.numberToString(initialWelfare);
     }
 }

@@ -7,7 +7,7 @@ public interface GameAnalyzer {
     ImmutableDirectedGraphWithScc<T> calculateBestResponseGraph(Game<T, U, ?> game);
 
     <T extends GameState<T>, W extends Number & Comparable<W>> GameAnalysis<T, W> analyze(
-            Game<T, ?, W> game,
+            Game<T, W, W> game,
             ImmutableDirectedGraphWithScc<T> bestResponseGraph);
 
 }

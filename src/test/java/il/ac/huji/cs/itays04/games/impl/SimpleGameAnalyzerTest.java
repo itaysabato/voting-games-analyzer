@@ -33,7 +33,7 @@ public class SimpleGameAnalyzerTest {
         assertConvergence(analysis, true);
     }
 
-    public void assertConvergence(
+    private void assertConvergence(
             GameAnalysis<?, ?> analysis,
             boolean shouldConverge) {
 
@@ -159,14 +159,31 @@ public class SimpleGameAnalyzerTest {
 
     @Test
     public void analyze4Voters4CandidatesNoNeSmoothExample() {
-        final List<BigFraction> voterPositions = voters(0, 66, 32, 100);
-        final Set<BigFraction> candidatePositions = candidates(0, 39, 58, 85);
+        final List<BigFraction> voterPositions = voters(0, 11, 22, 33);
+        final Set<BigFraction> candidatePositions = candidates(0, 11, 19, 30);
 
         final GameAnalysis<?, ?> analysis = analyzeAndReport(
                 voterPositions, candidatePositions, "4 voters and 4 candidates with no NE smooth example");
 
         assertConvergence(analysis, false);
         assertNash(analysis, false);
+    }
+
+    @Test
+    public void analyze5VotersEqualCandidatesUniformExample() {
+        final List<BigFraction> voterPositions = voters(1, 2, 3, 4, 5);
+        final Set<BigFraction> candidatePositions = candidates(1, 2, 3, 4, 5);
+
+        analyzeAndReport(voterPositions, candidatePositions, "5 voters=candidates uniform example");
+    }
+
+    @Test
+    public void analyze4VotersEqualCandidatesUniformExample() {
+        final List<BigFraction> voterPositions = voters(1, 2, 3, 4);
+        final Set<BigFraction> candidatePositions = candidates(1, 2, 3, 4);
+
+        analyzeAndReport(voterPositions, candidatePositions, "5 voters=candidates uniform example");
+
     }
 
     @Test
@@ -180,7 +197,9 @@ public class SimpleGameAnalyzerTest {
 //        assertConvergence(analysis, false);
         assertNash(analysis, true);
 
-        Assert.assertTrue(analysis.getPrices().getPriceOfAnarchy().get().compareTo(new BigFraction(3)) >= 0);
+        final Optional<BigFraction> priceOfAnarchy = analysis.getPrices().getPriceOfAnarchy();
+        assert priceOfAnarchy.isPresent();
+        Assert.assertTrue(priceOfAnarchy.get().compareTo(new BigFraction(3)) >= 0);
     }
 
     @Test
@@ -194,7 +213,9 @@ public class SimpleGameAnalyzerTest {
 //        assertConvergence(analysis, false);
         assertNash(analysis, true);
 
-        Assert.assertTrue(analysis.getPrices().getPriceOfAnarchy().get().compareTo(new BigFraction(3)) >= 0);
+        final Optional<BigFraction> priceOfAnarchy = analysis.getPrices().getPriceOfAnarchy();
+        assert priceOfAnarchy.isPresent();
+        Assert.assertTrue(priceOfAnarchy.get().compareTo(new BigFraction(3)) >= 0);
     }
 
     @Test
@@ -207,7 +228,9 @@ public class SimpleGameAnalyzerTest {
 
         assertNash(analysis, true);
 
-        Assert.assertTrue(analysis.getPrices().getPriceOfAnarchy().get().compareTo(new BigFraction(3)) >= 0);
+        final Optional<BigFraction> priceOfAnarchy = analysis.getPrices().getPriceOfAnarchy();
+        assert priceOfAnarchy.isPresent();
+        Assert.assertTrue(priceOfAnarchy.get().compareTo(new BigFraction(3)) >= 0);
     }
 
     @Test
@@ -221,7 +244,9 @@ public class SimpleGameAnalyzerTest {
 
         assertNash(analysis, true);
 
-        Assert.assertTrue(analysis.getPrices().getPriceOfAnarchy().get().compareTo(new BigFraction(10)) == 0);
+        final Optional<BigFraction> priceOfAnarchy = analysis.getPrices().getPriceOfAnarchy();
+        assert priceOfAnarchy.isPresent();
+        Assert.assertTrue(priceOfAnarchy.get().compareTo(new BigFraction(10)) == 0);
     }
 
     @Test
@@ -264,7 +289,9 @@ public class SimpleGameAnalyzerTest {
         final int n = 2 * k;
         GameAnalysis<?, BigFraction> analysis = test2kDelta(k, new BigFraction(n, n - 1), true);
 
-        final BigFraction poa = analysis.getPrices().getPriceOfAnarchy().get();
+        final Optional<BigFraction> priceOfAnarchy = analysis.getPrices().getPriceOfAnarchy();
+        assert priceOfAnarchy.isPresent();
+        final BigFraction poa = priceOfAnarchy.get();
         Assert.assertTrue(poa.compareTo(new BigFraction(2, 5*n)) >= 0);
     }
 
@@ -292,13 +319,15 @@ public class SimpleGameAnalyzerTest {
                 voterPositions, candidatePositions, n + " voters and 4 candidates PoS=1 example");
 
         assertNash(analysis, true);
-        final BigFraction pos = analysis.getPrices().getPriceOfStability().get();
+        final Optional<BigFraction> priceOfStability = analysis.getPrices().getPriceOfStability();
+        assert priceOfStability.isPresent();
+        final BigFraction pos = priceOfStability.get();
         Assert.assertTrue(pos1 == (pos.compareTo(new BigFraction(1)) == 0));
 
         return analysis;
     }
 
-    public void test2kPoA(int k) {
+    private void test2kPoA(int k) {
         final int n = 2 * k;
         final Integer[] voters = new Integer[n];
         Arrays.fill(voters, 0, k, (4 * k) - 1);
@@ -307,15 +336,37 @@ public class SimpleGameAnalyzerTest {
         final List<BigFraction> voterPositions = voters(voters);
         final Set<BigFraction> candidatePositions = candidates(n, 2 * n , 3 * n);
 
-        final GameAnalysis<?, BigFraction> analysis = analyzeAndReport(
+        final GameAnalysis<VotingGameState<BigFraction>, BigFraction> analysis = analyzeAndReport(
                 voterPositions, candidatePositions, n + " voters and 3 candidates PoA=" + n + " example");
 
         assertNash(analysis, true);
-        final BigFraction poa = analysis.getPrices().getPriceOfAnarchy().get();
+        final Optional<BigFraction> priceOfAnarchy = analysis.getPrices().getPriceOfAnarchy();
+        assert priceOfAnarchy.isPresent();
+        final BigFraction poa = priceOfAnarchy.get();
+
         Assert.assertTrue(poa.compareTo(new BigFraction(n)) == 0);
+
+
+        final ArrayList<BigFraction> votes = new ArrayList<>(n);
+
+        for (int i = 0; i < k; i++) {
+            votes.add(i, new BigFraction(2*n));
+        }
+
+        for (int i = k; i < n; i++) {
+            votes.add(i, new BigFraction(3*n));
+        }
+        final VotingGameState<BigFraction> state = new VotingGameState<>(votes);
+        final ImmutableDirectedGraphWithScc<VotingGameState<BigFraction>> bestResponseGraph = analysis.getBestResponseGraph();
+
+        final Set<VotingGameState<BigFraction>> improvingStates = bestResponseGraph.getOriginalGraph().getEdges().get(state);
+
+        System.out.println("The following are improving moves from state: " + state);
+        improvingStates.forEach(System.out::println);
+
     }
 
-    public void test2kPlus1PoA(int k) {
+    private void test2kPlus1PoA(int k) {
         final int n = 2 * k + 1;
         final Integer[] voters = new Integer[n];
 
@@ -330,19 +381,49 @@ public class SimpleGameAnalyzerTest {
                 voterPositions, candidatePositions, n + " voters and 3 candidates PoA>=" + (n-1) + " example");
 
         assertNash(analysis, true);
-        final BigFraction poa = analysis.getPrices().getPriceOfAnarchy().get();
+        final Optional<BigFraction> priceOfAnarchy = analysis.getPrices().getPriceOfAnarchy();
+        assert priceOfAnarchy.isPresent();
+        final BigFraction poa = priceOfAnarchy.get();
         Assert.assertTrue("PoA too small: " + NumberUtils.fractionToString(poa), poa.compareTo(new BigFraction(n-1)) >= 0);
+    }
+
+    @Test
+    public void testPoS() {
+        test2kPoS(3);
+    }
+
+    private void test2kPoS(int k) {
+        final int n = 2 * k;
+        final Integer[] voters = new Integer[n + 1];
+
+        Arrays.fill(voters, 0, k, (4 * k) - 1);
+        Arrays.fill(voters, k, n, (4 * k) + 1);
+        voters[n] = 5 * k + 1;
+
+        final List<BigFraction> voterPositions = voters(voters);
+        final Set<BigFraction> candidatePositions = candidates(n, 2 * n , 3 * n);
+
+        analyzeAndReport(voterPositions, candidatePositions, (n + 1) + " voters and 3 candidates PoS=? example");
+
+//        assertNash(analysis, true);
+//        final Optional<BigFraction> priceOfAnarchy = analysis.getPrices().getPriceOfAnarchy();
+//        assert priceOfAnarchy.isPresent();
+//        final BigFraction poa = priceOfAnarchy.get();
+//
+//        Assert.assertTrue(poa.compareTo(new BigFraction(n)) == 0);
     }
 
     @Test
     @Ignore
     public void analyzeInfiniteRandomVotersExample() {
-        BigFraction worstPriceOfAnarchy = BigFraction.ZERO, worstPriceOfSinking = BigFraction.ZERO;
+        BigFraction worstPriceOfAnarchy = BigFraction.ZERO,
+                worstPriceOfStability = BigFraction.ZERO,
+                worstPriceOfSinking = BigFraction.ZERO;
 
         //noinspection InfiniteLoopStatement
         while (true) {
 
-            final GameAnalysis<VotingGameState<BigFraction>, BigFraction> analysis = analyzeRandomExample(4, 3, 6);
+            final GameAnalysis<VotingGameState<BigFraction>, BigFraction> analysis = analyzeRandomExample(5, 3, 6);
             final GamePrices<BigFraction> prices = analysis.getPrices();
             final Optional<BigFraction> priceOfAnarchy = prices.getPriceOfAnarchy();
 
@@ -353,60 +434,72 @@ public class SimpleGameAnalyzerTest {
                 System.out.println("Worst POA yet: " + worstPriceOfAnarchy + " (" + worstPriceOfAnarchy.doubleValue() + ")");
             }
 
+            final Optional<BigFraction> priceOfStability = prices.getPriceOfStability();
+            if (priceOfStability.isPresent()
+                    && worstPriceOfStability.compareTo(priceOfStability.get()) < 0) {
+
+                worstPriceOfStability = priceOfStability.get();
+                System.out.println("Worst PoS yet: " + worstPriceOfStability + " (" + worstPriceOfStability.doubleValue() + ")");
+            }
+
             final BigFraction priceOfSinking = prices.getPriceOfSinking();
             if (worstPriceOfSinking.compareTo(priceOfSinking) < 0) {
 
                 worstPriceOfSinking = priceOfSinking;
-                System.out.println("Worst POSink yet: " + worstPriceOfSinking + " (" + worstPriceOfSinking.doubleValue() + ")");
+                System.out.println("Worst PoSink yet: " + worstPriceOfSinking + " (" + worstPriceOfSinking.doubleValue() + ")");
             }
         }
     }
 
-    public final List<BigFraction> voters(Integer... positions) {
+    private List<BigFraction> voters(Integer... positions) {
         return voters(Arrays.asList(positions));
     }
 
-    public List<BigFraction> voters(List<Integer> voters) {
+    private List<BigFraction> voters(List<Integer> voters) {
         return voters.stream()
                 .sorted()
                 .map(BigFraction::new)
                 .collect(Collectors.toList());
     }
 
-    public final Set<BigFraction> candidates(Integer... positions) {
+    private Set<BigFraction> candidates(Integer... positions) {
         return candidates(Arrays.asList(positions));
     }
 
-    public Set<BigFraction> candidates(Collection<Integer> candidates) {
+    private Set<BigFraction> candidates(Collection<Integer> candidates) {
         return candidates.stream()
                 .sorted()
                 .map(BigFraction::new)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    public final List<BigFraction> voters(BigFraction... positions) {
+    private List<BigFraction> voters(BigFraction... positions) {
         final ArrayList<BigFraction> voters = Lists.newArrayList(positions);
         Collections.sort(voters);
         return voters;
     }
 
-    public final Set<BigFraction> candidates(BigFraction... positions) {
+    private Set<BigFraction> candidates(BigFraction... positions) {
         final ArrayList<BigFraction> candidates = Lists.newArrayList(positions);
         return candidates.stream()
                 .sorted()
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    public GameAnalysis<VotingGameState<BigFraction>, BigFraction> analyzeRandomExample(int numberOfVoters, int minNumberOfCandidates, int maxNumberOfCandidates) {
+    private GameAnalysis<VotingGameState<BigFraction>, BigFraction> analyzeRandomExample(int numberOfVoters, int minNumberOfCandidates, int maxNumberOfCandidates) {
         final List<BigFraction> voterPositions = getRandomVoters(numberOfVoters);
         final Set<BigFraction> candidatePositions = getRandomCandidates(minNumberOfCandidates, maxNumberOfCandidates);
 
         return analyzeAndReport(
-                voterPositions, candidatePositions, "Random " + numberOfVoters + " voters example");
+                voterPositions,
+                candidatePositions,
+                "Random " + numberOfVoters + " voters example",
+                true);
     }
 
     private Set<BigFraction> getRandomCandidates(int min, int max) {
         final OptionalInt numberOfCandidates = random.ints(min, max).findAny();
+        assert numberOfCandidates.isPresent();
 
         final Set<Integer> candidates = random.ints()
                 .distinct()
@@ -441,19 +534,30 @@ public class SimpleGameAnalyzerTest {
             Set<BigFraction> candidatePositions,
             String gameDescription) {
 
-        System.out.println("Analyzing " + gameDescription + " with voters: ");
-        for (int i = 0; i < voterPositions.size(); i++) {
-            System.out.println("V" + i + " = " + NumberUtils.fractionToString(voterPositions.get(i)));
+        return analyzeAndReport(voterPositions, candidatePositions, gameDescription, false);
+    }
+
+    private GameAnalysis<VotingGameState<BigFraction>, BigFraction> analyzeAndReport(
+            List<BigFraction> voterPositions,
+            Set<BigFraction> candidatePositions,
+            String gameDescription,
+            boolean quiet) {
+
+        if (!quiet) {
+            System.out.println("Analyzing " + gameDescription + " with voters: ");
+            for (int i = 0; i < voterPositions.size(); i++) {
+                System.out.println("V" + i + " = " + NumberUtils.fractionToString(voterPositions.get(i)));
+            }
+
+            System.out.println();
+
+            final String candidatesString = candidatePositions.stream()
+                    .sequential()
+                    .map(NumberUtils::fractionToString)
+                    .collect(Collectors.joining("\n", "\n", "\n"));
+
+            System.out.println("and candidates: " + candidatesString);
         }
-
-        System.out.println();
-
-        final String candidatesString = candidatePositions.stream()
-                .sequential()
-                .map(NumberUtils::fractionToString)
-                .collect(Collectors.joining("\n", "\n", "\n"));
-
-        System.out.println("and candidates: " + candidatesString);
 
         final QuadraticFactory quadraticFactory = StaticContext.getInstance().getQuadraticFactory();
 
@@ -468,8 +572,9 @@ public class SimpleGameAnalyzerTest {
 
         final GameAnalysis<VotingGameState<BigFraction>, BigFraction> gameAnalysis = gameAnalyzer.analyze(game, brg);
 
-        StaticContext.getInstance().getGameAnalysisReporter().printReport(game, gameAnalysis, System.out);
-
+        if (!quiet) {
+            StaticContext.getInstance().getGameAnalysisReporter().printReport(game, gameAnalysis, System.out);
+        }
 //        if (gameAnalysis.getPrices().getPriceOfSinking().compareTo(new BigFraction(3)) >= 0) {
 //            System.out.println("Analyzing " + gameDescription + " with voters: " + voterPositions);
 //            StaticContext.getInstance().getGameAnalysisReporter().printReport(game, gameAnalysis, System.out);
