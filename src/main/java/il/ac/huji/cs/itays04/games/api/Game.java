@@ -2,12 +2,13 @@ package il.ac.huji.cs.itays04.games.api;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public interface Game<T extends GameState<T>, U extends Number & Comparable<U>, W extends Number & Comparable<W>> {
     int getNumberOfPlayers();
 
-    Set<? extends T> getInitialStates();
+    Map<? extends T, ? extends W> getTruthfulStates();
 
     Set<? extends T> getPossibleMovesForPlayer(T state, int playerIndex);
 

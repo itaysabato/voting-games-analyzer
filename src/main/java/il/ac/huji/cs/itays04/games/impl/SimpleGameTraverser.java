@@ -11,7 +11,7 @@ public class SimpleGameTraverser {
 
     public <T extends GameState<T>> Optional<? extends T> traverseGameUntil(Game<T, ?, ?> game, HashSet<T> visited, Predicate<T> haltCondition) {
         HashSet<T> toVisit = new HashSet<>();
-        toVisit.addAll(game.getInitialStates());
+        toVisit.addAll(game.getTruthfulStates().keySet());
 
         while(!toVisit.isEmpty()) {
             final HashSet<T> nextToVisit = new HashSet<>();

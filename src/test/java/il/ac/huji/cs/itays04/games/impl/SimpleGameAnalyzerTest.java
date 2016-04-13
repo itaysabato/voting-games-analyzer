@@ -10,6 +10,7 @@ import il.ac.huji.cs.itays04.utils.NumberUtils;
 import il.ac.huji.cs.itays04.voting.VotingGame;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
 import il.ac.huji.cs.itays04.voting.quadratic.QuadraticFactory;
+import il.ac.huji.cs.itays04.voting.quadratic.WeightedUtilityCalculator;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -573,13 +574,38 @@ public class SimpleGameAnalyzerTest {
         final GameAnalysis<VotingGameState<BigFraction>, BigFraction> gameAnalysis = gameAnalyzer.analyze(game, brg);
 
         if (!quiet) {
+            final WeightedUtilityCalculator<BigFraction> randomDicCalc = quadraticFactory.createWeightedCalculator(
+                    voterPositions, candidatePositions, false);
+
+            System.out.println("Truthful profiles:");
+            game.getTruthfulStates()
+                    .entrySet()
+                    .stream()
+                    .forEachOrdered(entry -> {
+                        System.out.println(entry.getKey());
+                        System.out.println("SW = " + NumberUtils.fractionToString(entry.getValue()));
+
+                        final BigFraction randomDicSW = game.getSocialWelfareCalculator().calculateWelfare(
+                                game, randomDicCalc, entry.getKey());
+
+                        System.out.println("Randomized dictatorship SW = " + NumberUtils.fractionToString(randomDicSW));
+                    });
+
+            System.out.println();
             StaticContext.getInstance().getGameAnalysisReporter().printReport(game, gameAnalysis, System.out);
         }
-//        if (gameAnalysis.getPrices().getPriceOfSinking().compareTo(new BigFraction(3)) >= 0) {
-//            System.out.println("Analyzing " + gameDescription + " with voters: " + voterPositions);
-//            StaticContext.getInstance().getGameAnalysisReporter().printReport(game, gameAnalysis, System.out);
-//        }
 
         return gameAnalysis;
+    }
+
+    private BigFraction randomDicSW(VotingGameState<BigFraction> state) {
+        final List<BigFraction> votes = state.getVotes();
+
+        final Optional<BigFraction> sw = votes.stream()
+                .reduce(BigFraction::add)
+                .map(sum -> sum.divide(votes.size()));
+
+        assert sw.isPresent();
+        return sw.get();
     }
 }

@@ -31,11 +31,14 @@ public class BigFractionAverageSocialWelfareCalculator<T extends GameState<T>>
     }
 
     @Override
-    public BigFraction calculateWelfare(Game<T, BigFraction, BigFraction> game, T gameState) {
+    public BigFraction calculateWelfare(Game<T, BigFraction, BigFraction> game,
+                                        UtilityCalculator<T, BigFraction> utilityCalculator,
+                                        T gameState) {
+
         BigFraction sum = BigFraction.ZERO;
 
         for (int i = 0; i < game.getNumberOfPlayers(); i++) {
-            final BigFraction utility = game.getUtilityCalculator().calculateUtility(gameState, i);
+            final BigFraction utility = utilityCalculator.calculateUtility(gameState, i);
             sum = sum.add(utility);
         }
 
@@ -43,11 +46,13 @@ public class BigFractionAverageSocialWelfareCalculator<T extends GameState<T>>
     }
 
     @Override
-    public BigFraction calculateAverageWelfare(Game<T, BigFraction, BigFraction> game, Set<T> states) {
+    public BigFraction calculateAverageWelfare(Game<T, BigFraction, BigFraction> game,
+                                               UtilityCalculator<T, BigFraction> utilityCalculator,
+                                               Set<T> states) {
         BigFraction sum = BigFraction.ZERO;
 
         for (T state : states) {
-            final BigFraction welfare = calculateWelfare(game, state);
+            final BigFraction welfare = calculateWelfare(game, utilityCalculator, state);
             sum = sum.add(welfare);
         }
 

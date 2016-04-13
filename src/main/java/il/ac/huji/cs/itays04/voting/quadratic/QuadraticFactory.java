@@ -14,14 +14,15 @@ import java.util.stream.Collectors;
 
 public class QuadraticFactory {
 
-    private QuadraticUtilityCalculator<BigFraction> createDistanceBasedCalculator(List<BigFraction> voterPositions, Set<BigFraction> candidatePositions) {
+    public WeightedUtilityCalculator<BigFraction> createWeightedCalculator(
+            List<BigFraction> voterPositions, Set<BigFraction> candidatePositions, boolean quadratic) {
 
         List<Map<BigFraction, BigFraction>> individualUtilities = voterPositions.stream()
                 .sequential()
                 .map(p -> calculateUtilities(p, candidatePositions))
                 .collect(Collectors.toList());
 
-        return new QuadraticUtilityCalculator<>(individualUtilities);
+        return new WeightedUtilityCalculator<>(individualUtilities, quadratic);
     }
 
     private Map<BigFraction, BigFraction> calculateUtilities(BigFraction voterPosition, Set<BigFraction> candidatePositions) {
@@ -46,14 +47,14 @@ public class QuadraticFactory {
 
         final double numberOfStates = Math.ceil(Math.pow(candidatePositions.size(), voterPositions.size()));
 
-        final QuadraticUtilityCalculator<BigFraction> utilityCalculator = createDistanceBasedCalculator(
-                voterPositions, candidatePositions);
+        final WeightedUtilityCalculator<BigFraction> utilityCalculator = createWeightedCalculator(
+                voterPositions, candidatePositions, true);
         
-        final List<BigFraction> truthfulProfile = utilityCalculator.getTruthfulProfile();
+        final Set<List<BigFraction>> truthfulProfiles = utilityCalculator.getTruthfulProfiles();
 
         final CachedUtilityCalculator<VotingGameState<BigFraction>, BigFraction> cachedUtilityCalculator =
                 new CachedUtilityCalculator<>(utilityCalculator, (int) numberOfStates);
 
-        return new VotingGame<>(candidatePositions, truthfulProfile, cachedUtilityCalculator, socialWelfareCalculator);
+        return new VotingGame<>(candidatePositions, truthfulProfiles, cachedUtilityCalculator, socialWelfareCalculator);
     }
 }

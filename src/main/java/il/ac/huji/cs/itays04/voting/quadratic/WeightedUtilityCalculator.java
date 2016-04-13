@@ -7,34 +7,86 @@ import org.apache.commons.math3.fraction.BigFraction;
 
 import java.math.BigInteger;
 import java.util.*;
+import java.util.stream.Collectors;
 
-class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingGameState<C>, BigFraction> {
-    private final List<C> truthfulProfile;
+public class WeightedUtilityCalculator<C> implements UtilityCalculator<VotingGameState<C>, BigFraction> {
+    private final boolean quadratic;
+    private final Set<List<C>> truthfulProfiles;
     private final List<Map<C, BigFraction>> individualUtilities;
 
-    QuadraticUtilityCalculator(List<Map<C, BigFraction>> individualUtilities) {
+    WeightedUtilityCalculator(List<Map<C, BigFraction>> individualUtilities) {
+        this(individualUtilities, true);
+    }
+
+    WeightedUtilityCalculator(List<Map<C, BigFraction>> individualUtilities, boolean quadratic) {
+        this.quadratic = quadratic;
         this.individualUtilities = Collections.unmodifiableList(individualUtilities);
 
-        truthfulProfile = new ArrayList<>(individualUtilities.size());
+        final Set<List<C>> allTruthfulProfiles = getAllTruthfulProfiles(this.individualUtilities);
+        this.truthfulProfiles = Collections.unmodifiableSet(allTruthfulProfiles);
+    }
+
+    private Set<List<C>> getAllTruthfulProfiles(List<Map<C, BigFraction>> individualUtilities) {
+        List<Set<C>> favorites = getFavorites(individualUtilities);
+        return getProfilesFromFavorites(favorites);
+    }
+
+    private List<Set<C>> getFavorites(List<Map<C, BigFraction>> individualUtilities) {
+        List<Set<C>> favorites = new ArrayList<>(individualUtilities.size());
 
         for (Map<C, BigFraction> utilities : individualUtilities) {
-            final Optional<Map.Entry<C, BigFraction>> max = utilities.entrySet()
+            final Optional<BigFraction> max = utilities.entrySet()
                     .stream()
-                    .max(Comparator.comparing(Map.Entry::getValue));
+                    .map(Map.Entry::getValue)
+                    .max(Comparator.naturalOrder());
 
             assert max.isPresent();
-            final C favorite = max.get()
-                    .getKey();
 
-            truthfulProfile.add(favorite);
+            final Set<C> currentFavorites = utilities.entrySet()
+                    .stream()
+                    .filter(e -> e.getValue().equals(max.get()))
+                    .map(Map.Entry::getKey)
+                    .collect(Collectors.toSet());
+
+            favorites.add(currentFavorites);
         }
+
+        return favorites;
+    }
+
+    private Set<List<C>> getProfilesFromFavorites(List<Set<C>> favorites) {
+        if (favorites.isEmpty()) {
+            final HashSet<List<C>> emptyProfile = new HashSet<>();
+            emptyProfile.add(Collections.emptyList());
+            return emptyProfile;
+        }
+
+        final List<Set<C>> tail = favorites.subList(1, favorites.size());
+        final Set<List<C>> subProfiles = getProfilesFromFavorites(tail);
+
+        return favorites.get(0)
+                .stream()
+                .flatMap(c -> subProfiles.stream()
+                        .map(l -> {
+                            final List<C> newList = new ArrayList<>(l.size() + 1);
+                            newList.add(c);
+                            newList.addAll(l);
+                            return newList;
+                        }))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
     public BigFraction calculateUtility(VotingGameState<C> gameState, int playerIndex) {
         final Map<C, Integer> histogram = calculateHistogram(gameState);
 
-        int total = QuadrifyHistogram(histogram);
+        final int total;
+        if (quadratic) {
+            total = QuadrifyHistogram(histogram);
+        }
+        else {
+            total = gameState.getVotes().size();
+        }
 
         return calculateExpectedUtility(playerIndex, histogram, total);
     }
@@ -82,8 +134,8 @@ class QuadraticUtilityCalculator<C> implements UtilityCalculator<VotingGameState
         return numerator.divide(totalWeight);
     }
 
-    public List<C> getTruthfulProfile() {
-        return truthfulProfile;
+    public Set<List<C>> getTruthfulProfiles() {
+        return truthfulProfiles;
     }
 
     @Override
