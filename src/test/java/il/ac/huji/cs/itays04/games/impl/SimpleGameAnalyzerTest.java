@@ -1,10 +1,7 @@
 package il.ac.huji.cs.itays04.games.impl;
 
 import com.google.common.collect.Lists;
-import il.ac.huji.cs.itays04.games.api.BigFractionAverageSocialWelfareCalculator;
-import il.ac.huji.cs.itays04.games.api.GameAnalysis;
-import il.ac.huji.cs.itays04.games.api.GameAnalyzer;
-import il.ac.huji.cs.itays04.games.api.GamePrices;
+import il.ac.huji.cs.itays04.games.api.*;
 import il.ac.huji.cs.itays04.utils.ImmutableDirectedGraphWithScc;
 import il.ac.huji.cs.itays04.utils.NumberUtils;
 import il.ac.huji.cs.itays04.voting.VotingGame;
@@ -545,8 +542,10 @@ public class SimpleGameAnalyzerTest {
             boolean quiet) {
 
         if (!quiet) {
-            System.out.println("********************************");
+            System.out.println("************************************************************************************************");
             System.out.println("Analyzing " + gameDescription + " with voters: ");
+            System.out.println("************************************************************************************************");
+
             for (int i = 0; i < voterPositions.size(); i++) {
                 System.out.println("V" + (i+1) + " = " + NumberUtils.fractionToString(voterPositions.get(i)));
             }
@@ -588,10 +587,19 @@ public class SimpleGameAnalyzerTest {
                         System.out.println(entry.getKey());
                         System.out.println("SW = " + NumberUtils.fractionToString(entry.getValue()));
 
-                        final BigFraction randomDicSW = game.getSocialWelfareCalculator().calculateWelfare(
+                        final SocialWelfareCalculator<VotingGameState<BigFraction>, BigFraction, BigFraction> socialWelfareCalculator = game.getSocialWelfareCalculator();
+                        final BigFraction randomDicSW = socialWelfareCalculator.calculateWelfare(
                                 game, randomDicCalc, entry.getKey());
 
                         System.out.println("Randomized dictatorship SW = " + NumberUtils.fractionToString(randomDicSW));
+
+                        final BigFraction socialOptimum = gameAnalysis.getPrices().getSocialOptimum();
+                        final BigFraction ratio = socialWelfareCalculator.getRatio(socialOptimum, randomDicSW);
+                        System.out.println("Randomized dictatorship ratio to optimum = " + NumberUtils.fractionToString(ratio));
+
+                        final BigFraction priceOfStability = gameAnalysis.getPrices().getPriceOfStability().orElse(BigFraction.ZERO);
+                        final BigFraction priceOfStabilityRatio = socialWelfareCalculator.getRatio(priceOfStability, ratio);
+                        System.out.println("Randomized dictatorship ratio to price of stability = " + NumberUtils.fractionToString(priceOfStabilityRatio));
                         System.out.println();
                     });
 
