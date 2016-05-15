@@ -14,11 +14,14 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 
 public class SimpleGameAnalyzerTest {
     private final Random random = new Random();
+    private final ExecutorService executorService = Executors.newFixedThreadPool(4);
 
     @Test
     public void analyzeTheorem5Example() {
@@ -376,8 +379,8 @@ public class SimpleGameAnalyzerTest {
 
         final Set<VotingGameState<BigFraction>> improvingStates = bestResponseGraph.getOriginalGraph().getEdges().get(state);
 
-        System.out.println("The following are improving moves from state: " + state);
-        improvingStates.forEach(System.out::println);
+        log("The following are improving moves from state: " + state);
+        improvingStates.forEach(this::log);
 
     }
 
@@ -446,7 +449,7 @@ public class SimpleGameAnalyzerTest {
                     && worstPriceOfAnarchy.compareTo(priceOfAnarchy.get()) < 0) {
 
                 worstPriceOfAnarchy = priceOfAnarchy.get();
-                System.out.println("Worst POA yet: " + worstPriceOfAnarchy + " (" + worstPriceOfAnarchy.doubleValue() + ")");
+                log("Worst POA yet: " + worstPriceOfAnarchy + " (" + worstPriceOfAnarchy.doubleValue() + ")");
             }
 
             final Optional<BigFraction> priceOfStability = prices.getPriceOfStability();
@@ -454,16 +457,36 @@ public class SimpleGameAnalyzerTest {
                     && worstPriceOfStability.compareTo(priceOfStability.get()) < 0) {
 
                 worstPriceOfStability = priceOfStability.get();
-                System.out.println("Worst PoS yet: " + worstPriceOfStability + " (" + worstPriceOfStability.doubleValue() + ")");
+                log("Worst PoS yet: " + worstPriceOfStability + " (" + worstPriceOfStability.doubleValue() + ")");
             }
 
             final BigFraction priceOfSinking = prices.getPriceOfSinking();
             if (worstPriceOfSinking.compareTo(priceOfSinking) < 0) {
 
                 worstPriceOfSinking = priceOfSinking;
-                System.out.println("Worst PoSink yet: " + worstPriceOfSinking + " (" + worstPriceOfSinking.doubleValue() + ")");
+                log("Worst PoSink yet: " + worstPriceOfSinking + " (" + worstPriceOfSinking.doubleValue() + ")");
             }
         }
+    }
+
+    @Test
+    @Ignore
+    public void analyzeInfiniteRandomVotersEqualCandidatesExample() throws InterruptedException {
+
+        final Runnable runnable = () -> {
+            final GameAnalysis<VotingGameState<BigFraction>, BigFraction> analysis = analyzeRandomExample(5, false);
+            if (analysis.getNeCount() == 0) {
+                log("No NE!");
+                System.exit(0);
+            }
+        };
+
+        //noinspection InfiniteLoopStatement
+        while (true) {
+            executorService.execute(runnable);
+            Thread.sleep(250);
+        }
+
     }
 
     private List<BigFraction> voters(Integer... positions) {
@@ -510,6 +533,17 @@ public class SimpleGameAnalyzerTest {
                 candidatePositions,
                 "Random " + numberOfVoters + " voters example",
                 true);
+    }
+
+    private GameAnalysis<VotingGameState<BigFraction>, BigFraction> analyzeRandomExample(int numberOfVoters, boolean quiet) {
+        final List<BigFraction> voterPositions = getRandomVoters(numberOfVoters);
+        final Set<BigFraction> candidatePositions = candidates(voterPositions);
+
+        return analyzeAndReport(
+                voterPositions,
+                candidatePositions,
+                "Random " + numberOfVoters + " voters=candidates example",
+                quiet);
     }
 
     private Set<BigFraction> getRandomCandidates(int min, int max) {
@@ -559,22 +593,24 @@ public class SimpleGameAnalyzerTest {
             boolean quiet) {
 
         if (!quiet) {
-            System.out.println("************************************************************************************************");
-            System.out.println("Analyzing " + gameDescription + " with voters: ");
-            System.out.println("************************************************************************************************");
+            synchronized (this) {
+                log("************************************************************************************************");
+                log("Analyzing " + gameDescription + " with voters: ");
+                log("************************************************************************************************");
 
-            for (int i = 0; i < voterPositions.size(); i++) {
-                System.out.println("V" + (i+1) + " = " + NumberUtils.fractionToString(voterPositions.get(i)));
+                for (int i = 0; i < voterPositions.size(); i++) {
+                    log("V" + (i+1) + " = " + NumberUtils.fractionToString(voterPositions.get(i)));
+                }
+
+                log();
+
+                final String candidatesString = candidatePositions.stream()
+                        .sequential()
+                        .map(NumberUtils::fractionToString)
+                        .collect(Collectors.joining("\n", "\n", "\n"));
+
+                log("and candidates: " + candidatesString);
             }
-
-            System.out.println();
-
-            final String candidatesString = candidatePositions.stream()
-                    .sequential()
-                    .map(NumberUtils::fractionToString)
-                    .collect(Collectors.joining("\n", "\n", "\n"));
-
-            System.out.println("and candidates: " + candidatesString);
         }
 
         final QuadraticFactory quadraticFactory = StaticContext.getInstance().getQuadraticFactory();
@@ -591,38 +627,54 @@ public class SimpleGameAnalyzerTest {
         final GameAnalysis<VotingGameState<BigFraction>, BigFraction> gameAnalysis = gameAnalyzer.analyze(game, brg);
 
         if (!quiet) {
-            final WeightedUtilityCalculator<BigFraction> randomDicCalc = quadraticFactory.createWeightedCalculator(
-                    voterPositions, candidatePositions, false);
+            synchronized (this) {
+                final WeightedUtilityCalculator<BigFraction> randomDicCalc = quadraticFactory.createWeightedCalculator(
+                        voterPositions, candidatePositions, false);
 
-            System.out.println("Truthful profiles:");
-            System.out.println();
+                log("Truthful profiles:");
+                log();
 
-            game.getTruthfulStates()
-                    .entrySet()
-                    .stream()
-                    .forEachOrdered(entry -> {
-                        System.out.println(entry.getKey());
-                        System.out.println("SW = " + NumberUtils.fractionToString(entry.getValue()));
+                game.getTruthfulStates()
+                        .entrySet()
+                        .stream()
+                        .forEachOrdered(entry -> {
+                            log(entry.getKey());
+                            log("SW = " + NumberUtils.fractionToString(entry.getValue()));
 
-                        final SocialWelfareCalculator<VotingGameState<BigFraction>, BigFraction, BigFraction> socialWelfareCalculator = game.getSocialWelfareCalculator();
-                        final BigFraction randomDicSW = socialWelfareCalculator.calculateWelfare(
-                                game, randomDicCalc, entry.getKey());
+                            final SocialWelfareCalculator<VotingGameState<BigFraction>, BigFraction, BigFraction> socialWelfareCalculator = game.getSocialWelfareCalculator();
+                            final BigFraction randomDicSW = socialWelfareCalculator.calculateWelfare(
+                                    game, randomDicCalc, entry.getKey());
 
-                        System.out.println("Randomized dictatorship SW = " + NumberUtils.fractionToString(randomDicSW));
+                            log("Randomized dictatorship SW = " + NumberUtils.fractionToString(randomDicSW));
 
-                        final BigFraction socialOptimum = gameAnalysis.getPrices().getSocialOptimum();
-                        final BigFraction ratio = socialWelfareCalculator.getRatio(socialOptimum, randomDicSW);
-                        System.out.println("Randomized dictatorship ratio to optimum = " + NumberUtils.fractionToString(ratio));
+                            final BigFraction socialOptimum = gameAnalysis.getPrices().getSocialOptimum();
+                            final BigFraction ratio = socialWelfareCalculator.getRatio(socialOptimum, randomDicSW);
+                            log("Randomized dictatorship ratio to optimum = " + NumberUtils.fractionToString(ratio));
 
-                        final BigFraction priceOfStability = gameAnalysis.getPrices().getPriceOfStability().orElse(BigFraction.ZERO);
-                        final BigFraction priceOfStabilityRatio = socialWelfareCalculator.getRatio(priceOfStability, ratio);
-                        System.out.println("Randomized dictatorship ratio to price of stability = " + NumberUtils.fractionToString(priceOfStabilityRatio));
-                        System.out.println();
-                    });
+                            final BigFraction priceOfStability = gameAnalysis.getPrices().getPriceOfStability().orElse(BigFraction.ZERO);
+                            final BigFraction priceOfStabilityRatio = socialWelfareCalculator.getRatio(priceOfStability, ratio);
+                            log("Randomized dictatorship ratio to price of stability = " + NumberUtils.fractionToString(priceOfStabilityRatio));
+                            log();
+                        });
 
-            StaticContext.getInstance().getGameAnalysisReporter().printReport(game, gameAnalysis, System.out);
+                StaticContext.getInstance().getGameAnalysisReporter().printReport(game, gameAnalysis, System.out);
+                log("End analysis.");
+            }
         }
 
         return gameAnalysis;
+    }
+
+    private void log() {
+        log("");
+    }
+
+    private void log(Object message) {
+        final long id = Thread.currentThread().getId();
+
+        final String prefix = id == 1 ?
+                "" : id + " - ";
+
+        System.out.println(prefix + message);
     }
 }
