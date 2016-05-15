@@ -156,6 +156,23 @@ public class SimpleGameAnalyzerTest {
     }
 
     @Test
+    public void analyze4VotersPosWorseThanDicAttempt() {
+        final GameAnalysis<?, ?> analysis = analyzeVotersEqualCandidates(
+                "4 voters=candidates Pos Worse Than Dic Attempt example", 1, 2, 4, 7);
+    }
+
+    private GameAnalysis<?, ?> analyzeVotersEqualCandidates(String gameDescription, Integer... integers) {
+        final List<BigFraction> voterPositions = voters(integers);
+        final Set<BigFraction> candidatePositions = candidates(voterPositions);
+
+        return analyzeAndReport(voterPositions, candidatePositions, gameDescription);
+    }
+
+    private Set<BigFraction> candidates(List<BigFraction> positions) {
+        return candidates(positions.toArray(new BigFraction[positions.size()]));
+    }
+
+    @Test
     public void analyze4Voters4CandidatesNoNeSmoothExample() {
         final List<BigFraction> voterPositions = voters(0, 11, 22, 33);
         final Set<BigFraction> candidatePositions = candidates(0, 11, 19, 30);
