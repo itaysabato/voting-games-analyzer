@@ -474,7 +474,7 @@ public class SimpleGameAnalyzerTest {
     public void analyzeInfiniteRandomVotersEqualCandidatesExample() throws InterruptedException {
 
         final Runnable runnable = () -> {
-            final GameAnalysis<VotingGameState<BigFraction>, BigFraction> analysis = analyzeRandomExample(5, false);
+            final GameAnalysis<VotingGameState<BigFraction>, BigFraction> analysis = analyzeRandomExample(6, false);
             if (analysis.getNeCount() == 0) {
                 log("No NE!");
                 System.exit(0);
@@ -484,7 +484,7 @@ public class SimpleGameAnalyzerTest {
         //noinspection InfiniteLoopStatement
         while (true) {
             executorService.execute(runnable);
-            Thread.sleep(250);
+            Thread.sleep(1000);
         }
 
     }
@@ -628,11 +628,13 @@ public class SimpleGameAnalyzerTest {
 
         if (!quiet) {
             synchronized (this) {
-                final WeightedUtilityCalculator<BigFraction> randomDicCalc = quadraticFactory.createWeightedCalculator(
-                        voterPositions, candidatePositions, false);
+                StaticContext.getInstance().getGameAnalysisReporter().printReport(game, gameAnalysis, System.out);
 
                 log("Truthful profiles:");
                 log();
+
+                final WeightedUtilityCalculator<BigFraction> randomDicCalc = quadraticFactory.createWeightedCalculator(
+                        voterPositions, candidatePositions, false);
 
                 game.getTruthfulStates()
                         .entrySet()
@@ -655,9 +657,13 @@ public class SimpleGameAnalyzerTest {
                             final BigFraction priceOfStabilityRatio = socialWelfareCalculator.getRatio(priceOfStability, ratio);
                             log("Randomized dictatorship ratio to price of stability = " + NumberUtils.fractionToString(priceOfStabilityRatio));
                             log();
+
+                            if (priceOfStabilityRatio.compareTo(BigFraction.ONE) > 0) {
+                                log("PoS worse than random dic!");
+                                System.exit(0);
+                            }
                         });
 
-                StaticContext.getInstance().getGameAnalysisReporter().printReport(game, gameAnalysis, System.out);
                 log("End analysis.");
             }
         }
