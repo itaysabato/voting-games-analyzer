@@ -2,6 +2,7 @@ package il.ac.huji.cs.itays04.games.api;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public interface UtilityCalculator<T extends GameState<T>, U extends Number & Comparable<U>> {
@@ -23,7 +24,13 @@ public interface UtilityCalculator<T extends GameState<T>, U extends Number & Co
                 .filter(move -> compare(move, state, playerIndex) > 0);
     }
 
-    default Optional<? extends T> getImprovement(Game<T, U, ?> game, T state, final int playerIndex) {
-        return streamImprovements(game, state, playerIndex).findAny();
+    default Stream<? extends T> streamImprovements(Game<T, U, ?> game, T state) {
+        return IntStream.range(0, game.getNumberOfPlayers())
+                .mapToObj(i->i)
+                .flatMap(i -> streamImprovements(game, state, i));
+    }
+
+    default Optional<? extends T> getImprovement(Game<T, U, ?> game, T state) {
+        return streamImprovements(game, state).findAny();
     }
 }

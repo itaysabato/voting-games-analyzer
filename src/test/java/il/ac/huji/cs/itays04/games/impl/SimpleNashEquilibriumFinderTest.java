@@ -33,13 +33,12 @@ public class SimpleNashEquilibriumFinderTest {
         final QuadraticFactory quadraticFactory = StaticContext.getInstance().getQuadraticFactory();
 
         final SimpleNashEquilibriumFinder neFinder = new SimpleNashEquilibriumFinder(
-                System.out,
                 StaticContext.getInstance().getSimpleGameTraverser());
 
         final BigFractionAverageSocialWelfareCalculator<VotingGameState<BigFraction>> socialWelfareCalculator =
                 new BigFractionAverageSocialWelfareCalculator<>();
 
-        final VotingGame<BigFraction, ?, ?> game = quadraticFactory.createDistanceBasedGame(
+        final VotingGame<BigFraction, BigFraction, ?> game = quadraticFactory.createDistanceBasedGame(
                 voterFractions, candidateFractions, socialWelfareCalculator);
 
         final Optional<? extends VotingGameState<BigFraction>> ne = neFinder.findNE(game);
