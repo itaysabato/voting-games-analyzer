@@ -20,8 +20,9 @@ import java.util.stream.Collectors;
 
 
 public class SimpleGameAnalyzerTest {
+    private static final int N_THREADS = 8;
     private final Random random = new Random();
-    private final ExecutorService executorService = Executors.newFixedThreadPool(4);
+    private final ExecutorService executorService = Executors.newFixedThreadPool(N_THREADS);
     private final QuadraticFactory quadraticFactory = StaticContext.getInstance().getQuadraticFactory();
     private final BigFractionAverageSocialWelfareCalculator<VotingGameState<BigFraction>> welfareCalculator = new BigFractionAverageSocialWelfareCalculator<>();
 
@@ -51,48 +52,55 @@ public class SimpleGameAnalyzerTest {
     public void analyzePoS(List<BigFraction> voterPositions) {
         final Set<BigFraction> candidatePositions = candidates(voterPositions);
 
-        final VotingGame<BigFraction, BigFraction, BigFraction> game = getGame(
-                voterPositions, candidatePositions, "Bad PoS Example", false);
+        final VotingGame<BigFraction, BigFraction, BigFraction> game;
+        synchronized (this) {
+            game = getGame(voterPositions, candidatePositions, "Bad PoS Example", false);
+        }
 
         final WeightedUtilityCalculator<BigFraction> randomDicCalc = getRandomDicCalculator(
                 voterPositions, candidatePositions);
 
-        log("Truthful states with Random-Dic SW:");
-        log("------------------------------------------------------------------");
-        final Optional<BigFraction> max = game.getTruthfulStates()
-                .keySet()
-                .stream()
-                .peek(this::log)
-                .map(state -> welfareCalculator.calculateWelfare(game, randomDicCalc, state))
-                .peek(this::withSw)
-                .peek(x -> log())
-                .max(Comparator.naturalOrder());
+        final BigFraction bestRandomDicSw;
+        synchronized (this) {
+            log("Truthful states with Random-Dic SW:");
+            log("------------------------------------------------------------------");
+            final Optional<BigFraction> max = game.getTruthfulStates()
+                    .keySet()
+                    .stream()
+                    .peek(this::log)
+                    .map(state -> welfareCalculator.calculateWelfare(game, randomDicCalc, state))
+                    .peek(this::withSw)
+                    .peek(x -> log())
+                    .max(Comparator.naturalOrder());
 
-        assert max.isPresent();
-        final BigFraction bestRandomDicSw = max.get();
-        log("Best Random-Dic SW: " + NumberUtils.fractionToString(bestRandomDicSw));
+            assert max.isPresent();
+            bestRandomDicSw = max.get();
+            log("Best Random-Dic SW: " + NumberUtils.fractionToString(bestRandomDicSw));
+        }
 
         final SimpleGameTraverser simpleGameTraverser = StaticContext.getInstance().getSimpleGameTraverser();
         final HashSet<VotingGameState<BigFraction>> visited = new HashSet<>();
         simpleGameTraverser.traverseGameUntil(game, visited, x -> false);
 
-        log();
-        log("NE states with Quadratic SW:");
-        log("------------------------------------------------------------------");
-        visited.stream()
-                .filter(s -> !game.getUtilityCalculator()
-                        .streamImprovements(game, s)
-                        .findAny()
-                        .isPresent())
-                .peek(this::log)
-                .map(state -> welfareCalculator.calculateWelfare(game, state))
-                .peek(this::withSw)
-                .peek(x -> log())
-                .max(Comparator.naturalOrder())
-                .ifPresent(sw -> {
-                    log("PoS = " + NumberUtils.fractionToString(sw));
-                    Assert.assertFalse("PoS worse than random dic!", sw.compareTo(bestRandomDicSw) < 0);
-                });
+        synchronized (this) {
+            log();
+            log("NE states with Quadratic SW:");
+            log("------------------------------------------------------------------");
+            visited.stream()
+                    .filter(s -> !game.getUtilityCalculator()
+                            .streamImprovements(game, s)
+                            .findAny()
+                            .isPresent())
+                    .peek(this::log)
+                    .map(state -> welfareCalculator.calculateWelfare(game, state))
+                    .peek(this::withSw)
+                    .peek(x -> log())
+                    .max(Comparator.naturalOrder())
+                    .ifPresent(sw -> {
+                        log("PoS = " + NumberUtils.fractionToString(sw));
+                        Assert.assertFalse("PoS worse than random dic!", sw.compareTo(bestRandomDicSw) < 0);
+                    });
+        }
     }
 
     public void withSw(BigFraction sw) {
@@ -236,8 +244,7 @@ public class SimpleGameAnalyzerTest {
 
     @Test
     public void analyze4VotersPosWorseThanDicAttempt() {
-        final GameAnalysis<?, ?> analysis = analyzeVotersEqualCandidates(
-                "4 voters=candidates Pos Worse Than Dic Attempt example", 1, 2, 4, 7);
+        analyzeVotersEqualCandidates("4 voters=candidates Pos Worse Than Dic Attempt example", 1, 2, 4, 7);
     }
 
     private GameAnalysis<?, ?> analyzeVotersEqualCandidates(String gameDescription, Integer... integers) {
@@ -550,17 +557,22 @@ public class SimpleGameAnalyzerTest {
     public void analyzeInfiniteRandomVotersEqualCandidatesExample() throws InterruptedException {
 
         final Runnable runnable = () -> {
-            final GameAnalysis<VotingGameState<BigFraction>, BigFraction> analysis = analyzeRandomExample(6, false);
-            if (analysis.getNeCount() == 0) {
-                log("No NE!");
+            try {
+                analyzeRandomPosExample(7);
+            }
+            catch (Exception e) {
+                log("Exception caught: " + e);
                 System.exit(0);
             }
         };
 
         //noinspection InfiniteLoopStatement
         while (true) {
-            executorService.execute(runnable);
-            Thread.sleep(1000);
+            for (int i = 0; i < N_THREADS; i++) {
+                executorService.execute(runnable);
+            }
+
+            Thread.sleep(120000);
         }
 
     }
@@ -609,6 +621,11 @@ public class SimpleGameAnalyzerTest {
                 candidatePositions,
                 "Random " + numberOfVoters + " voters example",
                 true);
+    }
+
+    private void analyzeRandomPosExample(int numberOfVoters) {
+        final List<BigFraction> voterPositions = getRandomVoters(numberOfVoters);
+        analyzePoS(voterPositions);
     }
 
     private GameAnalysis<VotingGameState<BigFraction>, BigFraction> analyzeRandomExample(int numberOfVoters, boolean quiet) {
@@ -744,13 +761,11 @@ public class SimpleGameAnalyzerTest {
             }
 
             log();
-
-            final String candidatesString = candidatePositions.stream()
+            log("and candidates:");
+            candidatePositions.stream()
                     .sequential()
                     .map(NumberUtils::fractionToString)
-                    .collect(Collectors.joining("\n", "\n", "\n"));
-
-            log("and candidates: " + candidatesString);
+                    .forEachOrdered(this::log);
         }
 
         return quadraticFactory.createDistanceBasedGame(
