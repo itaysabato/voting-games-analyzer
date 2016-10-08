@@ -200,8 +200,15 @@ public class SimpleGameAnalyzerTest {
         final GameAnalysis<?, ?> analysis = analyzeAndReport(
                 voterPositions, candidatePositions, "Theorem 12 without candidate 93");
 
-        assertConvergence(analysis, false);
         assertNash(analysis, false);
+    }
+
+    @Test
+    public void analyzeVotersEqualCandidatesNoNeAttempt() {
+//        final List<BigFraction> voterPositions = voters(4, 32, 34, 48, 67);
+//        final Set<BigFraction> candidatePositions = candidates(14, 32, 42, 60);
+        analyzePoS(4, 14, 32, 42, 60, 67);
+
     }
 
     @Test
