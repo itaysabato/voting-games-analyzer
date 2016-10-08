@@ -3,8 +3,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>il.ac.huji.cs.itays04</groupId>
-  <artifactId>project-katrina</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <artifactId>voting-games-analyzer</artifactId>
+  <version>0.1</version>
   <build>
     <plugins>
       <plugin>
