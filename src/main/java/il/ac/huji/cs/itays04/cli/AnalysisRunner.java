@@ -16,8 +16,12 @@ import java.util.List;
 import java.util.Set;
 
 public class AnalysisRunner {
-    private final QuadraticFactory quadraticFactory = StaticContext.getInstance().getQuadraticFactory();
+    private final QuadraticFactory quadraticFactory;
     private final BigFractionAverageSocialWelfareCalculator<VotingGameState<BigFraction>> welfareCalculator = new BigFractionAverageSocialWelfareCalculator<>();
+
+    public AnalysisRunner(QuadraticFactory quadraticFactory) {
+        this.quadraticFactory = quadraticFactory;
+    }
 
     public GameAnalysis<VotingGameState<BigFraction>, BigFraction> analyzeAndReport(
             List<BigFraction> voterPositions,
@@ -38,14 +42,16 @@ public class AnalysisRunner {
             game = getGame(voterPositions, candidatePositions, gameDescription, quiet);
         }
 
-        final GameAnalyzer gameAnalyzer = StaticContext.getInstance().getGameAnalyzer();
+        final GameAnalyzer gameAnalyzer = StaticContext.getInstance().gameAnalyzer;
         final ImmutableDirectedGraphWithScc<VotingGameState<BigFraction>> brg = gameAnalyzer.calculateBestResponseGraph(game);
 
         final GameAnalysis<VotingGameState<BigFraction>, BigFraction> gameAnalysis = gameAnalyzer.analyze(game, brg);
 
         if (!quiet) {
             synchronized (this) {
-                StaticContext.getInstance().getGameAnalysisReporter().printReport(game, gameAnalysis, System.out);
+                StaticContext.getInstance()
+                        .gameAnalysisReporter
+                        .printReport(game, gameAnalysis, System.out);
 
                 log("Truthful profiles:");
                 log();

@@ -3,13 +3,19 @@ package il.ac.huji.cs.itays04.cli;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import com.google.common.collect.ImmutableSet;
+import il.ac.huji.cs.itays04.utils.RandomUtils;
+import org.apache.commons.math3.fraction.BigFraction;
+
+import java.util.Comparator;
+import java.util.List;
 
 public class Main {
     private static final Main main = new Main();
 
     private final Arguments arguments = new Arguments();
     private final JCommander jCommander = new JCommander(arguments);
-    private final AnalysisRunner analysisRunner = new AnalysisRunner();
+    private final RandomUtils randomUtils = StaticContext.getInstance().randomUtils;
+    private final AnalysisRunner analysisRunner = StaticContext.getInstance().analysisRunner;
 
     private Main() {
         jCommander.setProgramName("vga");
@@ -33,11 +39,24 @@ public class Main {
             jCommander.usage();
         }
         else {
+            generateMorePositions(arguments.getVoters(), arguments.getRandomVotersRange());
+            generateMorePositions(arguments.getCandidates(), arguments.getRandomCandidatesRange());
+
             analysisRunner.analyzeAndReport(
                     arguments.getVoters(),
                     //todo: support candidate duplicates:
                     ImmutableSet.copyOf(arguments.getCandidates()),
                     "Quadratic Voting Game");
+        }
+    }
+
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    private void generateMorePositions(List<BigFraction> positions, List<Integer> amountRange) {
+        if (!amountRange.isEmpty()) {
+            int min = amountRange.stream().min(Comparator.naturalOrder()).get();
+            int max = 1 + amountRange.stream().max(Comparator.naturalOrder()).get();
+            final List<BigFraction> randomPositions = randomUtils.getRandomPositions(min, max);
+            positions.addAll(randomPositions);
         }
     }
 }

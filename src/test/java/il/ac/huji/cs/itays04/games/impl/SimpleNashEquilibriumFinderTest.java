@@ -31,10 +31,10 @@ public class SimpleNashEquilibriumFinderTest {
         final Set<BigFraction> candidateFractions = candidatePositions.stream()
                 .map(BigFraction::new)
                 .collect(Collectors.toSet());
-        final QuadraticFactory quadraticFactory = StaticContext.getInstance().getQuadraticFactory();
+        final QuadraticFactory quadraticFactory = StaticContext.getInstance().quadraticFactory;
 
         final SimpleNashEquilibriumFinder neFinder = new SimpleNashEquilibriumFinder(
-                StaticContext.getInstance().getSimpleGameTraverser());
+                StaticContext.getInstance().simpleGameTraverser);
 
         final BigFractionAverageSocialWelfareCalculator<VotingGameState<BigFraction>> socialWelfareCalculator =
                 new BigFractionAverageSocialWelfareCalculator<>();

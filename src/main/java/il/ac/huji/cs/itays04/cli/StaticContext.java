@@ -6,42 +6,27 @@ import il.ac.huji.cs.itays04.games.impl.SimpleGameAnalysisReporter;
 import il.ac.huji.cs.itays04.games.impl.SimpleGameAnalyzer;
 import il.ac.huji.cs.itays04.games.impl.SimpleGameTraverser;
 import il.ac.huji.cs.itays04.utils.DirectedGraphFactory;
+import il.ac.huji.cs.itays04.utils.PositionUtils;
 import il.ac.huji.cs.itays04.utils.PrincetonDirectedGraphFactory;
+import il.ac.huji.cs.itays04.utils.RandomUtils;
 import il.ac.huji.cs.itays04.voting.quadratic.QuadraticFactory;
 
 public class StaticContext {
     private static final StaticContext ourInstance = new StaticContext();
 
-    private final QuadraticFactory quadraticFactory = new QuadraticFactory();
-    private final SimpleGameTraverser simpleGameTraverser = new SimpleGameTraverser();
-    private final GameAnalysisReporter gameAnalysisReporter = new SimpleGameAnalysisReporter();
-    private final DirectedGraphFactory directedGraphFactory = new PrincetonDirectedGraphFactory();
-    private final GameAnalyzer gameAnalyzer = new SimpleGameAnalyzer(simpleGameTraverser, directedGraphFactory);
+    public final PositionUtils positionUtils = new PositionUtils();
+    public final RandomUtils randomUtils = new RandomUtils(positionUtils);
+    public final QuadraticFactory quadraticFactory = new QuadraticFactory();
+    public final AnalysisRunner analysisRunner = new AnalysisRunner(quadraticFactory);
+    public final SimpleGameTraverser simpleGameTraverser = new SimpleGameTraverser();
+    public final GameAnalysisReporter gameAnalysisReporter = new SimpleGameAnalysisReporter();
+    public final DirectedGraphFactory directedGraphFactory = new PrincetonDirectedGraphFactory();
+    public final GameAnalyzer gameAnalyzer = new SimpleGameAnalyzer(simpleGameTraverser, directedGraphFactory);
 
     private StaticContext() {
     }
 
     public static StaticContext getInstance() {
         return ourInstance;
-    }
-
-    public QuadraticFactory getQuadraticFactory() {
-        return quadraticFactory;
-    }
-
-    public SimpleGameTraverser getSimpleGameTraverser() {
-        return simpleGameTraverser;
-    }
-
-    public DirectedGraphFactory getDirectedGraphFactory() {
-        return directedGraphFactory;
-    }
-
-    public GameAnalyzer getGameAnalyzer() {
-        return gameAnalyzer;
-    }
-
-    public GameAnalysisReporter getGameAnalysisReporter() {
-        return gameAnalysisReporter;
     }
 }
