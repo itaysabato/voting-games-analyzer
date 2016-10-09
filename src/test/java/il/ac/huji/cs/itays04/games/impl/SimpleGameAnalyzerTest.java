@@ -1,111 +1,107 @@
 package il.ac.huji.cs.itays04.games.impl;
 
 import com.google.common.collect.Lists;
-import il.ac.huji.cs.itays04.games.api.*;
+import il.ac.huji.cs.itays04.cli.AnalysisRunner;
+import il.ac.huji.cs.itays04.games.api.GameAnalysis;
+import il.ac.huji.cs.itays04.games.api.GamePrices;
 import il.ac.huji.cs.itays04.utils.ImmutableDirectedGraphWithScc;
 import il.ac.huji.cs.itays04.utils.NumberUtils;
-import il.ac.huji.cs.itays04.voting.VotingGame;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
-import il.ac.huji.cs.itays04.voting.quadratic.QuadraticFactory;
-import il.ac.huji.cs.itays04.voting.quadratic.WeightedUtilityCalculator;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 
 public class SimpleGameAnalyzerTest {
-    private static final int N_THREADS = 8;
+//    private static final int N_THREADS = 8;
     private final Random random = new Random();
-    private final ExecutorService executorService = Executors.newFixedThreadPool(N_THREADS);
-    private final QuadraticFactory quadraticFactory = StaticContext.getInstance().getQuadraticFactory();
-    private final BigFractionAverageSocialWelfareCalculator<VotingGameState<BigFraction>> welfareCalculator = new BigFractionAverageSocialWelfareCalculator<>();
+//    private final ExecutorService executorService = Executors.newFixedThreadPool(N_THREADS);
+    private final AnalysisRunner analysisRunner = new AnalysisRunner();
 
-    @Test
-    @Ignore
-    public void testBadPosQuicklyFor8() {
-        // 0 1 2 10 2 10 2 1
-        analyzePoS(0, 1, 3, 13, 15, 25, 27, 28);
-    }
-
-    @Test
-    @Ignore
-    public void testBadPosQuicklyFor7() {
-        analyzePoS(1, 3, 13, 14, 15, 25, 27);
-    }
-
-    @Test
-    public void testBadPosQuicklyFor6() {
-        analyzePoS(1, 3, 13, 15, 25, 27);
-    }
-
-    public void analyzePoS(Integer... voters) {
-        final List<BigFraction> voterPositions = voters(voters);
-        analyzePoS(voterPositions);
-    }
-
-    public void analyzePoS(List<BigFraction> voterPositions) {
-        final Set<BigFraction> candidatePositions = candidates(voterPositions);
-
-        final VotingGame<BigFraction, BigFraction, BigFraction> game;
-        synchronized (this) {
-            game = getGame(voterPositions, candidatePositions, "Bad PoS Example", false);
-        }
-
-        final WeightedUtilityCalculator<BigFraction> randomDicCalc = getRandomDicCalculator(
-                voterPositions, candidatePositions);
-
-        final BigFraction bestRandomDicSw;
-        synchronized (this) {
-            log("Truthful states with Random-Dic SW:");
-            log("------------------------------------------------------------------");
-            final Optional<BigFraction> max = game.getTruthfulStates()
-                    .keySet()
-                    .stream()
-                    .peek(this::log)
-                    .map(state -> welfareCalculator.calculateWelfare(game, randomDicCalc, state))
-                    .peek(this::withSw)
-                    .peek(x -> log())
-                    .max(Comparator.naturalOrder());
-
-            assert max.isPresent();
-            bestRandomDicSw = max.get();
-            log("Best Random-Dic SW: " + NumberUtils.fractionToString(bestRandomDicSw));
-        }
-
-        final SimpleGameTraverser simpleGameTraverser = StaticContext.getInstance().getSimpleGameTraverser();
-        final HashSet<VotingGameState<BigFraction>> visited = new HashSet<>();
-        simpleGameTraverser.traverseGameUntil(game, visited, x -> false);
-
-        synchronized (this) {
-            log();
-            log("NE states with Quadratic SW:");
-            log("------------------------------------------------------------------");
-            visited.stream()
-                    .filter(s -> !game.getUtilityCalculator()
-                            .streamImprovements(game, s)
-                            .findAny()
-                            .isPresent())
-                    .peek(this::log)
-                    .map(state -> welfareCalculator.calculateWelfare(game, state))
-                    .peek(this::withSw)
-                    .peek(x -> log())
-                    .max(Comparator.naturalOrder())
-                    .ifPresent(sw -> {
-                        log("PoS = " + NumberUtils.fractionToString(sw));
-                        Assert.assertFalse("PoS worse than random dic!", sw.compareTo(bestRandomDicSw) < 0);
-                    });
-        }
-    }
-
-    public void withSw(BigFraction sw) {
-        log("With SW = " + NumberUtils.fractionToString(sw));
-    }
+//    @Test
+//    @Ignore
+//    public void testBadPosQuicklyFor8() {
+//        // 0 1 2 10 2 10 2 1
+//        analyzePoS(0, 1, 3, 13, 15, 25, 27, 28);
+//    }
+//
+//    @Test
+//    @Ignore
+//    public void testBadPosQuicklyFor7() {
+//        analyzePoS(1, 3, 13, 14, 15, 25, 27);
+//    }
+//
+//    @Test
+//    public void testBadPosQuicklyFor6() {
+//        analyzePoS(1, 3, 13, 15, 25, 27);
+//    }
+//
+//    public void analyzePoS(Integer... voters) {
+//        final List<BigFraction> voterPositions = voters(voters);
+//        analyzePoS(voterPositions);
+//    }
+//
+//    public void analyzePoS(List<BigFraction> voterPositions) {
+//        final Set<BigFraction> candidatePositions = candidates(voterPositions);
+//
+//        final VotingGame<BigFraction, BigFraction, BigFraction> game;
+//        synchronized (this) {
+//            game = getGame(voterPositions, candidatePositions, "Bad PoS Example", false);
+//        }
+//
+//        final WeightedUtilityCalculator<BigFraction> randomDicCalc = getRandomDicCalculator(
+//                voterPositions, candidatePositions);
+//
+//        final BigFraction bestRandomDicSw;
+//        synchronized (this) {
+//            log("Truthful states with Random-Dic SW:");
+//            log("------------------------------------------------------------------");
+//            final Optional<BigFraction> max = game.getTruthfulStates()
+//                    .keySet()
+//                    .stream()
+//                    .peek(this::log)
+//                    .map(state -> welfareCalculator.calculateWelfare(game, randomDicCalc, state))
+//                    .peek(this::withSw)
+//                    .peek(x -> log())
+//                    .max(Comparator.naturalOrder());
+//
+//            assert max.isPresent();
+//            bestRandomDicSw = max.get();
+//            log("Best Random-Dic SW: " + NumberUtils.fractionToString(bestRandomDicSw));
+//        }
+//
+//        final SimpleGameTraverser simpleGameTraverser = StaticContext.getInstance().getSimpleGameTraverser();
+//        final HashSet<VotingGameState<BigFraction>> visited = new HashSet<>();
+//        simpleGameTraverser.traverseGameUntil(game, visited, x -> false);
+//
+//        synchronized (this) {
+//            log();
+//            log("NE states with Quadratic SW:");
+//            log("------------------------------------------------------------------");
+//            visited.stream()
+//                    .filter(s -> !game.getUtilityCalculator()
+//                            .streamImprovements(game, s)
+//                            .findAny()
+//                            .isPresent())
+//                    .peek(this::log)
+//                    .map(state -> welfareCalculator.calculateWelfare(game, state))
+//                    .peek(this::withSw)
+//                    .peek(x -> log())
+//                    .max(Comparator.naturalOrder())
+//                    .ifPresent(sw -> {
+//                        log("PoS = " + NumberUtils.fractionToString(sw));
+//                        Assert.assertFalse("PoS worse than random dic!", sw.compareTo(bestRandomDicSw) < 0);
+//                    });
+//        }
+//    }
+//
+//    public void withSw(BigFraction sw) {
+//        log("With SW = " + NumberUtils.fractionToString(sw));
+//    }
 
     @Test
     public void analyzeTheorem5Example() {
@@ -203,13 +199,13 @@ public class SimpleGameAnalyzerTest {
         assertNash(analysis, false);
     }
 
-    @Test
-    public void analyzeVotersEqualCandidatesNoNeAttempt() {
-//        final List<BigFraction> voterPositions = voters(4, 32, 34, 48, 67);
-//        final Set<BigFraction> candidatePositions = candidates(14, 32, 42, 60);
-        analyzePoS(4, 14, 32, 42, 60, 67);
-
-    }
+//    @Test
+//    public void analyzeVotersEqualCandidatesNoNeAttempt() {
+////        final List<BigFraction> voterPositions = voters(4, 32, 34, 48, 67);
+////        final Set<BigFraction> candidatePositions = candidates(14, 32, 42, 60);
+//        analyzePoS(4, 14, 32, 42, 60, 67);
+//
+//    }
 
     @Test
     @Ignore
@@ -559,30 +555,30 @@ public class SimpleGameAnalyzerTest {
         }
     }
 
-    @Test
-    @Ignore
-    public void analyzeInfiniteRandomVotersEqualCandidatesExample() throws InterruptedException {
-
-        final Runnable runnable = () -> {
-            try {
-                analyzeRandomPosExample(7);
-            }
-            catch (Exception e) {
-                log("Exception caught: " + e);
-                System.exit(0);
-            }
-        };
-
-        //noinspection InfiniteLoopStatement
-        while (true) {
-            for (int i = 0; i < N_THREADS; i++) {
-                executorService.execute(runnable);
-            }
-
-            Thread.sleep(120000);
-        }
-
-    }
+//    @Test
+//    @Ignore
+//    public void analyzeInfiniteRandomVotersEqualCandidatesExample() throws InterruptedException {
+//
+//        final Runnable runnable = () -> {
+//            try {
+//                analyzeRandomPosExample(7);
+//            }
+//            catch (Exception e) {
+//                log("Exception caught: " + e);
+//                System.exit(0);
+//            }
+//        };
+//
+//        //noinspection InfiniteLoopStatement
+//        while (true) {
+//            for (int i = 0; i < N_THREADS; i++) {
+//                executorService.execute(runnable);
+//            }
+//
+//            Thread.sleep(120000);
+//        }
+//
+//    }
 
     private List<BigFraction> voters(Integer... positions) {
         return voters(Arrays.asList(positions));
@@ -630,10 +626,10 @@ public class SimpleGameAnalyzerTest {
                 true);
     }
 
-    private void analyzeRandomPosExample(int numberOfVoters) {
-        final List<BigFraction> voterPositions = getRandomVoters(numberOfVoters);
-        analyzePoS(voterPositions);
-    }
+//    private void analyzeRandomPosExample(int numberOfVoters) {
+//        final List<BigFraction> voterPositions = getRandomVoters(numberOfVoters);
+//        analyzePoS(voterPositions);
+//    }
 
     private GameAnalysis<VotingGameState<BigFraction>, BigFraction> analyzeRandomExample(int numberOfVoters, boolean quiet) {
         final List<BigFraction> voterPositions = getRandomVoters(numberOfVoters);
@@ -683,7 +679,7 @@ public class SimpleGameAnalyzerTest {
             Set<BigFraction> candidatePositions,
             String gameDescription) {
 
-        return analyzeAndReport(voterPositions, candidatePositions, gameDescription, false);
+        return analysisRunner.analyzeAndReport(voterPositions, candidatePositions, gameDescription, false);
     }
 
     private GameAnalysis<VotingGameState<BigFraction>, BigFraction> analyzeAndReport(
@@ -692,96 +688,12 @@ public class SimpleGameAnalyzerTest {
             String gameDescription,
             boolean quiet) {
 
-        final VotingGame<BigFraction, BigFraction, BigFraction> game;
-        synchronized (this) {
-            game = getGame(voterPositions, candidatePositions, gameDescription, quiet);
-        }
-
-        final GameAnalyzer gameAnalyzer = StaticContext.getInstance().getGameAnalyzer();
-        final ImmutableDirectedGraphWithScc<VotingGameState<BigFraction>> brg = gameAnalyzer.calculateBestResponseGraph(game);
-
-        final GameAnalysis<VotingGameState<BigFraction>, BigFraction> gameAnalysis = gameAnalyzer.analyze(game, brg);
-
-        if (!quiet) {
-            synchronized (this) {
-                StaticContext.getInstance().getGameAnalysisReporter().printReport(game, gameAnalysis, System.out);
-
-                log("Truthful profiles:");
-                log();
-
-                final WeightedUtilityCalculator<BigFraction> randomDicCalc = getRandomDicCalculator(voterPositions, candidatePositions);
-
-                game.getTruthfulStates()
-                        .entrySet()
-                        .stream()
-                        .forEachOrdered(entry -> {
-                            log(entry.getKey());
-                            log("SW = " + NumberUtils.fractionToString(entry.getValue()));
-
-                            final SocialWelfareCalculator<VotingGameState<BigFraction>, BigFraction, BigFraction> socialWelfareCalculator = game.getSocialWelfareCalculator();
-                            final BigFraction randomDicSW = socialWelfareCalculator.calculateWelfare(
-                                    game, randomDicCalc, entry.getKey());
-
-                            log("Randomized dictatorship SW = " + NumberUtils.fractionToString(randomDicSW));
-
-                            final BigFraction socialOptimum = gameAnalysis.getPrices().getSocialOptimum();
-                            final BigFraction ratio = socialWelfareCalculator.getRatio(socialOptimum, randomDicSW);
-                            log("Randomized dictatorship ratio to optimum = " + NumberUtils.fractionToString(ratio));
-
-                            final BigFraction priceOfStability = gameAnalysis.getPrices().getPriceOfStability().orElse(BigFraction.ZERO);
-                            final BigFraction priceOfStabilityRatio = socialWelfareCalculator.getRatio(priceOfStability, ratio);
-                            log("Randomized dictatorship ratio to price of stability = " + NumberUtils.fractionToString(priceOfStabilityRatio));
-                            log();
-
-                            if (priceOfStabilityRatio.compareTo(BigFraction.ONE) > 0) {
-                                log("PoS worse than random dic!");
-                                System.exit(0);
-                            }
-                        });
-
-                log("End analysis.");
-            }
-        }
-
-        return gameAnalysis;
+        return analysisRunner.analyzeAndReport(voterPositions, candidatePositions, gameDescription, quiet);
     }
 
-    private WeightedUtilityCalculator<BigFraction> getRandomDicCalculator(List<BigFraction> voterPositions, Set<BigFraction> candidatePositions) {
-        return quadraticFactory.createWeightedCalculator(
-                            voterPositions, candidatePositions, false);
-    }
-
-    private VotingGame<BigFraction, BigFraction, BigFraction> getGame(
-            List<BigFraction> voterPositions,
-            Set<BigFraction> candidatePositions,
-            String gameDescription,
-            boolean quiet) {
-
-        if (!quiet) {
-            log("************************************************************************************************");
-            log("Analyzing " + gameDescription);
-            log("************************************************************************************************");
-
-            log("with voters:");
-            for (int i = 0; i < voterPositions.size(); i++) {
-                log("V" + (i+1) + " = " + NumberUtils.fractionToString(voterPositions.get(i)));
-            }
-
-            log();
-            log("and candidates:");
-            candidatePositions.stream()
-                    .sequential()
-                    .map(NumberUtils::fractionToString)
-                    .forEachOrdered(this::log);
-        }
-
-        return quadraticFactory.createDistanceBasedGame(
-                    voterPositions, candidatePositions, welfareCalculator);
-    }
-
-    private void log() {
-        log("");
-    }
+//    private void log() {
+//        log("");
+//    }
 
     private void log(Object message) {
         final long id = Thread.currentThread().getId();

@@ -1,7 +1,10 @@
-package il.ac.huji.cs.itays04.games.impl;
+package il.ac.huji.cs.itays04.cli;
 
 import il.ac.huji.cs.itays04.games.api.GameAnalysisReporter;
 import il.ac.huji.cs.itays04.games.api.GameAnalyzer;
+import il.ac.huji.cs.itays04.games.impl.SimpleGameAnalysisReporter;
+import il.ac.huji.cs.itays04.games.impl.SimpleGameAnalyzer;
+import il.ac.huji.cs.itays04.games.impl.SimpleGameTraverser;
 import il.ac.huji.cs.itays04.utils.DirectedGraphFactory;
 import il.ac.huji.cs.itays04.utils.PrincetonDirectedGraphFactory;
 import il.ac.huji.cs.itays04.voting.quadratic.QuadraticFactory;

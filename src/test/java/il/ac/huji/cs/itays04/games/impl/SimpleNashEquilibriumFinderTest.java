@@ -2,6 +2,7 @@ package il.ac.huji.cs.itays04.games.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import il.ac.huji.cs.itays04.cli.StaticContext;
 import il.ac.huji.cs.itays04.games.api.BigFractionAverageSocialWelfareCalculator;
 import il.ac.huji.cs.itays04.voting.VotingGame;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
