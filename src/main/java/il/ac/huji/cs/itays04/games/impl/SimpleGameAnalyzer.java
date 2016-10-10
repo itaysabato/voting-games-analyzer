@@ -87,7 +87,7 @@ public class SimpleGameAnalyzer implements GameAnalyzer {
             ImmutableDirectedGraphWithScc<T> brg,
             Set<StronglyConnectedComponent<T>> sinks) {
 
-        final SocialWelfareCalculator<T, U, W> calculator = game.getSocialWelfareCalculator();
+        final SocialWelfareCalculator<U, W> calculator = game.getSocialWelfareCalculator();
         final HashSet<SinkWithWelfare<T, W>> sinksWithWelfare = new HashSet<>();
 
         Optional<W> worstPrice = Optional.empty(),

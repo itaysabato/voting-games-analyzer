@@ -16,13 +16,13 @@ public class VotingGame<C, U extends Number & Comparable<U>, W extends Number & 
     private final ImmutableSet<C> allCandidates;
     private final Map<VotingGameState<C>, W> truthfulStates;
     private final UtilityCalculator<VotingGameState<C>, U> utilityCalculator;
-    private final SocialWelfareCalculator<VotingGameState<C>, U, W> socialWelfareCalculator;
+    private final SocialWelfareCalculator<U, W> socialWelfareCalculator;
 
     public VotingGame(
             Set<C> allCandidates,
             Set<List<C>> truthfulVotes,
             UtilityCalculator<VotingGameState<C>, U> utilityCalculator,
-            SocialWelfareCalculator<VotingGameState<C>, U, W> socialWelfareCalculator) {
+            SocialWelfareCalculator<U, W> socialWelfareCalculator) {
 
         this.utilityCalculator = utilityCalculator;
         this.socialWelfareCalculator = socialWelfareCalculator;
@@ -67,7 +67,7 @@ public class VotingGame<C, U extends Number & Comparable<U>, W extends Number & 
     }
 
     @Override
-    public SocialWelfareCalculator<VotingGameState<C>, U, W> getSocialWelfareCalculator() {
+    public SocialWelfareCalculator<U, W> getSocialWelfareCalculator() {
         return socialWelfareCalculator;
     }
 

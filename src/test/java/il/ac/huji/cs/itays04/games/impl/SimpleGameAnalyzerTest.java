@@ -1,116 +1,116 @@
 package il.ac.huji.cs.itays04.games.impl;
 
-import com.google.common.collect.Lists;
-import il.ac.huji.cs.itays04.games.api.*;
-import il.ac.huji.cs.itays04.utils.ImmutableDirectedGraphWithScc;
+import il.ac.huji.cs.itays04.cli.AnalysisRunner;
+import il.ac.huji.cs.itays04.cli.StaticContext;
+import il.ac.huji.cs.itays04.games.api.GameAnalysis;
+import il.ac.huji.cs.itays04.games.api.GamePrices;
 import il.ac.huji.cs.itays04.utils.NumberUtils;
-import il.ac.huji.cs.itays04.voting.VotingGame;
+import il.ac.huji.cs.itays04.utils.RandomUtils;
+import il.ac.huji.cs.itays04.utils.RationalUtils;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
-import il.ac.huji.cs.itays04.voting.quadratic.QuadraticFactory;
-import il.ac.huji.cs.itays04.voting.quadratic.WeightedUtilityCalculator;
+import il.ac.huji.cs.itays04.voting.quadratic.NamedRationalEntity;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Optional;
 
 
 public class SimpleGameAnalyzerTest {
-    private static final int N_THREADS = 8;
-    private final Random random = new Random();
-    private final ExecutorService executorService = Executors.newFixedThreadPool(N_THREADS);
-    private final QuadraticFactory quadraticFactory = StaticContext.getInstance().getQuadraticFactory();
-    private final BigFractionAverageSocialWelfareCalculator<VotingGameState<BigFraction>> welfareCalculator = new BigFractionAverageSocialWelfareCalculator<>();
+//    private static final int N_THREADS = 8;
+//    private final ExecutorService executorService = Executors.newFixedThreadPool(N_THREADS);
+    private final RandomUtils randomUtils = StaticContext.getInstance().randomUtils;
+    private final RationalUtils rationalUtils = StaticContext.getInstance().rationalUtils;
+    private final AnalysisRunner analysisRunner = StaticContext.getInstance().analysisRunner;
 
-    @Test
-    @Ignore
-    public void testBadPosQuicklyFor8() {
-        // 0 1 2 10 2 10 2 1
-        analyzePoS(0, 1, 3, 13, 15, 25, 27, 28);
-    }
-
-    @Test
-    @Ignore
-    public void testBadPosQuicklyFor7() {
-        analyzePoS(1, 3, 13, 14, 15, 25, 27);
-    }
-
-    @Test
-    public void testBadPosQuicklyFor6() {
-        analyzePoS(1, 3, 13, 15, 25, 27);
-    }
-
-    public void analyzePoS(Integer... voters) {
-        final List<BigFraction> voterPositions = voters(voters);
-        analyzePoS(voterPositions);
-    }
-
-    public void analyzePoS(List<BigFraction> voterPositions) {
-        final Set<BigFraction> candidatePositions = candidates(voterPositions);
-
-        final VotingGame<BigFraction, BigFraction, BigFraction> game;
-        synchronized (this) {
-            game = getGame(voterPositions, candidatePositions, "Bad PoS Example", false);
-        }
-
-        final WeightedUtilityCalculator<BigFraction> randomDicCalc = getRandomDicCalculator(
-                voterPositions, candidatePositions);
-
-        final BigFraction bestRandomDicSw;
-        synchronized (this) {
-            log("Truthful states with Random-Dic SW:");
-            log("------------------------------------------------------------------");
-            final Optional<BigFraction> max = game.getTruthfulStates()
-                    .keySet()
-                    .stream()
-                    .peek(this::log)
-                    .map(state -> welfareCalculator.calculateWelfare(game, randomDicCalc, state))
-                    .peek(this::withSw)
-                    .peek(x -> log())
-                    .max(Comparator.naturalOrder());
-
-            assert max.isPresent();
-            bestRandomDicSw = max.get();
-            log("Best Random-Dic SW: " + NumberUtils.fractionToString(bestRandomDicSw));
-        }
-
-        final SimpleGameTraverser simpleGameTraverser = StaticContext.getInstance().getSimpleGameTraverser();
-        final HashSet<VotingGameState<BigFraction>> visited = new HashSet<>();
-        simpleGameTraverser.traverseGameUntil(game, visited, x -> false);
-
-        synchronized (this) {
-            log();
-            log("NE states with Quadratic SW:");
-            log("------------------------------------------------------------------");
-            visited.stream()
-                    .filter(s -> !game.getUtilityCalculator()
-                            .streamImprovements(game, s)
-                            .findAny()
-                            .isPresent())
-                    .peek(this::log)
-                    .map(state -> welfareCalculator.calculateWelfare(game, state))
-                    .peek(this::withSw)
-                    .peek(x -> log())
-                    .max(Comparator.naturalOrder())
-                    .ifPresent(sw -> {
-                        log("PoS = " + NumberUtils.fractionToString(sw));
-                        Assert.assertFalse("PoS worse than random dic!", sw.compareTo(bestRandomDicSw) < 0);
-                    });
-        }
-    }
-
-    public void withSw(BigFraction sw) {
-        log("With SW = " + NumberUtils.fractionToString(sw));
-    }
+//    @Test
+//    @Ignore
+//    public void testBadPosQuicklyFor8() {
+//        // 0 1 2 10 2 10 2 1
+//        analyzePoS(0, 1, 3, 13, 15, 25, 27, 28);
+//    }
+//
+//    @Test
+//    @Ignore
+//    public void testBadPosQuicklyFor7() {
+//        analyzePoS(1, 3, 13, 14, 15, 25, 27);
+//    }
+//
+//    @Test
+//    public void testBadPosQuicklyFor6() {
+//        analyzePoS(1, 3, 13, 15, 25, 27);
+//    }
+//
+//    public void analyzePoS(Integer... voters) {
+//        final List<BigFraction> voterPositions = rationalUtils.voters(voters);
+//        analyzePoS(voterPositions);
+//    }
+//
+//    public void analyzePoS(List<BigFraction> voterPositions) {
+//        final Set<BigFraction> candidatePositions = candidates(voterPositions);
+//
+//        final VotingGame<BigFraction, BigFraction, BigFraction> game;
+//        synchronized (this) {
+//            game = getGame(voterPositions, candidatePositions, "Bad PoS Example", false);
+//        }
+//
+//        final WeightedUtilityCalculator<BigFraction> randomDicCalc = getRandomDicCalculator(
+//                voterPositions, candidatePositions);
+//
+//        final BigFraction bestRandomDicSw;
+//        synchronized (this) {
+//            log("Truthful states with Random-Dic SW:");
+//            log("------------------------------------------------------------------");
+//            final Optional<BigFraction> max = game.getTruthfulStates()
+//                    .keySet()
+//                    .stream()
+//                    .peek(this::log)
+//                    .map(state -> welfareCalculator.calculateWelfare(game, randomDicCalc, state))
+//                    .peek(this::withSw)
+//                    .peek(x -> log())
+//                    .max(Comparator.naturalOrder());
+//
+//            assert max.isPresent();
+//            bestRandomDicSw = max.get();
+//            log("Best Random-Dic SW: " + NumberUtils.fractionToString(bestRandomDicSw));
+//        }
+//
+//        final SimpleGameTraverser simpleGameTraverser = StaticContext.getInstance().getSimpleGameTraverser();
+//        final HashSet<VotingGameState<BigFraction>> visited = new HashSet<>();
+//        simpleGameTraverser.traverseGameUntil(game, visited, x -> false);
+//
+//        synchronized (this) {
+//            log();
+//            log("NE states with Quadratic SW:");
+//            log("------------------------------------------------------------------");
+//            visited.stream()
+//                    .filter(s -> !game.getUtilityCalculator()
+//                            .streamImprovements(game, s)
+//                            .findAny()
+//                            .isPresent())
+//                    .peek(this::log)
+//                    .map(state -> welfareCalculator.calculateWelfare(game, state))
+//                    .peek(this::withSw)
+//                    .peek(x -> log())
+//                    .max(Comparator.naturalOrder())
+//                    .ifPresent(sw -> {
+//                        log("PoS = " + NumberUtils.fractionToString(sw));
+//                        Assert.assertFalse("PoS worse than random dic!", sw.compareTo(bestRandomDicSw) < 0);
+//                    });
+//        }
+//    }
+//
+//    public void withSw(BigFraction sw) {
+//        log("With SW = " + NumberUtils.fractionToString(sw));
+//    }
 
     @Test
     public void analyzeTheorem5Example() {
-        final List<BigFraction> voterPositions = voters(14,7,12);
-        final Set<BigFraction> candidatePositions = candidates(17,2,10);
+        final LinkedHashSet<NamedRationalEntity> voterPositions = rationalUtils.voters(14,7,12);
+        final LinkedHashSet<NamedRationalEntity> candidatePositions = rationalUtils.candidates(17,2,10);
 
         final GameAnalysis<?, ?> analysis = analyzeAndReport(
                 voterPositions, candidatePositions, "Theorem 5 example");
@@ -134,8 +134,8 @@ public class SimpleGameAnalyzerTest {
 
     @Test
     public void analyzeTheorem8Example() {
-        final List<BigFraction> voterPositions = voters(16, 4, 1, 7);
-        final Set<BigFraction> candidatePositions = candidates(5,1,19,8);
+        final LinkedHashSet<NamedRationalEntity> voterPositions = rationalUtils.voters(16, 4, 1, 7);
+        final LinkedHashSet<NamedRationalEntity> candidatePositions = rationalUtils.candidates(5,1,19,8);
 
         final GameAnalysis<?, ?> analysis = analyzeAndReport(
                 voterPositions, candidatePositions, "Theorem 8 example");
@@ -146,8 +146,8 @@ public class SimpleGameAnalyzerTest {
 
     @Test
     public void analyzeTheorem8WorseExample() {
-        final List<BigFraction> voterPositions = voters(500, 4, 1, 7);
-        final Set<BigFraction> candidatePositions = candidates(5,1,500,8);
+        final LinkedHashSet<NamedRationalEntity> voterPositions = rationalUtils.voters(500, 4, 1, 7);
+        final LinkedHashSet<NamedRationalEntity> candidatePositions = rationalUtils.candidates(5,1,500,8);
 
         final GameAnalysis<?, ?> analysis = analyzeAndReport(
                 voterPositions, candidatePositions, "Theorem 8 worse example");
@@ -158,8 +158,8 @@ public class SimpleGameAnalyzerTest {
 
     @Test
     public void analyzeTheorem10Example() {
-        final List<BigFraction> voterPositions = voters(400, 47, 92, 92, 92, 0, 0, 0, 0);
-        final Set<BigFraction> candidatePositions = candidates(0,92,400);
+        final LinkedHashSet<NamedRationalEntity> voterPositions = rationalUtils.voters(400, 47, 92, 92, 92, 0, 0, 0, 0);
+        final LinkedHashSet<NamedRationalEntity> candidatePositions = rationalUtils.candidates(0,92,400);
 
         final GameAnalysis<?, ?> analysis = analyzeAndReport(
                 voterPositions, candidatePositions, "Theorem 10 example");
@@ -170,8 +170,8 @@ public class SimpleGameAnalyzerTest {
 
     @Test
     public void analyzeTheorem11Example() {
-        final List<BigFraction> voterPositions = voters(15, 55, 42, 66, 74);
-        final Set<BigFraction> candidatePositions = candidates(15, 55, 42, 66, 74);
+        final LinkedHashSet<NamedRationalEntity> voterPositions = rationalUtils.voters(15, 55, 42, 66, 74);
+        final LinkedHashSet<NamedRationalEntity> candidatePositions = rationalUtils.candidates(15, 55, 42, 66, 74);
 
         final GameAnalysis<?, ?> analysis = analyzeAndReport(
                 voterPositions, candidatePositions, "Theorem 11 example");
@@ -182,8 +182,8 @@ public class SimpleGameAnalyzerTest {
 
     @Test
     public void analyzeTheorem12Example() {
-        final List<BigFraction> voterPositions = voters(4, 32, 34, 48, 67);
-        final Set<BigFraction> candidatePositions = candidates(14, 32, 42, 60, 93);
+        final LinkedHashSet<NamedRationalEntity> voterPositions = rationalUtils.voters(4, 32, 34, 48, 67);
+        final LinkedHashSet<NamedRationalEntity> candidatePositions = rationalUtils.candidates(14, 32, 42, 60, 93);
 
         final GameAnalysis<?, ?> analysis = analyzeAndReport(
                 voterPositions, candidatePositions, "Theorem 12 example");
@@ -194,8 +194,8 @@ public class SimpleGameAnalyzerTest {
 
     @Test
     public void analyzeTheorem12Without93Example() {
-        final List<BigFraction> voterPositions = voters(4, 32, 34, 48, 67);
-        final Set<BigFraction> candidatePositions = candidates(14, 32, 42, 60);
+        final LinkedHashSet<NamedRationalEntity> voterPositions = rationalUtils.voters(4, 32, 34, 48, 67);
+        final LinkedHashSet<NamedRationalEntity> candidatePositions = rationalUtils.candidates(14, 32, 42, 60);
 
         final GameAnalysis<?, ?> analysis = analyzeAndReport(
                 voterPositions, candidatePositions, "Theorem 12 without candidate 93");
@@ -203,19 +203,19 @@ public class SimpleGameAnalyzerTest {
         assertNash(analysis, false);
     }
 
-    @Test
-    public void analyzeVotersEqualCandidatesNoNeAttempt() {
-//        final List<BigFraction> voterPositions = voters(4, 32, 34, 48, 67);
-//        final Set<BigFraction> candidatePositions = candidates(14, 32, 42, 60);
-        analyzePoS(4, 14, 32, 42, 60, 67);
-
-    }
+//    @Test
+//    public void analyzeVotersEqualCandidatesNoNeAttempt() {
+////        final List<BigFraction> voterPositions = rationalUtils.voters(4, 32, 34, 48, 67);
+////        final Set<BigFraction> candidatePositions = rationalUtils.candidates(14, 32, 42, 60);
+//        analyzePoS(4, 14, 32, 42, 60, 67);
+//
+//    }
 
     @Test
     @Ignore
     public void analyze4Voters5CandidatesFailedNoNeExample() {
-        final List<BigFraction> voterPositions = voters(447892247, 1807778634, -1386396308, -800174363);
-        final Set<BigFraction> candidatePositions = candidates(-2006359767, -534226103, -1292843788, -821544891, -463640637);
+        final LinkedHashSet<NamedRationalEntity> voterPositions = rationalUtils.voters(447892247, 1807778634, -1386396308, -800174363);
+        final LinkedHashSet<NamedRationalEntity> candidatePositions = rationalUtils.candidates(-2006359767, -534226103, -1292843788, -821544891, -463640637);
 
         final GameAnalysis<?, ?> analysis = analyzeAndReport(
                 voterPositions, candidatePositions, "4 voters and 5 candidates with no NE example");
@@ -227,8 +227,8 @@ public class SimpleGameAnalyzerTest {
     @Test
     @Ignore
     public void analyze4Voters4CandidatesFailedNoNeExample() {
-        final List<BigFraction> voterPositions = voters(447892247, 1807778634, -1386396308, -800174363);
-        final Set<BigFraction> candidatePositions = candidates(-2006359767, -1292843788, -821544891, -463640637);
+        final LinkedHashSet<NamedRationalEntity> voterPositions = rationalUtils.voters(447892247, 1807778634, -1386396308, -800174363);
+        final LinkedHashSet<NamedRationalEntity> candidatePositions = rationalUtils.candidates(-2006359767, -1292843788, -821544891, -463640637);
 
         final GameAnalysis<?, ?> analysis = analyzeAndReport(
                 voterPositions, candidatePositions, "4 voters and 4 candidates with no NE example");
@@ -239,8 +239,8 @@ public class SimpleGameAnalyzerTest {
 
     @Test
     public void analyze4Voters4CandidatesNoNeExample() {
-        final List<BigFraction> voterPositions = voters(-1421648613, 933478673, -283196042, 2113642072);
-        final Set<BigFraction> candidatePositions = candidates(-1411103600, -10658440, 653699683, 1613807734);
+        final LinkedHashSet<NamedRationalEntity> voterPositions = rationalUtils.voters(-1421648613, 933478673, -283196042, 2113642072);
+        final LinkedHashSet<NamedRationalEntity> candidatePositions = rationalUtils.candidates(-1411103600, -10658440, 653699683, 1613807734);
 
         final GameAnalysis<?, ?> analysis = analyzeAndReport(
                 voterPositions, candidatePositions, "4 voters and 4 candidates with no NE example");
@@ -255,20 +255,16 @@ public class SimpleGameAnalyzerTest {
     }
 
     private GameAnalysis<?, ?> analyzeVotersEqualCandidates(String gameDescription, Integer... integers) {
-        final List<BigFraction> voterPositions = voters(integers);
-        final Set<BigFraction> candidatePositions = candidates(voterPositions);
+        final LinkedHashSet<NamedRationalEntity> voterPositions = rationalUtils.voters(integers);
+        final LinkedHashSet<NamedRationalEntity> candidatePositions = rationalUtils.candidates(integers);
 
         return analyzeAndReport(voterPositions, candidatePositions, gameDescription);
     }
 
-    private Set<BigFraction> candidates(List<BigFraction> positions) {
-        return candidates(positions.toArray(new BigFraction[positions.size()]));
-    }
-
     @Test
     public void analyze4Voters4CandidatesNoNeSmoothExample() {
-        final List<BigFraction> voterPositions = voters(0, 11, 22, 33);
-        final Set<BigFraction> candidatePositions = candidates(0, 11, 19, 30);
+        final LinkedHashSet<NamedRationalEntity> voterPositions = rationalUtils.voters(0, 11, 22, 33);
+        final LinkedHashSet<NamedRationalEntity> candidatePositions = rationalUtils.candidates(0, 11, 19, 30);
 
         final GameAnalysis<?, ?> analysis = analyzeAndReport(
                 voterPositions, candidatePositions, "4 voters and 4 candidates with no NE smooth example");
@@ -279,16 +275,16 @@ public class SimpleGameAnalyzerTest {
 
     @Test
     public void analyze5VotersEqualCandidatesUniformExample() {
-        final List<BigFraction> voterPositions = voters(1, 2, 3, 4, 5);
-        final Set<BigFraction> candidatePositions = candidates(1, 2, 3, 4, 5);
+        final LinkedHashSet<NamedRationalEntity> voterPositions = rationalUtils.voters(1, 2, 3, 4, 5);
+        final LinkedHashSet<NamedRationalEntity> candidatePositions = rationalUtils.candidates(1, 2, 3, 4, 5);
 
         analyzeAndReport(voterPositions, candidatePositions, "5 voters=candidates uniform example");
     }
 
     @Test
     public void analyze4VotersEqualCandidatesUniformExample() {
-        final List<BigFraction> voterPositions = voters(1, 2, 3, 4);
-        final Set<BigFraction> candidatePositions = candidates(1, 2, 3, 4);
+        final LinkedHashSet<NamedRationalEntity> voterPositions = rationalUtils.voters(1, 2, 3, 4);
+        final LinkedHashSet<NamedRationalEntity> candidatePositions = rationalUtils.candidates(1, 2, 3, 4);
 
         analyzeAndReport(voterPositions, candidatePositions, "5 voters=candidates uniform example");
 
@@ -296,8 +292,8 @@ public class SimpleGameAnalyzerTest {
 
     @Test
     public void analyze4VotersPoA3Example() {
-        final List<BigFraction> voterPositions = voters(-76449421, 1131956366, -52576629, 1177352783);
-        final Set<BigFraction> candidatePositions = candidates(-1205708878, 2011356870, -1659967173, 1996515385, 1115606866);
+        final LinkedHashSet<NamedRationalEntity> voterPositions = rationalUtils.voters(-76449421, 1131956366, -52576629, 1177352783);
+        final LinkedHashSet<NamedRationalEntity> candidatePositions = rationalUtils.candidates(-1205708878, 2011356870, -1659967173, 1996515385, 1115606866);
 
         final GameAnalysis<?, BigFraction> analysis = analyzeAndReport(
                 voterPositions, candidatePositions, "4 voters and 5 candidates PoA=3 example");
@@ -312,8 +308,8 @@ public class SimpleGameAnalyzerTest {
 
     @Test
     public void analyze4VotersPoA3SmoothExample() {
-        final List<BigFraction> voterPositions = voters(new BigFraction(-76449421, 1205708878), new BigFraction(1131956366, 1205708878), new BigFraction(-52576629, 1205708878), new BigFraction(1177352783, 1205708878));
-        final Set<BigFraction> candidatePositions = candidates(new BigFraction(-1), new BigFraction(2011356870, 1205708878), new BigFraction(-1659967173, 1205708878), new BigFraction(1996515385, 1205708878), new BigFraction(1115606866, 1205708878));
+        final LinkedHashSet<NamedRationalEntity> voterPositions = rationalUtils.voters(new BigFraction(-76449421, 1205708878), new BigFraction(1131956366, 1205708878), new BigFraction(-52576629, 1205708878), new BigFraction(1177352783, 1205708878));
+        final LinkedHashSet<NamedRationalEntity> candidatePositions = rationalUtils.candidates(new BigFraction(-1), new BigFraction(2011356870, 1205708878), new BigFraction(-1659967173, 1205708878), new BigFraction(1996515385, 1205708878), new BigFraction(1115606866, 1205708878));
 
         final GameAnalysis<?, BigFraction> analysis = analyzeAndReport(
                 voterPositions, candidatePositions, "4 voters and 5 candidates PoA=3 example");
@@ -328,8 +324,8 @@ public class SimpleGameAnalyzerTest {
 
     @Test
     public void analyze4VotersPoA4Example() {
-        final List<BigFraction> voterPositions = voters(7, 7, 9, 9);
-        final Set<BigFraction> candidatePositions = candidates(4, 8 , 12);
+        final LinkedHashSet<NamedRationalEntity> voterPositions = rationalUtils.voters(7, 7, 9, 9);
+        final LinkedHashSet<NamedRationalEntity> candidatePositions = rationalUtils.candidates(4, 8 , 12);
 
         final GameAnalysis<?, BigFraction> analysis = analyzeAndReport(
                 voterPositions, candidatePositions, "4 voters and 3 candidates PoA=4 example");
@@ -344,8 +340,8 @@ public class SimpleGameAnalyzerTest {
     @Test
     @Ignore
     public void analyze10VotersPoA10Example() {
-        final List<BigFraction> voterPositions = voters(19, 19, 19, 19, 19, 21, 21, 21, 21, 21);
-        final Set<BigFraction> candidatePositions = candidates(10, 20 , 30);
+        final LinkedHashSet<NamedRationalEntity> voterPositions = rationalUtils.voters(19, 19, 19, 19, 19, 21, 21, 21, 21, 21);
+        final LinkedHashSet<NamedRationalEntity> candidatePositions = rationalUtils.candidates(10, 20 , 30);
 
         final GameAnalysis<?, BigFraction> analysis = analyzeAndReport(
                 voterPositions, candidatePositions, "10 voters and 3 candidates PoA=10 example");
@@ -420,8 +416,8 @@ public class SimpleGameAnalyzerTest {
         Arrays.fill(voters, k, n-1, delta);
         voters[n-1] = d;
 
-        final List<BigFraction> voterPositions = voters(voters);
-        final Set<BigFraction> candidatePositions = candidates(a, b, delta, d);
+        final LinkedHashSet<NamedRationalEntity> voterPositions = rationalUtils.voters(voters);
+        final LinkedHashSet<NamedRationalEntity> candidatePositions = rationalUtils.candidates(a, b, delta, d);
 
         final GameAnalysis<?, BigFraction> analysis = analyzeAndReport(
                 voterPositions, candidatePositions, n + " voters and 4 candidates PoS=1 example");
@@ -441,10 +437,10 @@ public class SimpleGameAnalyzerTest {
         Arrays.fill(voters, 0, k, (4 * k) - 1);
         Arrays.fill(voters, k, n, (4 * k) + 1);
 
-        final List<BigFraction> voterPositions = voters(voters);
-        final Set<BigFraction> candidatePositions = candidates(n, 2 * n , 3 * n);
+        final LinkedHashSet<NamedRationalEntity> voterPositions = rationalUtils.voters(voters);
+        final LinkedHashSet<NamedRationalEntity> candidatePositions = rationalUtils.candidates(n, 2 * n , 3 * n);
 
-        final GameAnalysis<VotingGameState<BigFraction>, BigFraction> analysis = analyzeAndReport(
+        final GameAnalysis<?, BigFraction> analysis = analyzeAndReport(
                 voterPositions, candidatePositions, n + " voters and 3 candidates PoA=" + n + " example");
 
         assertNash(analysis, true);
@@ -453,25 +449,23 @@ public class SimpleGameAnalyzerTest {
         final BigFraction poa = priceOfAnarchy.get();
 
         Assert.assertTrue(poa.compareTo(new BigFraction(n)) == 0);
-
-
-        final ArrayList<BigFraction> votes = new ArrayList<>(n);
-
-        for (int i = 0; i < k; i++) {
-            votes.add(i, new BigFraction(2*n));
-        }
-
-        for (int i = k; i < n; i++) {
-            votes.add(i, new BigFraction(3*n));
-        }
-        final VotingGameState<BigFraction> state = new VotingGameState<>(votes);
-        final ImmutableDirectedGraphWithScc<VotingGameState<BigFraction>> bestResponseGraph = analysis.getBestResponseGraph();
-
-        final Set<VotingGameState<BigFraction>> improvingStates = bestResponseGraph.getOriginalGraph().getEdges().get(state);
-
-        log("The following are improving moves from state: " + state);
-        improvingStates.forEach(this::log);
-
+//
+//        final ArrayList<BigFraction> votes = new ArrayList<>(n);
+//
+//        for (int i = 0; i < k; i++) {
+//            votes.add(i, new BigFraction(2*n));
+//        }
+//
+//        for (int i = k; i < n; i++) {
+//            votes.add(i, new BigFraction(3*n));
+//        }
+//        final VotingGameState<BigFraction> state = new VotingGameState<>(votes);
+//        final ImmutableDirectedGraphWithScc<?> bestResponseGraph = analysis.getBestResponseGraph();
+//
+//        final Set<VotingGameState<BigFraction>> improvingStates = bestResponseGraph.getOriginalGraph().getEdges().get(state);
+//
+//        log("The following are improving moves from state: " + state);
+//        improvingStates.forEach(this::log);
     }
 
     private void test2kPlus1PoA(int k) {
@@ -482,8 +476,8 @@ public class SimpleGameAnalyzerTest {
         voters[k] = 4 * k;
         Arrays.fill(voters, k + 1, n, (4 * k) + 1);
 
-        final List<BigFraction> voterPositions = voters(voters);
-        final Set<BigFraction> candidatePositions = candidates(2 * k, 4 * k , 6 * k);
+        final LinkedHashSet<NamedRationalEntity> voterPositions = rationalUtils.voters(voters);
+        final LinkedHashSet<NamedRationalEntity> candidatePositions = rationalUtils.candidates(2 * k, 4 * k , 6 * k);
 
         final GameAnalysis<?, BigFraction> analysis = analyzeAndReport(
                 voterPositions, candidatePositions, n + " voters and 3 candidates PoA>=" + (n-1) + " example");
@@ -508,8 +502,8 @@ public class SimpleGameAnalyzerTest {
         Arrays.fill(voters, k, n, (4 * k) + 1);
         voters[n] = 5 * k + 1;
 
-        final List<BigFraction> voterPositions = voters(voters);
-        final Set<BigFraction> candidatePositions = candidates(n, 2 * n , 3 * n);
+        final LinkedHashSet<NamedRationalEntity> voterPositions = rationalUtils.voters(voters);
+        final LinkedHashSet<NamedRationalEntity> candidatePositions = rationalUtils.candidates(n, 2 * n , 3 * n);
 
         analyzeAndReport(voterPositions, candidatePositions, (n + 1) + " voters and 3 candidates PoS=? example");
 
@@ -531,7 +525,7 @@ public class SimpleGameAnalyzerTest {
         //noinspection InfiniteLoopStatement
         while (true) {
 
-            final GameAnalysis<VotingGameState<BigFraction>, BigFraction> analysis = analyzeRandomExample(5, 3, 6);
+            final GameAnalysis<?, BigFraction> analysis = analyzeRandomExample(5, 3, 6);
             final GamePrices<BigFraction> prices = analysis.getPrices();
             final Optional<BigFraction> priceOfAnarchy = prices.getPriceOfAnarchy();
 
@@ -559,69 +553,34 @@ public class SimpleGameAnalyzerTest {
         }
     }
 
-    @Test
-    @Ignore
-    public void analyzeInfiniteRandomVotersEqualCandidatesExample() throws InterruptedException {
+//    @Test
+//    @Ignore
+//    public void analyzeInfiniteRandomVotersEqualCandidatesExample() throws InterruptedException {
+//
+//        final Runnable runnable = () -> {
+//            try {
+//                analyzeRandomPosExample(7);
+//            }
+//            catch (Exception e) {
+//                log("Exception caught: " + e);
+//                System.exit(0);
+//            }
+//        };
+//
+//        //noinspection InfiniteLoopStatement
+//        while (true) {
+//            for (int i = 0; i < N_THREADS; i++) {
+//                executorService.execute(runnable);
+//            }
+//
+//            Thread.sleep(120000);
+//        }
+//
+//    }
 
-        final Runnable runnable = () -> {
-            try {
-                analyzeRandomPosExample(7);
-            }
-            catch (Exception e) {
-                log("Exception caught: " + e);
-                System.exit(0);
-            }
-        };
-
-        //noinspection InfiniteLoopStatement
-        while (true) {
-            for (int i = 0; i < N_THREADS; i++) {
-                executorService.execute(runnable);
-            }
-
-            Thread.sleep(120000);
-        }
-
-    }
-
-    private List<BigFraction> voters(Integer... positions) {
-        return voters(Arrays.asList(positions));
-    }
-
-    private List<BigFraction> voters(List<Integer> voters) {
-        return voters.stream()
-                .sorted()
-                .map(BigFraction::new)
-                .collect(Collectors.toList());
-    }
-
-    private Set<BigFraction> candidates(Integer... positions) {
-        return candidates(Arrays.asList(positions));
-    }
-
-    private Set<BigFraction> candidates(Collection<Integer> candidates) {
-        return candidates.stream()
-                .sorted()
-                .map(BigFraction::new)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-    }
-
-    private List<BigFraction> voters(BigFraction... positions) {
-        final ArrayList<BigFraction> voters = Lists.newArrayList(positions);
-        Collections.sort(voters);
-        return voters;
-    }
-
-    private Set<BigFraction> candidates(BigFraction... positions) {
-        final ArrayList<BigFraction> candidates = Lists.newArrayList(positions);
-        return candidates.stream()
-                .sorted()
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-    }
-
-    private GameAnalysis<VotingGameState<BigFraction>, BigFraction> analyzeRandomExample(int numberOfVoters, int minNumberOfCandidates, int maxNumberOfCandidates) {
-        final List<BigFraction> voterPositions = getRandomVoters(numberOfVoters);
-        final Set<BigFraction> candidatePositions = getRandomCandidates(minNumberOfCandidates, maxNumberOfCandidates);
+    private GameAnalysis<VotingGameState<NamedRationalEntity>, BigFraction> analyzeRandomExample(int numberOfVoters, int minNumberOfCandidates, int maxNumberOfCandidates) {
+        final LinkedHashSet<NamedRationalEntity> voterPositions = randomUtils.getRandomVoters(numberOfVoters);
+        final LinkedHashSet<NamedRationalEntity> candidatePositions = randomUtils.getRandomCandidates(minNumberOfCandidates, maxNumberOfCandidates);
 
         return analyzeAndReport(
                 voterPositions,
@@ -630,42 +589,21 @@ public class SimpleGameAnalyzerTest {
                 true);
     }
 
-    private void analyzeRandomPosExample(int numberOfVoters) {
-        final List<BigFraction> voterPositions = getRandomVoters(numberOfVoters);
-        analyzePoS(voterPositions);
-    }
+//    private void analyzeRandomPosExample(int numberOfVoters) {
+//        final List<BigFraction> voterPositions = randomUtils.getRandomPositions(numberOfVoters);
+//        analyzePoS(voterPositions);
+//    }
 
-    private GameAnalysis<VotingGameState<BigFraction>, BigFraction> analyzeRandomExample(int numberOfVoters, boolean quiet) {
-        final List<BigFraction> voterPositions = getRandomVoters(numberOfVoters);
-        final Set<BigFraction> candidatePositions = candidates(voterPositions);
-
-        return analyzeAndReport(
-                voterPositions,
-                candidatePositions,
-                "Random " + numberOfVoters + " voters=candidates example",
-                quiet);
-    }
-
-    private Set<BigFraction> getRandomCandidates(int min, int max) {
-        final OptionalInt numberOfCandidates = random.ints(min, max).findAny();
-        assert numberOfCandidates.isPresent();
-
-        final Set<Integer> candidates = random.ints()
-                .distinct()
-                .limit(numberOfCandidates.getAsInt())
-                .mapToObj(i -> i)
-                .collect(Collectors.toSet());
-
-        return candidates(candidates);
-    }
-
-    private List<BigFraction> getRandomVoters(int numberOfVoters) {
-        final List<Integer> voters = random.ints(numberOfVoters)
-                .mapToObj(i -> i)
-                .collect(Collectors.toList());
-
-        return voters(voters);
-    }
+//    private GameAnalysis<VotingGameState<BigFraction>, BigFraction> analyzeRandomExample(int numberOfVoters, boolean quiet) {
+//        final List<NamedRationalEntity> voterPositions = randomUtils.getRandomPositions(numberOfVoters);
+//        final Set<BigFraction> candidatePositions = rationalUtils.candidates(voterPositions);
+//
+//        return analyzeAndReport(
+//                voterPositions,
+//                candidatePositions,
+//                "Random " + numberOfVoters + " voters=candidates example",
+//                quiet);
+//    }
 
     private void assertNash(GameAnalysis<?, ?> analysis, boolean shouldExist) {
         final boolean exists = analysis.getNeCount() > 0;
@@ -678,110 +616,26 @@ public class SimpleGameAnalyzerTest {
         }
     }
 
-    private GameAnalysis<VotingGameState<BigFraction>, BigFraction> analyzeAndReport(
-            List<BigFraction> voterPositions,
-            Set<BigFraction> candidatePositions,
+    private GameAnalysis<VotingGameState<NamedRationalEntity>, BigFraction> analyzeAndReport(
+            LinkedHashSet<NamedRationalEntity> voterPositions,
+            LinkedHashSet<NamedRationalEntity> candidatePositions,
             String gameDescription) {
 
-        return analyzeAndReport(voterPositions, candidatePositions, gameDescription, false);
+        return analysisRunner.analyzeAndReport(voterPositions, candidatePositions, gameDescription, false);
     }
 
-    private GameAnalysis<VotingGameState<BigFraction>, BigFraction> analyzeAndReport(
-            List<BigFraction> voterPositions,
-            Set<BigFraction> candidatePositions,
+    private GameAnalysis<VotingGameState<NamedRationalEntity>, BigFraction> analyzeAndReport(
+            LinkedHashSet<NamedRationalEntity> voterPositions,
+            LinkedHashSet<NamedRationalEntity> candidatePositions,
             String gameDescription,
             boolean quiet) {
 
-        final VotingGame<BigFraction, BigFraction, BigFraction> game;
-        synchronized (this) {
-            game = getGame(voterPositions, candidatePositions, gameDescription, quiet);
-        }
-
-        final GameAnalyzer gameAnalyzer = StaticContext.getInstance().getGameAnalyzer();
-        final ImmutableDirectedGraphWithScc<VotingGameState<BigFraction>> brg = gameAnalyzer.calculateBestResponseGraph(game);
-
-        final GameAnalysis<VotingGameState<BigFraction>, BigFraction> gameAnalysis = gameAnalyzer.analyze(game, brg);
-
-        if (!quiet) {
-            synchronized (this) {
-                StaticContext.getInstance().getGameAnalysisReporter().printReport(game, gameAnalysis, System.out);
-
-                log("Truthful profiles:");
-                log();
-
-                final WeightedUtilityCalculator<BigFraction> randomDicCalc = getRandomDicCalculator(voterPositions, candidatePositions);
-
-                game.getTruthfulStates()
-                        .entrySet()
-                        .stream()
-                        .forEachOrdered(entry -> {
-                            log(entry.getKey());
-                            log("SW = " + NumberUtils.fractionToString(entry.getValue()));
-
-                            final SocialWelfareCalculator<VotingGameState<BigFraction>, BigFraction, BigFraction> socialWelfareCalculator = game.getSocialWelfareCalculator();
-                            final BigFraction randomDicSW = socialWelfareCalculator.calculateWelfare(
-                                    game, randomDicCalc, entry.getKey());
-
-                            log("Randomized dictatorship SW = " + NumberUtils.fractionToString(randomDicSW));
-
-                            final BigFraction socialOptimum = gameAnalysis.getPrices().getSocialOptimum();
-                            final BigFraction ratio = socialWelfareCalculator.getRatio(socialOptimum, randomDicSW);
-                            log("Randomized dictatorship ratio to optimum = " + NumberUtils.fractionToString(ratio));
-
-                            final BigFraction priceOfStability = gameAnalysis.getPrices().getPriceOfStability().orElse(BigFraction.ZERO);
-                            final BigFraction priceOfStabilityRatio = socialWelfareCalculator.getRatio(priceOfStability, ratio);
-                            log("Randomized dictatorship ratio to price of stability = " + NumberUtils.fractionToString(priceOfStabilityRatio));
-                            log();
-
-                            if (priceOfStabilityRatio.compareTo(BigFraction.ONE) > 0) {
-                                log("PoS worse than random dic!");
-                                System.exit(0);
-                            }
-                        });
-
-                log("End analysis.");
-            }
-        }
-
-        return gameAnalysis;
+        return analysisRunner.analyzeAndReport(voterPositions, candidatePositions, gameDescription, quiet);
     }
 
-    private WeightedUtilityCalculator<BigFraction> getRandomDicCalculator(List<BigFraction> voterPositions, Set<BigFraction> candidatePositions) {
-        return quadraticFactory.createWeightedCalculator(
-                            voterPositions, candidatePositions, false);
-    }
-
-    private VotingGame<BigFraction, BigFraction, BigFraction> getGame(
-            List<BigFraction> voterPositions,
-            Set<BigFraction> candidatePositions,
-            String gameDescription,
-            boolean quiet) {
-
-        if (!quiet) {
-            log("************************************************************************************************");
-            log("Analyzing " + gameDescription);
-            log("************************************************************************************************");
-
-            log("with voters:");
-            for (int i = 0; i < voterPositions.size(); i++) {
-                log("V" + (i+1) + " = " + NumberUtils.fractionToString(voterPositions.get(i)));
-            }
-
-            log();
-            log("and candidates:");
-            candidatePositions.stream()
-                    .sequential()
-                    .map(NumberUtils::fractionToString)
-                    .forEachOrdered(this::log);
-        }
-
-        return quadraticFactory.createDistanceBasedGame(
-                    voterPositions, candidatePositions, welfareCalculator);
-    }
-
-    private void log() {
-        log("");
-    }
+//    private void log() {
+//        log("");
+//    }
 
     private void log(Object message) {
         final long id = Thread.currentThread().getId();

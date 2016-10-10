@@ -26,5 +26,5 @@ public interface Game<T extends GameState<T>, U extends Number & Comparable<U>, 
 
     UtilityCalculator<T, U> getUtilityCalculator();
 
-    SocialWelfareCalculator<T, U, W> getSocialWelfareCalculator();
+    SocialWelfareCalculator<U, W> getSocialWelfareCalculator();
 }
