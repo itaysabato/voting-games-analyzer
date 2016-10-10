@@ -1,23 +1,21 @@
 package il.ac.huji.cs.itays04.utils;
 
+import il.ac.huji.cs.itays04.voting.quadratic.NamedRationalEntity;
 import org.apache.commons.math3.fraction.BigFraction;
 
-import java.util.List;
-import java.util.OptionalInt;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class RandomUtils {
     private static final Random random = new Random();
 
-    private final PositionUtils positionUtils;
+    private final RationalUtils rationalUtils;
 
-    public RandomUtils(PositionUtils positionUtils) {
-        this.positionUtils = positionUtils;
+    public RandomUtils(RationalUtils rationalUtils) {
+        this.rationalUtils = rationalUtils;
     }
 
-    public Set<BigFraction> getRandomCandidates(int min, int max) {
+    public LinkedHashSet<NamedRationalEntity> getRandomCandidates(int min, int max) {
         final int numToGenerate = randomInRange(min, max);
         return getRandomCandidates(numToGenerate);
     }
@@ -28,14 +26,14 @@ public class RandomUtils {
         return optionalInt.getAsInt();
     }
 
-    private Set<BigFraction> getRandomCandidates(int numToGenerate) {
+    private LinkedHashSet<NamedRationalEntity> getRandomCandidates(int numToGenerate) {
         final Set<Integer> candidates = random.ints()
                 .distinct()
                 .limit(numToGenerate)
                 .mapToObj(i -> i)
                 .collect(Collectors.toSet());
 
-        return positionUtils.candidates(candidates);
+        return rationalUtils.candidates(candidates);
     }
 
     public List<BigFraction> getRandomPositions(int min, int max) {
@@ -48,6 +46,10 @@ public class RandomUtils {
                 .mapToObj(i -> i)
                 .collect(Collectors.toList());
 
-        return positionUtils.positions(positions);
+        return rationalUtils.toFractions(positions);
+    }
+
+    public LinkedHashSet<NamedRationalEntity> getRandomVoters(int numberOfVoters) {
+        return rationalUtils.toVoters(getRandomPositions(numberOfVoters));
     }
 }

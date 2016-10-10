@@ -6,30 +6,27 @@ import il.ac.huji.cs.itays04.voting.VotingGame;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
 import org.apache.commons.math3.fraction.BigFraction;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class QuadraticFactory {
 
-    public WeightedUtilityCalculator<BigFraction> createWeightedCalculator(
-            List<BigFraction> voterPositions, Set<BigFraction> candidatePositions, boolean quadratic) {
+    public WeightedUtilityCalculator<NamedRationalEntity> createWeightedCalculator(
+            LinkedHashSet<NamedRationalEntity> voters, LinkedHashSet<NamedRationalEntity> candidates, boolean quadratic) {
 
-        List<Map<BigFraction, BigFraction>> individualUtilities = voterPositions.stream()
+        List<Map<NamedRationalEntity, BigFraction>> individualUtilities = voters.stream()
                 .sequential()
-                .map(p -> calculateUtilities(p, candidatePositions))
+                .map(p -> calculateUtilities(p.getPosition(), candidates))
                 .collect(Collectors.toList());
 
         return new WeightedUtilityCalculator<>(individualUtilities, quadratic);
     }
 
-    private Map<BigFraction, BigFraction> calculateUtilities(BigFraction voterPosition, Set<BigFraction> candidatePositions) {
-        final Map<BigFraction, BigFraction> utils = new LinkedHashMap<>();
+    private Map<NamedRationalEntity, BigFraction> calculateUtilities(BigFraction voterPosition, Set<NamedRationalEntity> candidates) {
+        final Map<NamedRationalEntity, BigFraction> utils = new LinkedHashMap<>();
 
-        for (BigFraction candidatePosition : candidatePositions) {
-            final BigFraction util = voterPosition.subtract(candidatePosition)
+        for (NamedRationalEntity candidatePosition : candidates) {
+            final BigFraction util = voterPosition.subtract(candidatePosition.getPosition())
                     .abs()
                     .negate();
 
@@ -40,21 +37,21 @@ public class QuadraticFactory {
     }
 
     public <W extends Number & Comparable<W>>
-    VotingGame<BigFraction, BigFraction, W> createDistanceBasedGame(
-            List<BigFraction> voterPositions,
-            Set<BigFraction> candidatePositions,
-            SocialWelfareCalculator<VotingGameState<BigFraction>, BigFraction, W> socialWelfareCalculator) {
+    VotingGame<NamedRationalEntity, BigFraction, W> createDistanceBasedGame(
+            LinkedHashSet<NamedRationalEntity> voters,
+            LinkedHashSet<NamedRationalEntity> candidates,
+            SocialWelfareCalculator<BigFraction, W> socialWelfareCalculator) {
 
-        final double numberOfStates = Math.ceil(Math.pow(candidatePositions.size(), voterPositions.size()));
+        final double numberOfStates = Math.ceil(Math.pow(candidates.size(), voters.size()));
 
-        final WeightedUtilityCalculator<BigFraction> utilityCalculator = createWeightedCalculator(
-                voterPositions, candidatePositions, true);
+        final WeightedUtilityCalculator<NamedRationalEntity> utilityCalculator = createWeightedCalculator(
+                voters, candidates, true);
         
-        final Set<List<BigFraction>> truthfulProfiles = utilityCalculator.getTruthfulProfiles();
+        final Set<List<NamedRationalEntity>> truthfulProfiles = utilityCalculator.getTruthfulProfiles();
 
-        final CachedUtilityCalculator<VotingGameState<BigFraction>, BigFraction> cachedUtilityCalculator =
+        final CachedUtilityCalculator<VotingGameState<NamedRationalEntity>, BigFraction> cachedUtilityCalculator =
                 new CachedUtilityCalculator<>(utilityCalculator, (int) numberOfStates);
 
-        return new VotingGame<>(candidatePositions, truthfulProfiles, cachedUtilityCalculator, socialWelfareCalculator);
+        return new VotingGame<>(candidates, truthfulProfiles, cachedUtilityCalculator, socialWelfareCalculator);
     }
 }

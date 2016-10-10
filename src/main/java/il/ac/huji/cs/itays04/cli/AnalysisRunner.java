@@ -8,44 +8,46 @@ import il.ac.huji.cs.itays04.utils.ImmutableDirectedGraphWithScc;
 import il.ac.huji.cs.itays04.utils.NumberUtils;
 import il.ac.huji.cs.itays04.voting.VotingGame;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
+import il.ac.huji.cs.itays04.voting.quadratic.NamedRationalEntity;
 import il.ac.huji.cs.itays04.voting.quadratic.QuadraticFactory;
 import il.ac.huji.cs.itays04.voting.quadratic.WeightedUtilityCalculator;
 import org.apache.commons.math3.fraction.BigFraction;
 
-import java.util.List;
-import java.util.Set;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.stream.Collectors;
 
 public class AnalysisRunner {
     private final QuadraticFactory quadraticFactory;
-    private final BigFractionAverageSocialWelfareCalculator<VotingGameState<BigFraction>> welfareCalculator = new BigFractionAverageSocialWelfareCalculator<>();
+    private final BigFractionAverageSocialWelfareCalculator welfareCalculator = new BigFractionAverageSocialWelfareCalculator();
 
     public AnalysisRunner(QuadraticFactory quadraticFactory) {
         this.quadraticFactory = quadraticFactory;
     }
 
-    public GameAnalysis<VotingGameState<BigFraction>, BigFraction> analyzeAndReport(
-            List<BigFraction> voterPositions,
-            Set<BigFraction> candidatePositions,
+    public GameAnalysis<VotingGameState<NamedRationalEntity>, BigFraction> analyzeAndReport(
+            LinkedHashSet<NamedRationalEntity> voterPositions,
+            LinkedHashSet<NamedRationalEntity> candidatePositions,
             String gameDescription) {
 
         return analyzeAndReport(voterPositions, candidatePositions, gameDescription, false);
     }
 
-    public GameAnalysis<VotingGameState<BigFraction>, BigFraction> analyzeAndReport(
-            List<BigFraction> voterPositions,
-            Set<BigFraction> candidatePositions,
+    public GameAnalysis<VotingGameState<NamedRationalEntity>, BigFraction> analyzeAndReport(
+            LinkedHashSet<NamedRationalEntity> voterPositions,
+            LinkedHashSet<NamedRationalEntity> candidatePositions,
             String gameDescription,
             boolean quiet) {
 
-        final VotingGame<BigFraction, BigFraction, BigFraction> game;
+        final VotingGame<NamedRationalEntity, BigFraction, BigFraction> game;
         synchronized (this) {
             game = getGame(voterPositions, candidatePositions, gameDescription, quiet);
         }
 
         final GameAnalyzer gameAnalyzer = StaticContext.getInstance().gameAnalyzer;
-        final ImmutableDirectedGraphWithScc<VotingGameState<BigFraction>> brg = gameAnalyzer.calculateBestResponseGraph(game);
+        final ImmutableDirectedGraphWithScc<VotingGameState<NamedRationalEntity>> brg = gameAnalyzer.calculateBestResponseGraph(game);
 
-        final GameAnalysis<VotingGameState<BigFraction>, BigFraction> gameAnalysis = gameAnalyzer.analyze(game, brg);
+        final GameAnalysis<VotingGameState<NamedRationalEntity>, BigFraction> gameAnalysis = gameAnalyzer.analyze(game, brg);
 
         if (!quiet) {
             synchronized (this) {
@@ -56,7 +58,7 @@ public class AnalysisRunner {
                 log("Truthful profiles:");
                 log();
 
-                final WeightedUtilityCalculator<BigFraction> randomDicCalc = getRandomDicCalculator(voterPositions, candidatePositions);
+                final WeightedUtilityCalculator<NamedRationalEntity> randomDicCalc = getRandomDicCalculator(voterPositions, candidatePositions);
 
                 game.getTruthfulStates()
                         .entrySet()
@@ -65,7 +67,7 @@ public class AnalysisRunner {
                             log(entry.getKey());
                             log("SW = " + NumberUtils.fractionToString(entry.getValue()));
 
-                            final SocialWelfareCalculator<VotingGameState<BigFraction>, BigFraction, BigFraction> socialWelfareCalculator = game.getSocialWelfareCalculator();
+                            final SocialWelfareCalculator<BigFraction, BigFraction> socialWelfareCalculator = game.getSocialWelfareCalculator();
                             final BigFraction randomDicSW = socialWelfareCalculator.calculateWelfare(
                                     game, randomDicCalc, entry.getKey());
 
@@ -93,14 +95,14 @@ public class AnalysisRunner {
         return gameAnalysis;
     }
 
-    private WeightedUtilityCalculator<BigFraction> getRandomDicCalculator(List<BigFraction> voterPositions, Set<BigFraction> candidatePositions) {
+    private WeightedUtilityCalculator<NamedRationalEntity> getRandomDicCalculator(LinkedHashSet<NamedRationalEntity> voterPositions, LinkedHashSet<NamedRationalEntity> candidatePositions) {
         return quadraticFactory.createWeightedCalculator(
                 voterPositions, candidatePositions, false);
     }
 
-    private VotingGame<BigFraction, BigFraction, BigFraction> getGame(
-            List<BigFraction> voterPositions,
-            Set<BigFraction> candidatePositions,
+    private VotingGame<NamedRationalEntity, BigFraction, BigFraction> getGame(
+            LinkedHashSet<NamedRationalEntity> voters,
+            LinkedHashSet<NamedRationalEntity> candidates,
             String gameDescription,
             boolean quiet) {
 
@@ -110,20 +112,22 @@ public class AnalysisRunner {
             log("************************************************************************************************");
 
             log("with voters:");
-            for (int i = 0; i < voterPositions.size(); i++) {
-                log("V" + (i+1) + " = " + NumberUtils.fractionToString(voterPositions.get(i)));
-            }
+            logEntities(voters);
 
             log();
             log("and candidates:");
-            candidatePositions.stream()
-                    .sequential()
-                    .map(NumberUtils::fractionToString)
-                    .forEachOrdered(this::log);
+            logEntities(candidates);
+
         }
 
         return quadraticFactory.createDistanceBasedGame(
-                voterPositions, candidatePositions, welfareCalculator);
+                voters, candidates, welfareCalculator);
+    }
+
+    private void logEntities(Collection<NamedRationalEntity> entities) {
+        log(entities.stream()
+                .map(Object::toString)
+                .collect(Collectors.joining("\n")));
     }
 
     private void log() {

@@ -4,8 +4,8 @@ import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.Set;
 
-public class BigFractionAverageSocialWelfareCalculator<T extends GameState<T>>
-        implements SocialWelfareCalculator<T, BigFraction, BigFraction> {
+public class BigFractionAverageSocialWelfareCalculator
+        implements SocialWelfareCalculator<BigFraction, BigFraction> {
 
     @Override
     public BigFraction getRatio(BigFraction w1, BigFraction w2) {
@@ -31,7 +31,7 @@ public class BigFractionAverageSocialWelfareCalculator<T extends GameState<T>>
     }
 
     @Override
-    public BigFraction calculateWelfare(Game<T, BigFraction, BigFraction> game,
+    public <T extends GameState<T>> BigFraction calculateWelfare(Game<T, BigFraction, BigFraction> game,
                                         UtilityCalculator<T, BigFraction> utilityCalculator,
                                         T gameState) {
 
@@ -46,7 +46,7 @@ public class BigFractionAverageSocialWelfareCalculator<T extends GameState<T>>
     }
 
     @Override
-    public BigFraction calculateAverageWelfare(Game<T, BigFraction, BigFraction> game,
+    public <T extends GameState<T>> BigFraction calculateAverageWelfare(Game<T, BigFraction, BigFraction> game,
                                                UtilityCalculator<T, BigFraction> utilityCalculator,
                                                Set<T> states) {
         BigFraction sum = BigFraction.ZERO;

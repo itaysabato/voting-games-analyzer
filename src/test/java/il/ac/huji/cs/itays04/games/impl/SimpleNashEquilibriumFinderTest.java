@@ -1,53 +1,45 @@
 package il.ac.huji.cs.itays04.games.impl;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import il.ac.huji.cs.itays04.cli.StaticContext;
 import il.ac.huji.cs.itays04.games.api.BigFractionAverageSocialWelfareCalculator;
+import il.ac.huji.cs.itays04.utils.RationalUtils;
 import il.ac.huji.cs.itays04.voting.VotingGame;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
+import il.ac.huji.cs.itays04.voting.quadratic.NamedRationalEntity;
 import il.ac.huji.cs.itays04.voting.quadratic.QuadraticFactory;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 
 public class SimpleNashEquilibriumFinderTest {
 
     @Test
     public void testTheorem12() {
-        final List<Integer> voterPositions = Lists.newArrayList(4, 32, 34, 48, 67);
-        final Set<Integer> candidatePositions = Sets.newHashSet(14, 32, 42, 60, 93);
-
-        final List<BigFraction> voterFractions = voterPositions.stream()
-                .map(BigFraction::new)
-                .collect(Collectors.toList());
-
-        final Set<BigFraction> candidateFractions = candidatePositions.stream()
-                .map(BigFraction::new)
-                .collect(Collectors.toSet());
+        final RationalUtils rationalUtils = StaticContext.getInstance().rationalUtils;
         final QuadraticFactory quadraticFactory = StaticContext.getInstance().quadraticFactory;
+
+        final LinkedHashSet<NamedRationalEntity> voters = rationalUtils.voters(4, 32, 34, 48, 67);
+        final LinkedHashSet<NamedRationalEntity> candidates = rationalUtils.candidates(14, 32, 42, 60, 93);
 
         final SimpleNashEquilibriumFinder neFinder = new SimpleNashEquilibriumFinder(
                 StaticContext.getInstance().simpleGameTraverser);
 
-        final BigFractionAverageSocialWelfareCalculator<VotingGameState<BigFraction>> socialWelfareCalculator =
-                new BigFractionAverageSocialWelfareCalculator<>();
+        final BigFractionAverageSocialWelfareCalculator socialWelfareCalculator =
+                new BigFractionAverageSocialWelfareCalculator();
 
-        final VotingGame<BigFraction, BigFraction, ?> game = quadraticFactory.createDistanceBasedGame(
-                voterFractions, candidateFractions, socialWelfareCalculator);
+        final VotingGame<NamedRationalEntity, BigFraction, ?> game = quadraticFactory.createDistanceBasedGame(
+                voters, candidates, socialWelfareCalculator);
 
-        final Optional<? extends VotingGameState<BigFraction>> ne = neFinder.findNE(game);
+        final Optional<? extends VotingGameState<NamedRationalEntity>> ne = neFinder.findNE(game);
 
         System.out.println("******************");
 
         if (ne.isPresent()) {
-            final VotingGameState<BigFraction> s = ne.get();
+            final VotingGameState<NamedRationalEntity> s = ne.get();
             System.out.println("NE FOUND:");
             System.out.println(s);
             System.out.println("Utilities: ");
