@@ -1,0 +1,1 @@
+java -cp .;lib\* il.ac.huji.cs.itays04.cli.Main %*
