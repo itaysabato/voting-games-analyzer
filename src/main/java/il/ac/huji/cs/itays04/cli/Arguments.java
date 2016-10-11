@@ -37,6 +37,13 @@ class Arguments {
     private List<BigFraction> candidates = new LinkedList<>();
 
     @Parameter(
+            names = {"-r", "--randomize"},
+            description = "Generate random participants. If this flag is not set, " +
+                    "voters and candidates must be explicitly specified."
+    )
+    private boolean randomize = false;
+
+    @Parameter(
             names = {"-rc", "--random-candidates"},
             description = RAND_DESC_PRE + "candidates" + RAND_DESC_POST,
             converter = IntegerConverter.class,
@@ -68,6 +75,10 @@ class Arguments {
 
     public List<BigFraction> getCandidates() {
         return candidates;
+    }
+
+    public boolean isRandomize() {
+        return randomize;
     }
 
     public List<Integer> getRandomCandidatesRange() {

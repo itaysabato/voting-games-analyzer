@@ -47,19 +47,28 @@ public class Main {
             int numberOfGames = arguments.getNumberOfGames() > 0 ? arguments.getNumberOfGames() : 1;
 
             for (int i = 1; i <= numberOfGames; i++) {
-                List<BigFraction> voters = generateMorePositions(arguments.getVoters(), arguments.getRandomVotersRange());
-                List<BigFraction> candidates = generateMorePositions(arguments.getCandidates(), arguments.getRandomCandidatesRange());
-
-                final GameAnalysis<?, BigFraction> analysis = analysisRunner.analyzeAndReport(
-                        rationalUtils.toVoters(voters),
-                        rationalUtils.toCandidates(candidates),
-                        "Quadratic Voting Game " + i);
-
-                aggregator.add(analysis);
+                nextGame(i, aggregator);
             }
 
             System.out.println(aggregator.getCurrentAggregation());
         }
+    }
+
+    private void nextGame(int gameIndex, RationalAggregator aggregator) {
+        List<BigFraction> voters = arguments.getVoters();
+        List<BigFraction> candidates = arguments.getCandidates();
+
+        if (arguments.isRandomize()) {
+            voters = generateMorePositions(arguments.getVoters(), arguments.getRandomVotersRange());
+            candidates = generateMorePositions(arguments.getCandidates(), arguments.getRandomCandidatesRange());
+        }
+
+        final GameAnalysis<?, BigFraction> analysis = analysisRunner.analyzeAndReport(
+                rationalUtils.toVoters(voters),
+                rationalUtils.toCandidates(candidates),
+                "Quadratic Voting Game " + gameIndex);
+
+        aggregator.add(analysis);
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
