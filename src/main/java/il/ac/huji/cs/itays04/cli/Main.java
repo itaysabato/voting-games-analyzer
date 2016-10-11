@@ -17,26 +17,26 @@ import java.util.List;
 public class Main {
     private static final Main main = new Main();
 
-    private final Arguments arguments = new Arguments();
-    private final JCommander jCommander = new JCommander(arguments);
     private final RandomUtils randomUtils = StaticContext.getInstance().randomUtils;
     private final RationalUtils rationalUtils = StaticContext.getInstance().rationalUtils;
     private final AnalysisRunner analysisRunner = StaticContext.getInstance().analysisRunner;
-
-    private Main() {
-        jCommander.setProgramName("vga");
-    }
 
     public static void main(String[] args) {
         main.run(args);
     }
 
     private void run(String[] args) {
+        final Arguments arguments = new Arguments();
+        final JCommander jCommander = new JCommander(arguments);
+        jCommander.setProgramName("vga");
+
         try {
             jCommander.parse(args);
+            validateVoters(arguments);
+            validateCandidates(arguments);
         }
         catch (ParameterException e) {
-            System.out.println("Invalid command line format: " + e.getMessage());
+            System.out.println("Invalid command line arguments: " + e.getMessage());
             jCommander.usage();
             return;
         }
@@ -45,18 +45,51 @@ public class Main {
             jCommander.usage();
         }
         else {
-            final RationalAggregator aggregator = new RationalAggregator();
-            int numberOfGames = arguments.getNumberOfGames() > 0 ? arguments.getNumberOfGames() : 1;
-
-            for (int i = 1; i <= numberOfGames; i++) {
-                nextGame(i, aggregator);
-            }
-
-            System.out.println(aggregator.getCurrentAggregation());
+            run(arguments);
         }
     }
 
-    private void nextGame(int gameIndex, RationalAggregator aggregator) {
+    private void validateVoters(Arguments arguments) {
+        validatePositions(arguments.getVoters(), arguments.isRandomize(), arguments.getRandomVotersRange(),
+                "Voters");
+    }
+
+    private void validatePositions(
+            List<BigFraction> positions,
+            boolean randomize,
+            List<Integer> range,
+            final String name) {
+
+        if (positions.isEmpty() &&
+                (!randomize || zeroable(range))) {
+
+            throw new ParameterException(name + " must be supplied explicitly if not randomly generated.");
+        }
+    }
+
+    private boolean zeroable(List<Integer> range) {
+        return range.isEmpty() || range.contains(0);
+    }
+
+    private void validateCandidates(Arguments arguments) {
+        if (!arguments.isNoCandidates()) {
+            validatePositions(arguments.getCandidates(), arguments.isRandomize(), arguments.getRandomCandidatesRange(),
+                    "Candidates");
+        }
+    }
+
+    private void run(Arguments arguments) {
+        final RationalAggregator aggregator = new RationalAggregator();
+        int numberOfGames = arguments.getNumberOfGames() > 0 ? arguments.getNumberOfGames() : 1;
+
+        for (int i = 1; i <= numberOfGames; i++) {
+            nextGame(i, arguments, aggregator);
+        }
+
+        System.out.println(aggregator.getCurrentAggregation());
+    }
+
+    private void nextGame(int gameIndex, Arguments arguments, RationalAggregator aggregator) {
         List<BigFraction> voterPositions = arguments.getVoters();
 
         final boolean noCandidates = arguments.isNoCandidates();
