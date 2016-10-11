@@ -66,7 +66,8 @@ public class Main {
         final GameAnalysis<?, BigFraction> analysis = analysisRunner.analyzeAndReport(
                 rationalUtils.toVoters(voters),
                 rationalUtils.toCandidates(candidates),
-                "Quadratic Voting Game " + gameIndex);
+                "Quadratic Voting Game " + gameIndex,
+                arguments.isQuiet());
 
         aggregator.add(analysis);
     }

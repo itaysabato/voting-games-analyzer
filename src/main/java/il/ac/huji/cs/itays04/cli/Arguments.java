@@ -17,10 +17,16 @@ class Arguments {
 
     @Parameter(
             names = {"-h", "--help"},
-            description = "Display help message",
+            description = "Display help message.",
             help = true
     )
     private boolean help = false;
+
+    @Parameter(
+            names = {"-q", "--quiet"},
+            description = "Do not output individual game analyses, only final aggregation."
+    )
+    private boolean quiet = false;
 
     @Parameter(
             names = {"-v", "--voters"},
@@ -67,6 +73,10 @@ class Arguments {
 
     public boolean isHelp() {
         return help;
+    }
+
+    public boolean isQuiet() {
+        return quiet;
     }
 
     public List<BigFraction> getVoters() {
