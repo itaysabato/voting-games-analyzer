@@ -2,11 +2,14 @@ package il.ac.huji.cs.itays04.cli;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
-import il.ac.huji.cs.itays04.utils.RandomUtils;
-import il.ac.huji.cs.itays04.utils.RationalUtils;
+import il.ac.huji.cs.itays04.games.api.GameAnalysis;
+import il.ac.huji.cs.itays04.rational.RandomUtils;
+import il.ac.huji.cs.itays04.rational.RationalAggregator;
+import il.ac.huji.cs.itays04.rational.RationalUtils;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Main {
@@ -40,24 +43,37 @@ public class Main {
             jCommander.usage();
         }
         else {
-            generateMorePositions(arguments.getVoters(), arguments.getRandomVotersRange());
-            generateMorePositions(arguments.getCandidates(), arguments.getRandomCandidatesRange());
+            final RationalAggregator aggregator = new RationalAggregator();
+            int numberOfGames = arguments.getNumberOfGames() > 0 ? arguments.getNumberOfGames() : 1;
 
-            analysisRunner.analyzeAndReport(
-                    rationalUtils.toVoters(arguments.getVoters()),
-                    rationalUtils.toCandidates(arguments.getCandidates()),
-                    "Quadratic Voting Game");
+            for (int i = 1; i <= numberOfGames; i++) {
+                List<BigFraction> voters = generateMorePositions(arguments.getVoters(), arguments.getRandomVotersRange());
+                List<BigFraction> candidates = generateMorePositions(arguments.getCandidates(), arguments.getRandomCandidatesRange());
+
+                final GameAnalysis<?, BigFraction> analysis = analysisRunner.analyzeAndReport(
+                        rationalUtils.toVoters(voters),
+                        rationalUtils.toCandidates(candidates),
+                        "Quadratic Voting Game " + i);
+
+                aggregator.add(analysis);
+            }
+
+            System.out.println(aggregator.getCurrentAggregation());
         }
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
-    private void generateMorePositions(List<BigFraction> positions, List<Integer> amountRange) {
+    private LinkedList<BigFraction> generateMorePositions(List<BigFraction> positions, List<Integer> amountRange) {
+        final LinkedList<BigFraction> newPositions = new LinkedList<>(positions);
+
         if (!amountRange.isEmpty()) {
             int min = amountRange.stream().min(Comparator.naturalOrder()).get();
             int max = 1 + amountRange.stream().max(Comparator.naturalOrder()).get();
 
             final List<BigFraction> randomPositions = randomUtils.getRandomPositions(min, max);
-            positions.addAll(randomPositions);
+            newPositions.addAll(randomPositions);
         }
+
+        return newPositions;
     }
 }

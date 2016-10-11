@@ -2,10 +2,9 @@ package il.ac.huji.cs.itays04.cli;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.IntegerConverter;
-import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.math3.fraction.BigFraction;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -43,7 +42,7 @@ class Arguments {
             converter = IntegerConverter.class,
             validateValueWith = NonNegativeRangeValidator.class
     )
-    private List<Integer> randomCandidatesRange = Collections.emptyList();
+    private List<Integer> randomCandidatesRange = ImmutableList.of(2,5);
 
     @Parameter(
             names = {"-rv", "--random-voters"},
@@ -51,7 +50,13 @@ class Arguments {
             converter = IntegerConverter.class,
             validateValueWith = NonNegativeRangeValidator.class
     )
-    private List<Integer> randomVotersRange = Collections.emptyList();
+    private List<Integer> randomVotersRange = ImmutableList.of(2,5);
+
+    @Parameter(
+            names = {"-n", "--number-games"},
+            description = "The number of games to analyze."
+    )
+    private int numberOfGames = 1;
 
     public boolean isHelp() {
         return help;
@@ -73,12 +78,7 @@ class Arguments {
         return randomVotersRange;
     }
 
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("help", help)
-                .add("voters", voters)
-                .add("candidates", candidates)
-                .toString();
+    public int getNumberOfGames() {
+        return numberOfGames;
     }
 }

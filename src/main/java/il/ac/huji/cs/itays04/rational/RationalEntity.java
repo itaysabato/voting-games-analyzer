@@ -1,7 +1,6 @@
-package il.ac.huji.cs.itays04.voting.quadratic;
+package il.ac.huji.cs.itays04.rational;
 
 import com.google.common.base.Preconditions;
-import il.ac.huji.cs.itays04.utils.NumberUtils;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.Objects;

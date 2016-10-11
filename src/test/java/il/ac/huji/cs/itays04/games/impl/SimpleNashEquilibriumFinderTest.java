@@ -1,11 +1,11 @@
 package il.ac.huji.cs.itays04.games.impl;
 
 import il.ac.huji.cs.itays04.cli.StaticContext;
-import il.ac.huji.cs.itays04.games.api.BigFractionAverageSocialWelfareCalculator;
-import il.ac.huji.cs.itays04.utils.RationalUtils;
+import il.ac.huji.cs.itays04.rational.BigFractionAverageSocialWelfareCalculator;
+import il.ac.huji.cs.itays04.rational.NamedRationalEntity;
+import il.ac.huji.cs.itays04.rational.RationalUtils;
 import il.ac.huji.cs.itays04.voting.VotingGame;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
-import il.ac.huji.cs.itays04.voting.quadratic.NamedRationalEntity;
 import il.ac.huji.cs.itays04.voting.quadratic.QuadraticFactory;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.junit.Assert;

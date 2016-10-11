@@ -1,4 +1,4 @@
-package il.ac.huji.cs.itays04.voting.quadratic;
+package il.ac.huji.cs.itays04.rational;
 
 import org.apache.commons.math3.fraction.BigFraction;
 

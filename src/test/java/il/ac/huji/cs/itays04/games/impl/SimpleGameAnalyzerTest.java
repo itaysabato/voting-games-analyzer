@@ -4,11 +4,11 @@ import il.ac.huji.cs.itays04.cli.AnalysisRunner;
 import il.ac.huji.cs.itays04.cli.StaticContext;
 import il.ac.huji.cs.itays04.games.api.GameAnalysis;
 import il.ac.huji.cs.itays04.games.api.GamePrices;
-import il.ac.huji.cs.itays04.utils.NumberUtils;
-import il.ac.huji.cs.itays04.utils.RandomUtils;
-import il.ac.huji.cs.itays04.utils.RationalUtils;
+import il.ac.huji.cs.itays04.rational.NamedRationalEntity;
+import il.ac.huji.cs.itays04.rational.NumberUtils;
+import il.ac.huji.cs.itays04.rational.RandomUtils;
+import il.ac.huji.cs.itays04.rational.RationalUtils;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
-import il.ac.huji.cs.itays04.voting.quadratic.NamedRationalEntity;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -106,6 +106,14 @@ public class SimpleGameAnalyzerTest {
 //    public void withSw(BigFraction sw) {
 //        log("With SW = " + NumberUtils.fractionToString(sw));
 //    }
+
+    @Test
+    public void analyzePoSWorseThanDicSmoothExample() {
+        final LinkedHashSet<NamedRationalEntity> voterPositions = rationalUtils.voters(4, 4, 10);
+        final LinkedHashSet<NamedRationalEntity> candidatePositions = rationalUtils.candidates(0, 10);
+
+        analyzeAndReport(voterPositions, candidatePositions, "Worse than DIC SMOOTH example");
+    }
 
     @Test
     public void analyzeTheorem5Example() {

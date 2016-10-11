@@ -1,14 +1,14 @@
 package il.ac.huji.cs.itays04.cli;
 
-import il.ac.huji.cs.itays04.games.api.BigFractionAverageSocialWelfareCalculator;
 import il.ac.huji.cs.itays04.games.api.GameAnalysis;
 import il.ac.huji.cs.itays04.games.api.GameAnalyzer;
 import il.ac.huji.cs.itays04.games.api.SocialWelfareCalculator;
+import il.ac.huji.cs.itays04.rational.BigFractionAverageSocialWelfareCalculator;
+import il.ac.huji.cs.itays04.rational.NamedRationalEntity;
+import il.ac.huji.cs.itays04.rational.NumberUtils;
 import il.ac.huji.cs.itays04.utils.ImmutableDirectedGraphWithScc;
-import il.ac.huji.cs.itays04.utils.NumberUtils;
 import il.ac.huji.cs.itays04.voting.VotingGame;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
-import il.ac.huji.cs.itays04.voting.quadratic.NamedRationalEntity;
 import il.ac.huji.cs.itays04.voting.quadratic.QuadraticFactory;
 import il.ac.huji.cs.itays04.voting.quadratic.WeightedUtilityCalculator;
 import org.apache.commons.math3.fraction.BigFraction;
@@ -84,11 +84,10 @@ public class AnalysisRunner {
 
                             if (priceOfStabilityRatio.compareTo(BigFraction.ONE) > 0) {
                                 log("PoS worse than random dic!");
-                                System.exit(0);
                             }
                         });
 
-                log("End analysis.");
+                log("End Analysis of " + gameDescription + ".");
             }
         }
 

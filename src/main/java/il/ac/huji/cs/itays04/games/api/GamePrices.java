@@ -1,6 +1,6 @@
 package il.ac.huji.cs.itays04.games.api;
 
-import com.google.common.base.MoreObjects;
+import il.ac.huji.cs.itays04.rational.NumberUtils;
 
 import java.util.Optional;
 
@@ -35,11 +35,11 @@ public class GamePrices<W extends Number & Comparable<W>> {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("socialOptimum", socialOptimum)
-                .add("priceOfSinking", priceOfSinking)
-                .add("priceOfAnarchy", priceOfAnarchy)
-                .add("priceOfStability", priceOfStability)
-                .toString();
+        return '{' +
+                "\n    \"socialOptimum\" : " + NumberUtils.format(socialOptimum.doubleValue()) +
+                ",\n    \"priceOfSinking\" : " + NumberUtils.format(priceOfSinking.doubleValue()) +
+                (priceOfAnarchy.isPresent() ? ",\n    \"priceOfAnarchy\" : " + NumberUtils.format(priceOfAnarchy.get().doubleValue()) : "") +
+                (priceOfStability.isPresent() ? ",\n    \"priceOfStability\" : " + NumberUtils.format(priceOfStability.get().doubleValue()) : "") +
+                "\n}";
     }
 }

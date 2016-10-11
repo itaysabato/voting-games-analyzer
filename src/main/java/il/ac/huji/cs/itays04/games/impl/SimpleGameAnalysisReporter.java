@@ -1,8 +1,8 @@
 package il.ac.huji.cs.itays04.games.impl;
 
 import il.ac.huji.cs.itays04.games.api.*;
+import il.ac.huji.cs.itays04.rational.NumberUtils;
 import il.ac.huji.cs.itays04.utils.ImmutableDirectedGraphWithScc;
-import il.ac.huji.cs.itays04.utils.NumberUtils;
 import il.ac.huji.cs.itays04.utils.StronglyConnectedComponent;
 
 import java.io.PrintStream;
@@ -43,7 +43,7 @@ public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
         printStream.print("Price of Anarchy: ");
 
         if (priceOfAnarchy.isPresent()) {
-            printStream.println(priceOfAnarchy.get() + " (" + priceOfAnarchy.get().doubleValue() + ")");
+            printStream.println(NumberUtils.format(priceOfAnarchy.get()));
         }
         else {
             printStream.println(N_A);
@@ -55,7 +55,7 @@ public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
         printStream.print("Price of Stability: ");
 
         if (priceOfStability.isPresent()) {
-            printStream.println(priceOfStability.get() + " (" + priceOfStability.get().doubleValue() + ")");
+            printStream.println(NumberUtils.format(priceOfStability.get()));
         }
         else {
             printStream.println(N_A);
@@ -146,6 +146,6 @@ public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
     }
 
     private void printWelfareWithLabel(PrintStream printStream, String label, Number value) {
-        printStream.println(label + ": " + NumberUtils.numberToString(value));
+        printStream.println(label + ": " + NumberUtils.format(value));
     }
 }

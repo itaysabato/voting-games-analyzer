@@ -1,6 +1,5 @@
-package il.ac.huji.cs.itays04.utils;
+package il.ac.huji.cs.itays04.rational;
 
-import il.ac.huji.cs.itays04.voting.quadratic.NamedRationalEntity;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.*;

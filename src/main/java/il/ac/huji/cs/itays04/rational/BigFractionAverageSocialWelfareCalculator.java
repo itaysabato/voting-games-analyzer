@@ -1,5 +1,9 @@
-package il.ac.huji.cs.itays04.games.api;
+package il.ac.huji.cs.itays04.rational;
 
+import il.ac.huji.cs.itays04.games.api.Game;
+import il.ac.huji.cs.itays04.games.api.GameState;
+import il.ac.huji.cs.itays04.games.api.SocialWelfareCalculator;
+import il.ac.huji.cs.itays04.games.api.UtilityCalculator;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.Set;
@@ -32,8 +36,8 @@ public class BigFractionAverageSocialWelfareCalculator
 
     @Override
     public <T extends GameState<T>> BigFraction calculateWelfare(Game<T, BigFraction, BigFraction> game,
-                                        UtilityCalculator<T, BigFraction> utilityCalculator,
-                                        T gameState) {
+                                                                 UtilityCalculator<T, BigFraction> utilityCalculator,
+                                                                 T gameState) {
 
         BigFraction sum = BigFraction.ZERO;
 

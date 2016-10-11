@@ -2,6 +2,7 @@ package il.ac.huji.cs.itays04.voting.quadratic;
 
 import il.ac.huji.cs.itays04.games.api.SocialWelfareCalculator;
 import il.ac.huji.cs.itays04.games.impl.CachedUtilityCalculator;
+import il.ac.huji.cs.itays04.rational.NamedRationalEntity;
 import il.ac.huji.cs.itays04.voting.VotingGame;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
 import org.apache.commons.math3.fraction.BigFraction;
