@@ -36,6 +36,13 @@ class Arguments {
     private List<BigFraction> voters = new LinkedList<>();
 
     @Parameter(
+            names = {"-nc", "--no-candidates"},
+            description = "Use the voters as the only candidates. " +
+                    "Other options regarding candidates are ignored if this flag is set."
+    )
+    private boolean noCandidates = false;
+
+    @Parameter(
             names = {"-c", "--candidates"},
             description = POS_DESC_PRE + "candidate" + POS_DESC_POST,
             converter = BigFractionConverter.class
@@ -81,6 +88,10 @@ class Arguments {
 
     public List<BigFraction> getVoters() {
         return voters;
+    }
+
+    public boolean isNoCandidates() {
+        return noCandidates;
     }
 
     public List<BigFraction> getCandidates() {

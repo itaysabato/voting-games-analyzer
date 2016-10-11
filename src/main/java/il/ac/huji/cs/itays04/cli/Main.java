@@ -3,12 +3,14 @@ package il.ac.huji.cs.itays04.cli;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import il.ac.huji.cs.itays04.games.api.GameAnalysis;
+import il.ac.huji.cs.itays04.rational.NamedRationalEntity;
 import il.ac.huji.cs.itays04.rational.RandomUtils;
 import il.ac.huji.cs.itays04.rational.RationalAggregator;
 import il.ac.huji.cs.itays04.rational.RationalUtils;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -55,17 +57,26 @@ public class Main {
     }
 
     private void nextGame(int gameIndex, RationalAggregator aggregator) {
-        List<BigFraction> voters = arguments.getVoters();
-        List<BigFraction> candidates = arguments.getCandidates();
+        List<BigFraction> voterPositions = arguments.getVoters();
+
+        final boolean noCandidates = arguments.isNoCandidates();
+        List<BigFraction> candidatePositions = arguments.getCandidates();
 
         if (arguments.isRandomize()) {
-            voters = generateMorePositions(arguments.getVoters(), arguments.getRandomVotersRange());
-            candidates = generateMorePositions(arguments.getCandidates(), arguments.getRandomCandidatesRange());
+            voterPositions = generateMorePositions(arguments.getVoters(), arguments.getRandomVotersRange());
+
+            if (!noCandidates) {
+                candidatePositions = generateMorePositions(arguments.getCandidates(), arguments.getRandomCandidatesRange());
+            }
         }
 
+        final LinkedHashSet<NamedRationalEntity> voters = rationalUtils.toVoters(voterPositions);
+        final LinkedHashSet<NamedRationalEntity> candidates = noCandidates ?
+                voters : rationalUtils.toCandidates(candidatePositions);
+
         final GameAnalysis<?, BigFraction> analysis = analysisRunner.analyzeAndReport(
-                rationalUtils.toVoters(voters),
-                rationalUtils.toCandidates(candidates),
+                voters,
+                candidates,
                 "Quadratic Voting Game " + gameIndex,
                 arguments.isQuiet());
 
