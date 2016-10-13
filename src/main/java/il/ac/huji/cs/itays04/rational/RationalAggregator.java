@@ -2,6 +2,7 @@ package il.ac.huji.cs.itays04.rational;
 
 import il.ac.huji.cs.itays04.games.api.GameAnalysis;
 import il.ac.huji.cs.itays04.games.api.GamePrices;
+import il.ac.huji.cs.itays04.voting.quadratic.AnalysisWithRandomDicComparison;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.Optional;
@@ -16,33 +17,44 @@ public class RationalAggregator {
                     BigFraction.ZERO,
                     BigFraction.ZERO,
                     Optional.empty(),
-                    Optional.empty())
-    );
+                    Optional.empty()),
+            Optional.empty());
 
     public RationalAnalysisAggregation getCurrentAggregation() {
         return currentAggregation;
     }
 
-    public synchronized void add(GameAnalysis<?, BigFraction> gameAnalysis) {
+    public synchronized void add(AnalysisWithRandomDicComparison<?, BigFraction> gameAnalysis) {
         currentAggregation = add(currentAggregation, gameAnalysis);
     }
 
-    private RationalAnalysisAggregation add(RationalAnalysisAggregation aggregation, GameAnalysis<?, BigFraction> gameAnalysis) {
+    private RationalAnalysisAggregation add(RationalAnalysisAggregation aggregation, AnalysisWithRandomDicComparison<?, BigFraction> analysisWithComparison) {
         final int numberOfGames = aggregation.getNumberOfGames();
+        GameAnalysis<?, BigFraction> gameAnalysis = analysisWithComparison.getGameAnalysis();
 
         return new RationalAnalysisAggregation(
                 numberOfGames + 1,
                 avg(numberOfGames, aggregation.getAvgNeCount(), gameAnalysis.getNeCount()),
                 avg(numberOfGames, aggregation.getFractionWithNe(), gameAnalysis.getNeCount() > 0 ? 1 : 0),
                 avg(numberOfGames, aggregation.getConvergingFraction(), gameAnalysis.getNumberOfNonSingularSccs() == 0 ? 1 : 0),
-                avg(aggregation, gameAnalysis.getPrices())
-        );
+                avg(aggregation, gameAnalysis.getPrices()),
+                avgBetterThanDic(aggregation, analysisWithComparison));
+    }
+
+    private Optional<BigFraction> avgBetterThanDic(RationalAnalysisAggregation aggregation, AnalysisWithRandomDicComparison<?, BigFraction> analysisWithComparison) {
+        final Optional<BigFraction> randomDicPoSRatio = analysisWithComparison.getRandomDicPoSRatio();
+
+        Optional<BigFraction> newValue = randomDicPoSRatio.isPresent() ?
+                Optional.of(randomDicPoSRatio.get().compareTo(BigFraction.ONE) <= 0 ? BigFraction.ONE : BigFraction.ZERO)
+                : Optional.empty();
+
+        return avg(withNeCount(aggregation), aggregation.getBetterPoSThanDicFraction(), newValue);
     }
 
     private GamePrices<BigFraction> avg(RationalAnalysisAggregation aggregation, GamePrices<BigFraction> newValue) {
         final int numberOfGames = aggregation.getNumberOfGames();
         final GamePrices<BigFraction> currentAvg = aggregation.getAvgPrices();
-        final BigFraction numberOfGamesWithNe = aggregation.getFractionWithNe().multiply(numberOfGames);
+        final BigFraction numberOfGamesWithNe = withNeCount(aggregation);
 
         return new GamePrices<>(
                 avg(numberOfGames, currentAvg.getSocialOptimum(), newValue.getSocialOptimum()),
@@ -50,6 +62,11 @@ public class RationalAggregator {
                 avg(numberOfGamesWithNe, currentAvg.getPriceOfAnarchy(), newValue.getPriceOfAnarchy()),
                 avg(numberOfGamesWithNe, currentAvg.getPriceOfStability(), newValue.getPriceOfStability())
         );
+    }
+
+    private BigFraction withNeCount(RationalAnalysisAggregation aggregation) {
+        final int nGames = aggregation.getNumberOfGames();
+        return aggregation.getFractionWithNe().multiply(nGames);
     }
 
     private Optional<BigFraction> avg(BigFraction currentWeight, Optional<BigFraction> currentValue, Optional<BigFraction> newValue) {

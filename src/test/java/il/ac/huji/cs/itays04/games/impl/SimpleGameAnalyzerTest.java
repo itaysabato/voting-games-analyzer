@@ -1,6 +1,6 @@
 package il.ac.huji.cs.itays04.games.impl;
 
-import il.ac.huji.cs.itays04.cli.AnalysisRunner;
+import il.ac.huji.cs.itays04.cli.QuadraticAnalysisRunner;
 import il.ac.huji.cs.itays04.cli.StaticContext;
 import il.ac.huji.cs.itays04.games.api.GameAnalysis;
 import il.ac.huji.cs.itays04.games.api.GamePrices;
@@ -24,7 +24,7 @@ public class SimpleGameAnalyzerTest {
 //    private final ExecutorService executorService = Executors.newFixedThreadPool(N_THREADS);
     private final RandomUtils randomUtils = StaticContext.getInstance().randomUtils;
     private final RationalUtils rationalUtils = StaticContext.getInstance().rationalUtils;
-    private final AnalysisRunner analysisRunner = StaticContext.getInstance().analysisRunner;
+    private final QuadraticAnalysisRunner quadraticAnalysisRunner = StaticContext.getInstance().quadraticAnalysisRunner;
 
 //    @Test
 //    @Ignore
@@ -629,7 +629,7 @@ public class SimpleGameAnalyzerTest {
             LinkedHashSet<NamedRationalEntity> candidatePositions,
             String gameDescription) {
 
-        return analysisRunner.analyzeAndReport(voterPositions, candidatePositions, gameDescription, false);
+        return analyzeAndReport(voterPositions, candidatePositions, gameDescription, false);
     }
 
     private GameAnalysis<VotingGameState<NamedRationalEntity>, BigFraction> analyzeAndReport(
@@ -638,7 +638,8 @@ public class SimpleGameAnalyzerTest {
             String gameDescription,
             boolean quiet) {
 
-        return analysisRunner.analyzeAndReport(voterPositions, candidatePositions, gameDescription, quiet);
+        return quadraticAnalysisRunner.analyzeAndReport(voterPositions, candidatePositions, gameDescription, quiet)
+                .getGameAnalysis();
     }
 
 //    private void log() {

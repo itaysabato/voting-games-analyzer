@@ -17,7 +17,7 @@ public class StaticContext {
     public final RationalUtils rationalUtils = new RationalUtils();
     public final RandomUtils randomUtils = new RandomUtils(rationalUtils);
     public final QuadraticFactory quadraticFactory = new QuadraticFactory();
-    public final AnalysisRunner analysisRunner = new AnalysisRunner(quadraticFactory);
+    public final QuadraticAnalysisRunner quadraticAnalysisRunner = new QuadraticAnalysisRunner(quadraticFactory);
     public final SimpleGameTraverser simpleGameTraverser = new SimpleGameTraverser();
     public final GameAnalysisReporter gameAnalysisReporter = new SimpleGameAnalysisReporter();
     public final DirectedGraphFactory directedGraphFactory = new PrincetonDirectedGraphFactory();

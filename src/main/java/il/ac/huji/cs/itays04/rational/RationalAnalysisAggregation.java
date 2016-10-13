@@ -11,19 +11,22 @@ public class RationalAnalysisAggregation {
     private final BigFraction fractionWithNe;
     private final BigFraction convergingFraction;
     private final GamePrices<BigFraction> avgPrices;
+    private final Optional<BigFraction> betterPoSThanDicFraction;
 
     public RationalAnalysisAggregation(
             int numberOfGames,
             BigFraction avgNeCount,
             BigFraction fractionWithNe,
             BigFraction convergingFraction,
-            GamePrices<BigFraction> avgPrices) {
+            GamePrices<BigFraction> avgPrices,
+            Optional<BigFraction> betterPoSThanDicFraction) {
 
         this.numberOfGames = numberOfGames;
         this.avgNeCount = avgNeCount;
         this.fractionWithNe = fractionWithNe;
         this.convergingFraction = convergingFraction;
         this.avgPrices = avgPrices;
+        this.betterPoSThanDicFraction = betterPoSThanDicFraction;
     }
 
     public int getNumberOfGames() {
@@ -46,6 +49,10 @@ public class RationalAnalysisAggregation {
         return avgPrices;
     }
 
+    public Optional<BigFraction> getBetterPoSThanDicFraction() {
+        return betterPoSThanDicFraction;
+    }
+
     @Override
     public String toString() {
         final Optional<BigFraction> priceOfAnarchy = avgPrices.getPriceOfAnarchy();
@@ -62,6 +69,10 @@ public class RationalAnalysisAggregation {
                 (priceOfAnarchy.isPresent() ? ",\n        \"priceOfAnarchy\" : " + NumberUtils.format(priceOfAnarchy.get().doubleValue()) : "") +
                 (priceOfStability.isPresent() ? ",\n        \"priceOfStability\" : " + NumberUtils.format(priceOfStability.get().doubleValue()) : "") +
                 "\n    }" +
+                (betterPoSThanDicFraction.isPresent() ?
+                        ",\n    \"betterPoSThanRandomizedDictatorshipPercentage\" : " +
+                                NumberUtils.format(betterPoSThanDicFraction.get().percentageValue())
+                        : "") +
                 "\n}";
     }
 }

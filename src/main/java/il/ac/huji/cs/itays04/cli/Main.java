@@ -2,11 +2,11 @@ package il.ac.huji.cs.itays04.cli;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
-import il.ac.huji.cs.itays04.games.api.GameAnalysis;
 import il.ac.huji.cs.itays04.rational.NamedRationalEntity;
 import il.ac.huji.cs.itays04.rational.RandomUtils;
 import il.ac.huji.cs.itays04.rational.RationalAggregator;
 import il.ac.huji.cs.itays04.rational.RationalUtils;
+import il.ac.huji.cs.itays04.voting.quadratic.AnalysisWithRandomDicComparison;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.Comparator;
@@ -19,7 +19,7 @@ public class Main {
 
     private final RandomUtils randomUtils = StaticContext.getInstance().randomUtils;
     private final RationalUtils rationalUtils = StaticContext.getInstance().rationalUtils;
-    private final AnalysisRunner analysisRunner = StaticContext.getInstance().analysisRunner;
+    private final QuadraticAnalysisRunner quadraticAnalysisRunner = StaticContext.getInstance().quadraticAnalysisRunner;
 
     public static void main(String[] args) {
         main.run(args);
@@ -107,7 +107,7 @@ public class Main {
         final LinkedHashSet<NamedRationalEntity> candidates = noCandidates ?
                 voters : rationalUtils.toCandidates(candidatePositions);
 
-        final GameAnalysis<?, BigFraction> analysis = analysisRunner.analyzeAndReport(
+        final AnalysisWithRandomDicComparison<?, BigFraction> analysis = quadraticAnalysisRunner.analyzeAndReport(
                 voters,
                 candidates,
                 "Quadratic Voting Game " + gameIndex,

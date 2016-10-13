@@ -9,23 +9,26 @@ import il.ac.huji.cs.itays04.rational.NumberUtils;
 import il.ac.huji.cs.itays04.utils.ImmutableDirectedGraphWithScc;
 import il.ac.huji.cs.itays04.voting.VotingGame;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
+import il.ac.huji.cs.itays04.voting.quadratic.AnalysisWithRandomDicComparison;
 import il.ac.huji.cs.itays04.voting.quadratic.QuadraticFactory;
 import il.ac.huji.cs.itays04.voting.quadratic.WeightedUtilityCalculator;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class AnalysisRunner {
+public class QuadraticAnalysisRunner {
     private final QuadraticFactory quadraticFactory;
     private final BigFractionAverageSocialWelfareCalculator welfareCalculator = new BigFractionAverageSocialWelfareCalculator();
 
-    public AnalysisRunner(QuadraticFactory quadraticFactory) {
+    public QuadraticAnalysisRunner(QuadraticFactory quadraticFactory) {
         this.quadraticFactory = quadraticFactory;
     }
 
-    public GameAnalysis<VotingGameState<NamedRationalEntity>, BigFraction> analyzeAndReport(
+    public AnalysisWithRandomDicComparison<VotingGameState<NamedRationalEntity>, BigFraction> analyzeAndReport(
             LinkedHashSet<NamedRationalEntity> voterPositions,
             LinkedHashSet<NamedRationalEntity> candidatePositions,
             String gameDescription,
@@ -40,50 +43,66 @@ public class AnalysisRunner {
         final ImmutableDirectedGraphWithScc<VotingGameState<NamedRationalEntity>> brg = gameAnalyzer.calculateBestResponseGraph(game);
 
         final GameAnalysis<VotingGameState<NamedRationalEntity>, BigFraction> gameAnalysis = gameAnalyzer.analyze(game, brg);
+        Optional<BigFraction> randomDicPoSRatio = Optional.empty();
 
-        if (!quiet) {
-            synchronized (this) {
+        synchronized (this) {
+            if (!quiet) {
                 StaticContext.getInstance()
                         .gameAnalysisReporter
                         .printReport(game, gameAnalysis, System.out);
 
                 log("Truthful profiles:");
                 log();
+            }
 
-                final WeightedUtilityCalculator<NamedRationalEntity> randomDicCalc = getRandomDicCalculator(voterPositions, candidatePositions);
+            final WeightedUtilityCalculator<NamedRationalEntity> randomDicCalc = getRandomDicCalculator(voterPositions, candidatePositions);
 
-                game.getTruthfulStates()
-                        .entrySet()
-                        .stream()
-                        .forEachOrdered(entry -> {
-                            log(entry.getKey());
-                            log("SW = " + NumberUtils.fractionToString(entry.getValue()));
+            for (Map.Entry<VotingGameState<NamedRationalEntity>, BigFraction> entry : game.getTruthfulStates()
+                    .entrySet()) {
 
-                            final SocialWelfareCalculator<BigFraction, BigFraction> socialWelfareCalculator = game.getSocialWelfareCalculator();
-                            final BigFraction randomDicSW = socialWelfareCalculator.calculateWelfare(
-                                    game, randomDicCalc, entry.getKey());
+                if (!quiet) {
+                    log(entry.getKey());
+                    log("SW = " + NumberUtils.fractionToString(entry.getValue()));
+                }
 
-                            log("Randomized dictatorship SW = " + NumberUtils.fractionToString(randomDicSW));
+                final SocialWelfareCalculator<BigFraction, BigFraction> socialWelfareCalculator = game.getSocialWelfareCalculator();
+                final BigFraction randomDicSW = socialWelfareCalculator.calculateWelfare(
+                        game, randomDicCalc, entry.getKey());
 
-                            final BigFraction socialOptimum = gameAnalysis.getPrices().getSocialOptimum();
-                            final BigFraction ratio = socialWelfareCalculator.getRatio(socialOptimum, randomDicSW);
-                            log("Randomized dictatorship ratio to optimum = " + NumberUtils.fractionToString(ratio));
+                if (!quiet) {
+                    log("Randomized dictatorship SW = " + NumberUtils.fractionToString(randomDicSW));
+                }
+                final BigFraction socialOptimum = gameAnalysis.getPrices().getSocialOptimum();
+                final BigFraction ratio = socialWelfareCalculator.getRatio(socialOptimum, randomDicSW);
 
-                            final BigFraction priceOfStability = gameAnalysis.getPrices().getPriceOfStability().orElse(BigFraction.ZERO);
-                            final BigFraction priceOfStabilityRatio = socialWelfareCalculator.getRatio(priceOfStability, ratio);
-                            log("Randomized dictatorship ratio to price of stability = " + NumberUtils.fractionToString(priceOfStabilityRatio));
-                            log();
+                if (!quiet) {
+                    log("Randomized dictatorship ratio to optimum = " + NumberUtils.fractionToString(ratio));
+                }
+                final BigFraction priceOfStability = gameAnalysis.getPrices().getPriceOfStability().orElse(BigFraction.ZERO);
+                final BigFraction priceOfStabilityRatio = socialWelfareCalculator.getRatio(priceOfStability, ratio);
 
-                            if (priceOfStabilityRatio.compareTo(BigFraction.ONE) > 0) {
-                                log("PoS worse than random dic!");
-                            }
-                        });
+                if (!quiet) {
+                    log("Randomized dictatorship ratio to price of stability = " + NumberUtils.fractionToString(priceOfStabilityRatio));
+                    log();
+                }
 
+                if (!quiet && priceOfStabilityRatio.compareTo(BigFraction.ONE) > 0) {
+                    log("PoS worse than random dic!");
+                }
+
+                if (!randomDicPoSRatio.isPresent()
+                        || randomDicPoSRatio.get().compareTo(priceOfStabilityRatio) < 0) {
+
+                    randomDicPoSRatio = Optional.of(priceOfStabilityRatio);
+                }
+            }
+
+            if (!quiet) {
                 log("End Analysis of " + gameDescription + ".");
             }
         }
 
-        return gameAnalysis;
+        return new AnalysisWithRandomDicComparison<>(randomDicPoSRatio, gameAnalysis);
     }
 
     private WeightedUtilityCalculator<NamedRationalEntity> getRandomDicCalculator(LinkedHashSet<NamedRationalEntity> voterPositions, LinkedHashSet<NamedRationalEntity> candidatePositions) {
