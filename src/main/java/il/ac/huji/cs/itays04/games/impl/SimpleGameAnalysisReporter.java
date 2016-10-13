@@ -29,16 +29,11 @@ public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
         printStream.println();
 
         final ImmutableDirectedGraphWithScc<T> bestResponseGraph = gameAnalysis.getBestResponseGraph();
-        printStream.println("Number of possible states: " + bestResponseGraph.getOriginalGraph().getNodes().size());
-        printStream.println("Number of strongly connected components: " + bestResponseGraph.getSccGraph().getNodes().size());
-        printStream.println("Number of components with cycles: " + gameAnalysis.getNumberOfNonSingularSccs());
+        printStream.println("Number of possible game states: " + bestResponseGraph.getOriginalGraph().getNodes().size());
         printStream.println("Number of pure Nash equilibria: " + gameAnalysis.getNeCount());
-        printStream.println("Number of sink-equilibria: " + gameAnalysis.getSinksWithWelfare().size());
         printStream.println();
 
         final GamePrices<W> prices = gameAnalysis.getPrices();
-        printWelfareWithLabel(printStream, "Social optimum", prices.getSocialOptimum());
-
         final Optional<W> priceOfAnarchy = prices.getPriceOfAnarchy();
         printStream.print("Price of Anarchy: ");
 
@@ -60,8 +55,13 @@ public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
         else {
             printStream.println(N_A);
         }
-
         printStream.println();
+        printStream.println("Number of strongly connected components in best response graph: " + bestResponseGraph.getSccGraph().getNodes().size());
+        printStream.println("Number of components with cycles: " + gameAnalysis.getNumberOfNonSingularSccs());
+        printStream.println("Number of sink-equilibria: " + gameAnalysis.getSinksWithWelfare().size());
+        printStream.println();
+
+        printWelfareWithLabel(printStream, "Social optimum", prices.getSocialOptimum());
         printStream.println("Socially optimal states:");
         int k = 1;
         for (T state : gameAnalysis.getOptimalStates()) {
@@ -80,7 +80,7 @@ public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
             printStream.println("Sink #" + j++);
             printStream.println("Component id: " + sink.getId());
 
-            printStream.println("Number of states:" + states.size());
+            printStream.println("Number of states: " + states.size());
 
             final W welfare = sinkWithWelfare.getWelfare();
             printWelfareWithLabel(printStream, "Average welfare", welfare);

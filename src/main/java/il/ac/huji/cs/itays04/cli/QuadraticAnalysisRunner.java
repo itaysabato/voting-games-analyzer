@@ -52,17 +52,18 @@ public class QuadraticAnalysisRunner {
                         .printReport(game, gameAnalysis, System.out);
 
                 log("Truthful profiles:");
-                log();
             }
 
             final WeightedUtilityCalculator<NamedRationalEntity> randomDicCalc = getRandomDicCalculator(voterPositions, candidatePositions);
 
+            int i = 1;
             for (Map.Entry<VotingGameState<NamedRationalEntity>, BigFraction> entry : game.getTruthfulStates()
                     .entrySet()) {
 
                 if (!quiet) {
-                    log(entry.getKey());
-                    log("SW = " + NumberUtils.fractionToString(entry.getValue()));
+                    log();
+                    log((i++) + " - " + entry.getKey());
+                    log("Original social welfare: " + NumberUtils.fractionToString(entry.getValue()));
                 }
 
                 final SocialWelfareCalculator<BigFraction, BigFraction> socialWelfareCalculator = game.getSocialWelfareCalculator();
@@ -70,24 +71,23 @@ public class QuadraticAnalysisRunner {
                         game, randomDicCalc, entry.getKey());
 
                 if (!quiet) {
-                    log("Randomized dictatorship SW = " + NumberUtils.fractionToString(randomDicSW));
+                    log("Randomized Dictatorship social welfare: " + NumberUtils.fractionToString(randomDicSW));
                 }
                 final BigFraction socialOptimum = gameAnalysis.getPrices().getSocialOptimum();
                 final BigFraction ratio = socialWelfareCalculator.getRatio(socialOptimum, randomDicSW);
 
                 if (!quiet) {
-                    log("Randomized dictatorship ratio to optimum = " + NumberUtils.fractionToString(ratio));
+                    log("Randomized Dictatorship social welfare ratio to optimum: " + NumberUtils.fractionToString(ratio));
                 }
                 final BigFraction priceOfStability = gameAnalysis.getPrices().getPriceOfStability().orElse(BigFraction.ZERO);
                 final BigFraction priceOfStabilityRatio = socialWelfareCalculator.getRatio(priceOfStability, ratio);
 
                 if (!quiet) {
-                    log("Randomized dictatorship ratio to price of stability = " + NumberUtils.fractionToString(priceOfStabilityRatio));
-                    log();
+                    log("Randomized Dictatorship social welfare ratio to best original NE: " + NumberUtils.fractionToString(priceOfStabilityRatio));
                 }
 
                 if (!quiet && priceOfStabilityRatio.compareTo(BigFraction.ONE) > 0) {
-                    log("PoS worse than random dic!");
+                    log("Randomized Dictatorship social welfare is better than best original NE!");
                 }
 
                 if (!randomDicPoSRatio.isPresent()
@@ -98,7 +98,9 @@ public class QuadraticAnalysisRunner {
             }
 
             if (!quiet) {
+                log();
                 log("End Analysis of " + gameDescription + ".");
+                log();
             }
         }
 
@@ -123,11 +125,11 @@ public class QuadraticAnalysisRunner {
 
             log("with voters:");
             logEntities(voters);
-
             log();
+
             log("and candidates:");
             logEntities(candidates);
-
+            log();
         }
 
         return quadraticFactory.createDistanceBasedGame(

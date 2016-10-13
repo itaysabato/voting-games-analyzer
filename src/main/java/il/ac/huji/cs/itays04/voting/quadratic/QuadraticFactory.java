@@ -7,7 +7,10 @@ import il.ac.huji.cs.itays04.voting.VotingGame;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
 import org.apache.commons.math3.fraction.BigFraction;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class QuadraticFactory {
@@ -15,7 +18,7 @@ public class QuadraticFactory {
     public WeightedUtilityCalculator<NamedRationalEntity> createWeightedCalculator(
             LinkedHashSet<NamedRationalEntity> voters, LinkedHashSet<NamedRationalEntity> candidates, boolean quadratic) {
 
-        List<Map<NamedRationalEntity, BigFraction>> individualUtilities = voters.stream()
+        List<LinkedHashMap<NamedRationalEntity, BigFraction>> individualUtilities = voters.stream()
                 .sequential()
                 .map(p -> calculateUtilities(p.getPosition(), candidates))
                 .collect(Collectors.toList());
@@ -23,8 +26,8 @@ public class QuadraticFactory {
         return new WeightedUtilityCalculator<>(individualUtilities, quadratic);
     }
 
-    private Map<NamedRationalEntity, BigFraction> calculateUtilities(BigFraction voterPosition, Set<NamedRationalEntity> candidates) {
-        final Map<NamedRationalEntity, BigFraction> utils = new LinkedHashMap<>();
+    private LinkedHashMap<NamedRationalEntity, BigFraction> calculateUtilities(BigFraction voterPosition, Set<NamedRationalEntity> candidates) {
+        final LinkedHashMap<NamedRationalEntity, BigFraction> utils = new LinkedHashMap<>();
 
         for (NamedRationalEntity candidatePosition : candidates) {
             final BigFraction util = voterPosition.subtract(candidatePosition.getPosition())

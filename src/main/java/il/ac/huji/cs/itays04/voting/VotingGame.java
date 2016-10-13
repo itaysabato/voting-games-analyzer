@@ -83,7 +83,7 @@ public class VotingGame<C, U extends Number & Comparable<U>, W extends Number & 
     public String toString() {
         return "Type: Voting Game"
                 + "\nNumber of voters: " + numberOfPlayers
-                + "\nCandidates: " + allCandidates
+                + "\nNumber of candidates: " + allCandidates.size()
                 + "\n\nUtility function: " + utilityCalculator
                 + "\nSocial welfare function: " + socialWelfareCalculator;
     }

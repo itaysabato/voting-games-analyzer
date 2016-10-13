@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
 public class WeightedUtilityCalculator<C> implements UtilityCalculator<VotingGameState<C>, BigFraction> {
     private final boolean quadratic;
     private final Set<List<C>> truthfulProfiles;
-    private final List<Map<C, BigFraction>> individualUtilities;
+    private final List<LinkedHashMap<C, BigFraction>> individualUtilities;
 
-    WeightedUtilityCalculator(List<Map<C, BigFraction>> individualUtilities, boolean quadratic) {
+    WeightedUtilityCalculator(List<LinkedHashMap<C, BigFraction>> individualUtilities, boolean quadratic) {
         this.quadratic = quadratic;
         this.individualUtilities = Collections.unmodifiableList(individualUtilities);
 
@@ -22,12 +22,12 @@ public class WeightedUtilityCalculator<C> implements UtilityCalculator<VotingGam
         this.truthfulProfiles = Collections.unmodifiableSet(allTruthfulProfiles);
     }
 
-    private Set<List<C>> getAllTruthfulProfiles(List<Map<C, BigFraction>> individualUtilities) {
+    private Set<List<C>> getAllTruthfulProfiles(List<? extends Map<C, BigFraction>> individualUtilities) {
         List<Set<C>> favorites = getFavorites(individualUtilities);
         return getProfilesFromFavorites(favorites);
     }
 
-    private List<Set<C>> getFavorites(List<Map<C, BigFraction>> individualUtilities) {
+    private List<Set<C>> getFavorites(List<? extends Map<C, BigFraction>> individualUtilities) {
         List<Set<C>> favorites = new ArrayList<>(individualUtilities.size());
 
         for (Map<C, BigFraction> utilities : individualUtilities) {
@@ -137,22 +137,20 @@ public class WeightedUtilityCalculator<C> implements UtilityCalculator<VotingGam
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append(quadratic ? "Quadratic" : "Randomized dictatorship")
-                .append(" expected utility based on individual preferences:\n");
+        builder.append(quadratic ? "Quadratic" : "Randomized Dictatorship")
+                .append(" expected utility based on the following cardinal utilities:\n");
 
         for (int i = 0; i < individualUtilities.size(); i++) {
             final Map<C, BigFraction> utilities = individualUtilities.get(i);
 
-            for (Map.Entry<C, BigFraction> entry : utilities.entrySet()) {
-                builder.append("U(V")
-                        .append(i+1)
-                        .append(",")
-                        .append(entry.getKey())
-                        .append(") = ")
-                        .append(NumberUtils.fractionToString(entry.getValue()))
-                        .append("; ");
-            }
-            builder.append("\n");
+            builder.append("Voter ")
+                    .append(i + 1)
+                    .append(": ")
+                    .append(utilities.values()
+                            .stream()
+                            .map(NumberUtils::format)
+                            .collect(Collectors.joining(", ")))
+                    .append("\n");
         }
 
         return builder.toString();
