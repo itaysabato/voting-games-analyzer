@@ -6,7 +6,7 @@ import il.ac.huji.cs.itays04.utils.StronglyConnectedComponent;
 
 import java.util.Set;
 
-public class GameAnalysis<T extends GameState<T>, W extends Number & Comparable<W>> {
+public class GameAnalysis<T extends GameState, W extends Number & Comparable<W>> {
     private final long neCount;
     private final GamePrices<W> prices;
     private final long numberOfNonSingularSccs;

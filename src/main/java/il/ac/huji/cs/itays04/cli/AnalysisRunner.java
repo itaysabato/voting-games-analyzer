@@ -28,14 +28,6 @@ public class AnalysisRunner {
     public GameAnalysis<VotingGameState<NamedRationalEntity>, BigFraction> analyzeAndReport(
             LinkedHashSet<NamedRationalEntity> voterPositions,
             LinkedHashSet<NamedRationalEntity> candidatePositions,
-            String gameDescription) {
-
-        return analyzeAndReport(voterPositions, candidatePositions, gameDescription, false);
-    }
-
-    public GameAnalysis<VotingGameState<NamedRationalEntity>, BigFraction> analyzeAndReport(
-            LinkedHashSet<NamedRationalEntity> voterPositions,
-            LinkedHashSet<NamedRationalEntity> candidatePositions,
             String gameDescription,
             boolean quiet) {
 

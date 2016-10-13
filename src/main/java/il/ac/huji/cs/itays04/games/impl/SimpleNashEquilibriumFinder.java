@@ -15,11 +15,11 @@ public class SimpleNashEquilibriumFinder implements NashEquilibriumFinder {
     }
 
     @Override
-    public <T extends GameState<T>, U extends Number & Comparable<U>> Optional<? extends T> findNE(Game<T, U, ?> game) {
+    public <T extends GameState, U extends Number & Comparable<U>> Optional<? extends T> findNE(Game<T, U, ?> game) {
         return simpleGameTraverser.traverseGameUntil(game, new HashSet<>(), s -> isNash(game, s));
     }
 
-    private <T extends GameState<T>, U extends Number & Comparable<U>> boolean isNash(Game<T, U, ?> game, T state) {
+    private <T extends GameState, U extends Number & Comparable<U>> boolean isNash(Game<T, U, ?> game, T state) {
         Optional<? extends T> improvement = game.getUtilityCalculator().getImprovement(game, state);
         return !improvement.isPresent();
     }

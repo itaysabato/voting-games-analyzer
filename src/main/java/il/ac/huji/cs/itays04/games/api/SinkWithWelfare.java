@@ -5,7 +5,7 @@ import il.ac.huji.cs.itays04.utils.StronglyConnectedComponent;
 
 import java.util.Set;
 
-public class SinkWithWelfare<T extends GameState<T>, W extends Number & Comparable<W>> {
+public class SinkWithWelfare<T extends GameState, W extends Number & Comparable<W>> {
     private final W welfare;
     private final long longestPathToSinkLength;
     private final StronglyConnectedComponent<T> sink;

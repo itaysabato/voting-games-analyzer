@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public interface Game<T extends GameState<T>, U extends Number & Comparable<U>, W extends Number & Comparable<W>> {
+public interface Game<T extends GameState, U extends Number & Comparable<U>, W extends Number & Comparable<W>> {
     int getNumberOfPlayers();
 
     Map<? extends T, ? extends W> getTruthfulStates();

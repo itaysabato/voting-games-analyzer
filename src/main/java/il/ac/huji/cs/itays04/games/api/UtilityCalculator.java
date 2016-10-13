@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public interface UtilityCalculator<T extends GameState<T>, U extends Number & Comparable<U>> {
+public interface UtilityCalculator<T extends GameState, U extends Number & Comparable<U>> {
 
     U calculateUtility(T gameState, int playerIndex);
 

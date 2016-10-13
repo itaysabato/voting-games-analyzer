@@ -8,7 +8,7 @@ import il.ac.huji.cs.itays04.games.api.UtilityCalculator;
 
 import java.util.Objects;
 
-public class CachedUtilityCalculator<T extends GameState<T>, U extends Number & Comparable<U>> implements UtilityCalculator<T,U> {
+public class CachedUtilityCalculator<T extends GameState, U extends Number & Comparable<U>> implements UtilityCalculator<T,U> {
 
     private final UtilityCalculator<T, U> utilityCalculator;
     private final LoadingCache<StateAndPlayer<T>, U> utilityCache;
@@ -37,7 +37,7 @@ public class CachedUtilityCalculator<T extends GameState<T>, U extends Number & 
         return utilityCalculator.toString();
     }
 
-    private static class StateAndPlayer<T extends GameState<T>> {
+    private static class StateAndPlayer<T extends GameState> {
         private final T state;
         private final int player;
 

@@ -19,7 +19,7 @@ public class SimpleGameAnalysisReporter implements GameAnalysisReporter {
     private static final String N_A = "N/A";
 
     @Override
-    public <T extends GameState<T>, W extends Number & Comparable<W>> void printReport(
+    public <T extends GameState, W extends Number & Comparable<W>> void printReport(
             Game<T, ?, W> game, GameAnalysis<T, W> gameAnalysis, PrintStream printStream) {
 
         printStream.println("********************************");

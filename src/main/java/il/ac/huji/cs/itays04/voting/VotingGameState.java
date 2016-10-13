@@ -6,7 +6,7 @@ import il.ac.huji.cs.itays04.games.api.GameState;
 import java.util.List;
 import java.util.Objects;
 
-public final class VotingGameState<C> implements GameState<VotingGameState<C>> {
+public final class VotingGameState<C> implements GameState {
     private final ImmutableList<C> votes;
 
     public VotingGameState(List<C> votes) {

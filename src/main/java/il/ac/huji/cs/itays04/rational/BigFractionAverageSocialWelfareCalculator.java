@@ -35,9 +35,9 @@ public class BigFractionAverageSocialWelfareCalculator
     }
 
     @Override
-    public <T extends GameState<T>> BigFraction calculateWelfare(Game<T, BigFraction, BigFraction> game,
-                                                                 UtilityCalculator<T, BigFraction> utilityCalculator,
-                                                                 T gameState) {
+    public <T extends GameState> BigFraction calculateWelfare(Game<T, BigFraction, BigFraction> game,
+                                                              UtilityCalculator<T, BigFraction> utilityCalculator,
+                                                              T gameState) {
 
         BigFraction sum = BigFraction.ZERO;
 
@@ -50,9 +50,9 @@ public class BigFractionAverageSocialWelfareCalculator
     }
 
     @Override
-    public <T extends GameState<T>> BigFraction calculateAverageWelfare(Game<T, BigFraction, BigFraction> game,
-                                               UtilityCalculator<T, BigFraction> utilityCalculator,
-                                               Set<T> states) {
+    public <T extends GameState> BigFraction calculateAverageWelfare(Game<T, BigFraction, BigFraction> game,
+                                                                     UtilityCalculator<T, BigFraction> utilityCalculator,
+                                                                     Set<T> states) {
         BigFraction sum = BigFraction.ZERO;
 
         for (T state : states) {

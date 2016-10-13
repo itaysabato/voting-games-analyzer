@@ -5,15 +5,15 @@ import java.util.Set;
 public interface SocialWelfareCalculator<U extends Number & Comparable<U>, W extends Number & Comparable<W>> {
     W getRatio(W w1, W w2);
 
-    <T extends GameState<T>> W calculateWelfare(Game<T, U, W> game, UtilityCalculator<T, U> utilityCalculator, T gameState);
+    <T extends GameState> W calculateWelfare(Game<T, U, W> game, UtilityCalculator<T, U> utilityCalculator, T gameState);
 
-    default <T extends GameState<T>>  W calculateWelfare(Game<T, U, W> game, T gameState) {
+    default <T extends GameState>  W calculateWelfare(Game<T, U, W> game, T gameState) {
         return calculateWelfare(game, game.getUtilityCalculator(), gameState);
     }
 
-    <T extends GameState<T>>  W calculateAverageWelfare(Game<T, U, W> game, UtilityCalculator<T, U> utilityCalculator, Set<T> states);
+    <T extends GameState>  W calculateAverageWelfare(Game<T, U, W> game, UtilityCalculator<T, U> utilityCalculator, Set<T> states);
 
-    default <T extends GameState<T>>  W calculateAverageWelfare(Game<T, U, W> game, Set<T> states) {
+    default <T extends GameState>  W calculateAverageWelfare(Game<T, U, W> game, Set<T> states) {
         return calculateAverageWelfare(game, game.getUtilityCalculator(), states);
     }
 }

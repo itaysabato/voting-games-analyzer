@@ -9,7 +9,7 @@ import java.util.function.Predicate;
 
 public class SimpleGameTraverser {
 
-    public <T extends GameState<T>> Optional<? extends T> traverseGameUntil(Game<T, ?, ?> game, HashSet<T> visited, Predicate<T> haltCondition) {
+    public <T extends GameState> Optional<? extends T> traverseGameUntil(Game<T, ?, ?> game, HashSet<T> visited, Predicate<T> haltCondition) {
         HashSet<T> toVisit = new HashSet<>();
         toVisit.addAll(game.getTruthfulStates().keySet());
 
@@ -28,7 +28,7 @@ public class SimpleGameTraverser {
         return Optional.empty();
     }
 
-    private <T extends GameState<T>> Optional<T> expand(Game<T, ?, ?> game, HashSet<T> toVisit, HashSet<T> visited, HashSet<T> nextToVisit, Predicate<T> haltCondition) {
+    private <T extends GameState> Optional<T> expand(Game<T, ?, ?> game, HashSet<T> toVisit, HashSet<T> visited, HashSet<T> nextToVisit, Predicate<T> haltCondition) {
         for (T state : toVisit) {
 
             if (haltCondition.test(state)) {
