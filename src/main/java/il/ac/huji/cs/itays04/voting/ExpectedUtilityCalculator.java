@@ -1,24 +1,71 @@
-package il.ac.huji.cs.itays04.voting.quadratic;
+package il.ac.huji.cs.itays04.voting;
 
 import il.ac.huji.cs.itays04.games.api.UtilityCalculator;
 import il.ac.huji.cs.itays04.rational.NumberUtils;
-import il.ac.huji.cs.itays04.voting.VotingGameState;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class WeightedUtilityCalculator<C> implements UtilityCalculator<VotingGameState<C>, BigFraction> {
-    private final boolean quadratic;
+public class ExpectedUtilityCalculator<C> implements UtilityCalculator<VotingGameState<C>, BigFraction> {
+    private final Set<C> allCandidates;
     private final Set<List<C>> truthfulProfiles;
+    private final RandomizedVotingRule votingRule;
     private final List<LinkedHashMap<C, BigFraction>> individualUtilities;
 
-    public WeightedUtilityCalculator(List<LinkedHashMap<C, BigFraction>> individualUtilities, boolean quadratic) {
-        this.quadratic = quadratic;
-        this.individualUtilities = Collections.unmodifiableList(individualUtilities);
+    public ExpectedUtilityCalculator(
+            List<LinkedHashMap<C, BigFraction>> individualUtilities,
+            RandomizedVotingRule votingRule) {
 
-        final Set<List<C>> allTruthfulProfiles = getAllTruthfulProfiles(this.individualUtilities);
+        this.votingRule = votingRule;
+        this.individualUtilities = Collections.unmodifiableList(individualUtilities);
+        allCandidates = Collections.unmodifiableSet(individualUtilities.get(0).keySet());
+
+        final Set<List<C>> allTruthfulProfiles = getAllTruthfulProfiles(individualUtilities);
         this.truthfulProfiles = Collections.unmodifiableSet(allTruthfulProfiles);
+    }
+
+    /**
+     * Calculates the expected utility for the playerIndex-th voter, given the game state.
+     * @param gameState The game state.
+     * @param playerIndex The player/voter index (zero-based).
+     * @return The expected utility for the playerIndex-th voter.
+     * @throws IllegalStateException If child class does not provide a well-defined distribution over the set of candidates.
+     */
+    @Override
+    public BigFraction calculateUtility(VotingGameState<C> gameState, int playerIndex) {
+        final Map<C, BigFraction> distribution = votingRule.getWinnerDistribution(gameState.getVotes(), allCandidates);
+        return calculateExpectedUtility(distribution, playerIndex);
+    }
+
+    /**
+     *
+     * @return The set of ballots in which every voter votes for one of her favorite candidates.
+     */
+    public Set<List<C>> getTruthfulProfiles() {
+        return truthfulProfiles;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder("Expected utility based on the ");
+        builder.append(votingRule.getName())
+                .append(" voting rule and the following cardinal utilities:\n");
+
+        for (int i = 0; i < individualUtilities.size(); i++) {
+            final Map<C, BigFraction> utilities = individualUtilities.get(i);
+
+            builder.append("Voter ")
+                    .append(i + 1)
+                    .append(": ")
+                    .append(utilities.values()
+                            .stream()
+                            .map(NumberUtils::format)
+                            .collect(Collectors.joining(", ")))
+                    .append("\n");
+        }
+
+        return builder.toString();
     }
 
     private Set<List<C>> getAllTruthfulProfiles(List<? extends Map<C, BigFraction>> individualUtilities) {
@@ -71,54 +118,6 @@ public class WeightedUtilityCalculator<C> implements UtilityCalculator<VotingGam
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    @Override
-    public BigFraction calculateUtility(VotingGameState<C> gameState, int playerIndex) {
-        final Map<C, BigFraction> distribution = getWinnerDistribution(gameState.getVotes());
-        return calculateExpectedUtility(distribution, playerIndex);
-    }
-
-    public Map<C, BigFraction> getWinnerDistribution(List<C> votes) {
-        final Map<C, BigFraction> histogram = calculateHistogram(votes);
-
-        final BigFraction total;
-        if (quadratic) {
-            total = quadrifyHistogram(histogram);
-        }
-        else {
-            total = new BigFraction(votes.size());
-        }
-
-        for (Map.Entry<C, BigFraction> entry : histogram.entrySet()) {
-            entry.setValue(entry.getValue().divide(total));
-        }
-        return histogram;
-    }
-
-    private Map<C, BigFraction> calculateHistogram(List<C> votes) {
-        final Map<C, BigFraction> histogram = new HashMap<>();
-
-        for (C candidate : votes) {
-            BigFraction count = histogram.getOrDefault(candidate, BigFraction.ZERO);
-            histogram.put(candidate, count.add(1));
-        }
-
-        return histogram;
-    }
-
-    private BigFraction quadrifyHistogram(Map<C, BigFraction> histogram) {
-        BigFraction total = BigFraction.ZERO;
-
-        for (Map.Entry<C, BigFraction> entry : histogram.entrySet()) {
-            BigFraction value = entry.getValue();
-            BigFraction newValue = value.pow(2);
-
-            entry.setValue(newValue);
-            total = total.add(newValue);
-        }
-
-        return total;
-    }
-
     private BigFraction calculateExpectedUtility(Map<C, BigFraction> distribution, int playerIndex) {
         final Map<C, BigFraction> utilities = individualUtilities.get(playerIndex);
 
@@ -132,31 +131,5 @@ public class WeightedUtilityCalculator<C> implements UtilityCalculator<VotingGam
         }
 
         return expectancy;
-    }
-
-    public Set<List<C>> getTruthfulProfiles() {
-        return truthfulProfiles;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(quadratic ? "Quadratic" : "Randomized Dictatorship")
-                .append(" expected utility based on the following cardinal utilities:\n");
-
-        for (int i = 0; i < individualUtilities.size(); i++) {
-            final Map<C, BigFraction> utilities = individualUtilities.get(i);
-
-            builder.append("Voter ")
-                    .append(i + 1)
-                    .append(": ")
-                    .append(utilities.values()
-                            .stream()
-                            .map(NumberUtils::format)
-                            .collect(Collectors.joining(", ")))
-                    .append("\n");
-        }
-
-        return builder.toString();
     }
 }

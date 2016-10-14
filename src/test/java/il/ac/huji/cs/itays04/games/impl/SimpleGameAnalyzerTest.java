@@ -1,7 +1,7 @@
 package il.ac.huji.cs.itays04.games.impl;
 
-import il.ac.huji.cs.itays04.cli.QuadraticAnalysisRunner;
 import il.ac.huji.cs.itays04.cli.StaticContext;
+import il.ac.huji.cs.itays04.cli.VotingGameAnalysisRunner;
 import il.ac.huji.cs.itays04.games.api.GameAnalysis;
 import il.ac.huji.cs.itays04.games.api.GamePrices;
 import il.ac.huji.cs.itays04.rational.NamedRationalEntity;
@@ -24,7 +24,7 @@ public class SimpleGameAnalyzerTest {
 //    private final ExecutorService executorService = Executors.newFixedThreadPool(N_THREADS);
     private final RandomUtils randomUtils = StaticContext.getInstance().randomUtils;
     private final RationalUtils rationalUtils = StaticContext.getInstance().rationalUtils;
-    private final QuadraticAnalysisRunner quadraticAnalysisRunner = StaticContext.getInstance().quadraticAnalysisRunner;
+    private final VotingGameAnalysisRunner votingGameAnalysisRunner = StaticContext.getInstance().votingGameAnalysisRunner;
 
 //    @Test
 //    @Ignore
@@ -57,7 +57,7 @@ public class SimpleGameAnalyzerTest {
 //            game = getGame(voterPositions, candidatePositions, "Bad PoS Example", false);
 //        }
 //
-//        final WeightedUtilityCalculator<BigFraction> randomDicCalc = getRandomDicCalculator(
+//        final WeightedVotesRandomizedVotingRule<BigFraction> randomDicCalc = getRandomDicCalculator(
 //                voterPositions, candidatePositions);
 //
 //        final BigFraction bestRandomDicSw;
@@ -638,7 +638,7 @@ public class SimpleGameAnalyzerTest {
             String gameDescription,
             boolean quiet) {
 
-        return quadraticAnalysisRunner.analyzeAndReport(voterPositions, candidatePositions, gameDescription, quiet)
+        return votingGameAnalysisRunner.analyzeAndReport(voterPositions, candidatePositions, gameDescription, quiet)
                 .getGameAnalysis();
     }
 

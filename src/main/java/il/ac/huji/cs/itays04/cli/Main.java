@@ -6,7 +6,8 @@ import il.ac.huji.cs.itays04.rational.NamedRationalEntity;
 import il.ac.huji.cs.itays04.rational.RandomUtils;
 import il.ac.huji.cs.itays04.rational.RationalAggregator;
 import il.ac.huji.cs.itays04.rational.RationalUtils;
-import il.ac.huji.cs.itays04.voting.quadratic.AnalysisWithRandomDicComparison;
+import il.ac.huji.cs.itays04.voting.AnalysisWithRandomDicComparison;
+import il.ac.huji.cs.itays04.voting.RandomizedVotingRule;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.*;
@@ -16,7 +17,7 @@ public class Main {
 
     private final RandomUtils randomUtils = StaticContext.getInstance().randomUtils;
     private final RationalUtils rationalUtils = StaticContext.getInstance().rationalUtils;
-    private final QuadraticAnalysisRunner quadraticAnalysisRunner = StaticContext.getInstance().quadraticAnalysisRunner;
+    private final VotingGameAnalysisRunner votingGameAnalysisRunner = StaticContext.getInstance().votingGameAnalysisRunner;
 
     public static void main(String[] args) {
         main.run(args);
@@ -41,6 +42,7 @@ public class Main {
         }
         catch (ParameterException e) {
             System.out.println("Invalid command line arguments: " + e.getMessage());
+            System.out.println();
             jCommander.usage();
             System.exit(1);
         }
@@ -87,12 +89,13 @@ public class Main {
     }
 
     private void nextGame(int gameIndex, Arguments arguments, RationalAggregator aggregator) {
-        final String gameDescription = "Quadratic Voting Game " + gameIndex;
         final boolean quiet = arguments.isQuiet();
         final boolean noCandidates = arguments.isNoCandidates();
         List<BigFraction> voterPositions = arguments.getVoters();
         final List<BigFraction> utilities = arguments.getUtilities();
         List<BigFraction> candidatePositions = arguments.getCandidates();
+        final RandomizedVotingRule votingRule = arguments.getVotingRule();
+        final String gameDescription = votingRule.getName() + " Voting Game " + gameIndex;
 
         final AnalysisWithRandomDicComparison<?, BigFraction> analysis;
 
@@ -109,9 +112,10 @@ public class Main {
             final LinkedHashSet<NamedRationalEntity> candidates = noCandidates ?
                     voters : rationalUtils.toCandidates(candidatePositions);
 
-            analysis = quadraticAnalysisRunner.analyzeAndReport(
+            analysis = votingGameAnalysisRunner.analyzeAndReport(
                     voters,
                     candidates,
+                    votingRule,
                     gameDescription,
                     quiet);
         }
@@ -156,8 +160,9 @@ public class Main {
                 }
             }
 
-            analysis = quadraticAnalysisRunner.analyzeAndReport(
+            analysis = votingGameAnalysisRunner.analyzeAndReport(
                     allUtils,
+                    votingRule,
                     gameDescription,
                     quiet);
         }

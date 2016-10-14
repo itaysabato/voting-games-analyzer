@@ -7,27 +7,25 @@ import il.ac.huji.cs.itays04.rational.BigFractionAverageSocialWelfareCalculator;
 import il.ac.huji.cs.itays04.rational.NamedRationalEntity;
 import il.ac.huji.cs.itays04.rational.NumberUtils;
 import il.ac.huji.cs.itays04.utils.ImmutableDirectedGraphWithScc;
-import il.ac.huji.cs.itays04.voting.VotingGame;
-import il.ac.huji.cs.itays04.voting.VotingGameState;
-import il.ac.huji.cs.itays04.voting.quadratic.AnalysisWithRandomDicComparison;
-import il.ac.huji.cs.itays04.voting.quadratic.QuadraticFactory;
-import il.ac.huji.cs.itays04.voting.quadratic.WeightedUtilityCalculator;
+import il.ac.huji.cs.itays04.voting.*;
+import il.ac.huji.cs.itays04.voting.weighted.QuadraticRandomizedVotingRule;
+import il.ac.huji.cs.itays04.voting.weighted.RandomizedDictatorshipRandomizedVotingRule;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class QuadraticAnalysisRunner {
-    private final QuadraticFactory quadraticFactory;
+public class VotingGameAnalysisRunner {
+    private final VotingGamesFactory votingGamesFactory;
     private final BigFractionAverageSocialWelfareCalculator welfareCalculator = new BigFractionAverageSocialWelfareCalculator();
 
-    public QuadraticAnalysisRunner(QuadraticFactory quadraticFactory) {
-        this.quadraticFactory = quadraticFactory;
+    public VotingGameAnalysisRunner(VotingGamesFactory votingGamesFactory) {
+        this.votingGamesFactory = votingGamesFactory;
     }
-
 
     public AnalysisWithRandomDicComparison<?, BigFraction> analyzeAndReport(
             List<LinkedHashMap<String, BigFraction>> allUtils,
+            RandomizedVotingRule votingRule,
             String gameDescription,
             boolean quiet) {
 
@@ -38,8 +36,11 @@ public class QuadraticAnalysisRunner {
             log();
         }
 
-        final VotingGame<String, BigFraction, BigFraction> game = quadraticFactory.createGame(allUtils);
-        final WeightedUtilityCalculator<String> randomDicCalc = new WeightedUtilityCalculator<>(allUtils, false);
+        final VotingGame<String, BigFraction, BigFraction> game = votingGamesFactory.createGame(allUtils, votingRule);
+        final ExpectedUtilityCalculator<String> randomDicCalc = votingGamesFactory.getCalculator(
+                allUtils,
+                new RandomizedDictatorshipRandomizedVotingRule());
+
         return analyzeAndReport(game, randomDicCalc, gameDescription, quiet);
     }
 
@@ -49,18 +50,33 @@ public class QuadraticAnalysisRunner {
             String gameDescription,
             boolean quiet) {
 
+        return analyzeAndReport(
+                voterPositions,
+                candidatePositions,
+                new QuadraticRandomizedVotingRule(),
+                gameDescription,
+                quiet);
+    }
+
+    public AnalysisWithRandomDicComparison<VotingGameState<NamedRationalEntity>, BigFraction> analyzeAndReport(
+            LinkedHashSet<NamedRationalEntity> voters,
+            LinkedHashSet<NamedRationalEntity> candidates,
+            RandomizedVotingRule votingRule,
+            String gameDescription,
+            boolean quiet) {
+
         final VotingGame<NamedRationalEntity, BigFraction, BigFraction> game;
         synchronized (this) {
-            game = getGame(voterPositions, candidatePositions, gameDescription, quiet);
+            game = getGame(voters, candidates, votingRule, gameDescription, quiet);
         }
-        final WeightedUtilityCalculator<NamedRationalEntity> randomDicCalc = getRandomDicCalculator(voterPositions, candidatePositions);
 
+        final ExpectedUtilityCalculator<NamedRationalEntity> randomDicCalc = getRandomDicCalculator(voters, candidates);
         return analyzeAndReport(game, randomDicCalc, gameDescription, quiet);
     }
 
     public <C> AnalysisWithRandomDicComparison<VotingGameState<C>, BigFraction> analyzeAndReport(
             VotingGame<C, BigFraction, BigFraction> game,
-            WeightedUtilityCalculator<C> randomDicCalc,
+            ExpectedUtilityCalculator<C> randomDicCalc,
             String gameDescription,
             boolean quiet) {
 
@@ -130,17 +146,20 @@ public class QuadraticAnalysisRunner {
         return new AnalysisWithRandomDicComparison<>(randomDicPoSRatio, gameAnalysis);
     }
 
-    private WeightedUtilityCalculator<NamedRationalEntity> getRandomDicCalculator(
+    private ExpectedUtilityCalculator<NamedRationalEntity> getRandomDicCalculator(
             LinkedHashSet<NamedRationalEntity> voterPositions,
             LinkedHashSet<NamedRationalEntity> candidatePositions) {
 
-        return quadraticFactory.createWeightedCalculator(
-                voterPositions, candidatePositions, false);
+        return votingGamesFactory.createDistanceBasedCalculator(
+                voterPositions,
+                candidatePositions,
+                new RandomizedDictatorshipRandomizedVotingRule());
     }
 
     private VotingGame<NamedRationalEntity, BigFraction, BigFraction> getGame(
             LinkedHashSet<NamedRationalEntity> voters,
             LinkedHashSet<NamedRationalEntity> candidates,
+            RandomizedVotingRule votingRule,
             String gameDescription,
             boolean quiet) {
 
@@ -156,8 +175,8 @@ public class QuadraticAnalysisRunner {
             log();
         }
 
-        return quadraticFactory.createDistanceBasedGame(
-                voters, candidates, welfareCalculator);
+        return votingGamesFactory.createDistanceBasedGame(
+                voters, candidates, votingRule, welfareCalculator);
     }
 
     private void logHeader(String gameDescription) {

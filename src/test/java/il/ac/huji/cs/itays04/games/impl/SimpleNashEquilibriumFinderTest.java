@@ -6,7 +6,8 @@ import il.ac.huji.cs.itays04.rational.NamedRationalEntity;
 import il.ac.huji.cs.itays04.rational.RationalUtils;
 import il.ac.huji.cs.itays04.voting.VotingGame;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
-import il.ac.huji.cs.itays04.voting.quadratic.QuadraticFactory;
+import il.ac.huji.cs.itays04.voting.VotingGamesFactory;
+import il.ac.huji.cs.itays04.voting.weighted.QuadraticRandomizedVotingRule;
 import org.apache.commons.math3.fraction.BigFraction;
 import org.junit.Assert;
 import org.junit.Test;
@@ -20,7 +21,7 @@ public class SimpleNashEquilibriumFinderTest {
     @Test
     public void testTheorem12() {
         final RationalUtils rationalUtils = StaticContext.getInstance().rationalUtils;
-        final QuadraticFactory quadraticFactory = StaticContext.getInstance().quadraticFactory;
+        final VotingGamesFactory votingGamesFactory = StaticContext.getInstance().votingGamesFactory;
 
         final LinkedHashSet<NamedRationalEntity> voters = rationalUtils.voters(4, 32, 34, 48, 67);
         final LinkedHashSet<NamedRationalEntity> candidates = rationalUtils.candidates(14, 32, 42, 60, 93);
@@ -31,8 +32,8 @@ public class SimpleNashEquilibriumFinderTest {
         final BigFractionAverageSocialWelfareCalculator socialWelfareCalculator =
                 new BigFractionAverageSocialWelfareCalculator();
 
-        final VotingGame<NamedRationalEntity, BigFraction, ?> game = quadraticFactory.createDistanceBasedGame(
-                voters, candidates, socialWelfareCalculator);
+        final VotingGame<NamedRationalEntity, BigFraction, ?> game = votingGamesFactory.createDistanceBasedGame(
+                voters, candidates, new QuadraticRandomizedVotingRule(), socialWelfareCalculator);
 
         final Optional<? extends VotingGameState<NamedRationalEntity>> ne = neFinder.findNE(game);
 

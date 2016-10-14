@@ -2,7 +2,7 @@ package il.ac.huji.cs.itays04.rational;
 
 import il.ac.huji.cs.itays04.games.api.GameAnalysis;
 import il.ac.huji.cs.itays04.games.api.GamePrices;
-import il.ac.huji.cs.itays04.voting.quadratic.AnalysisWithRandomDicComparison;
+import il.ac.huji.cs.itays04.voting.AnalysisWithRandomDicComparison;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.Optional;

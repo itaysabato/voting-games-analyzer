@@ -1,4 +1,4 @@
-package il.ac.huji.cs.itays04.voting.quadratic;
+package il.ac.huji.cs.itays04.voting;
 
 import il.ac.huji.cs.itays04.games.api.GameAnalysis;
 import il.ac.huji.cs.itays04.games.api.GameState;

@@ -9,15 +9,15 @@ import il.ac.huji.cs.itays04.rational.RandomUtils;
 import il.ac.huji.cs.itays04.rational.RationalUtils;
 import il.ac.huji.cs.itays04.utils.DirectedGraphFactory;
 import il.ac.huji.cs.itays04.utils.PrincetonDirectedGraphFactory;
-import il.ac.huji.cs.itays04.voting.quadratic.QuadraticFactory;
+import il.ac.huji.cs.itays04.voting.VotingGamesFactory;
 
 public class StaticContext {
     private static final StaticContext ourInstance = new StaticContext();
 
     public final RationalUtils rationalUtils = new RationalUtils();
     public final RandomUtils randomUtils = new RandomUtils(rationalUtils);
-    public final QuadraticFactory quadraticFactory = new QuadraticFactory();
-    public final QuadraticAnalysisRunner quadraticAnalysisRunner = new QuadraticAnalysisRunner(quadraticFactory);
+    public final VotingGamesFactory votingGamesFactory = new VotingGamesFactory();
+    public final VotingGameAnalysisRunner votingGameAnalysisRunner = new VotingGameAnalysisRunner(votingGamesFactory);
     public final SimpleGameTraverser simpleGameTraverser = new SimpleGameTraverser();
     public final GameAnalysisReporter gameAnalysisReporter = new SimpleGameAnalysisReporter();
     public final DirectedGraphFactory directedGraphFactory = new PrincetonDirectedGraphFactory();

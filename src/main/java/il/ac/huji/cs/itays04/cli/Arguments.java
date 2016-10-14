@@ -3,6 +3,8 @@ package il.ac.huji.cs.itays04.cli;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.IntegerConverter;
 import com.google.common.collect.ImmutableList;
+import il.ac.huji.cs.itays04.voting.RandomizedVotingRule;
+import il.ac.huji.cs.itays04.voting.weighted.QuadraticRandomizedVotingRule;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.LinkedList;
@@ -100,6 +102,16 @@ class Arguments {
     )
     private int numberOfGames = 1;
 
+
+    @Parameter(
+            names = {"-vr", "--voting-rule"},
+            description = "The fully qualified name of a java class implementing the interface " +
+                    "RandomizedVotingRule to be used instead of the Quadratic voting rule. The compiled class must " +
+                    "have a no-argument constructor and be present in the lib folder.",
+            converter = VotingRuleConverter.class
+    )
+    private RandomizedVotingRule votingRule = new QuadraticRandomizedVotingRule();
+
     public boolean isHelp() {
         return help;
     }
@@ -138,5 +150,9 @@ class Arguments {
 
     public int getNumberOfGames() {
         return numberOfGames;
+    }
+
+    public RandomizedVotingRule getVotingRule() {
+        return votingRule;
     }
 }
