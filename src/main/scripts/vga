@@ -1,2 +1,4 @@
 #!/bin/bash
-java -cp lib/*:lib il.ac.huji.cs.itays04.cli.Main "$@"
+LIB="$(dirname $0)/lib"
+CP="$LIB"/*:"$LIB"
+java -cp $CP il.ac.huji.cs.itays04.cli.Main "$@"
