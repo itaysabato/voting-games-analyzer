@@ -11,33 +11,41 @@ Usage: vga [options]
        form '1', '-2', '3/2', etc. If the -u option is set, only the first number
        will be read, and floored to an integer.
        Default: []
+       
     -h, --help
        Display help message.
        Default: false
+       
     -nc, --no-candidates
        Use the voters as the only candidates. Other options regarding candidates
        are ignored if this flag is set. If the -u option is set, this flag indicates
        that the number of candidates is equal to the number of voters.
        Default: false
+       
     -n, --number-games
        The number of games to analyze.
        Default: 1
+       
     -q, --quiet
        Do not output individual game analyses, only final aggregation.
        Default: false
+       
     -rc, --random-candidates
        The number of random candidates to generate. It is also possible to give
        a range from which the amount will be chosen uniformly, e.g. 2,4 or 1,3.
        Default: [2, 5]
+       
     -rv, --random-voters
        The number of random voters to generate. It is also possible to give a
        range from which the amount will be chosen uniformly, e.g. 2,4 or 1,3.
        Default: [2, 5]
+       
     -r, --randomize
        Generate random positions. If this flag is not set, voters and candidates
        must be explicitly specified. If the -u option is set, this flag will be
        ignored.
        Default: false
+       
     -u, --utilities
        A comma-separated list of cardinal utilities, starting with the utilities
        the first voter gets from the first candidates, then the second candidates,
@@ -47,16 +55,119 @@ Usage: vga [options]
        of candidates should be given instead of their positions lists via -v and -c
        respectively.
        Default: []
+       
     -v, --voters
        A comma-separated list of voter positions, as rational numbers of the
        form '1', '-2', '3/2', etc. If the -u option is set, only the first number
        will be read, and floored to an integer.
        Default: []
+       
     -vr, --voting-rule
        The fully qualified name of a java class implementing the interface
        RandomizedVotingRule to be used instead of the Quadratic voting rule. The compiled class must
        have a no-argument constructor and be present in the lib folder.
        Default: il.ac.huji.cs.itays04.voting.weighted.QuadraticRandomizedVotingRule
+```
+The quickest way to see it in action is to analyze a random game: 
+```
+$ vga -r
+************************************************************************************************
+Analyzing Quadratic Voting Game 1
+************************************************************************************************
+with voters:
+V1 = -283569466
+V2 = 722491586
+
+and candidates:
+C1 = -1342501127
+C2 = 1325639602
+
+********************************
+Game Analysis
+********************************
+Type: Voting Game
+Number of voters: 2
+Number of candidates: 2
+
+Utility function: Expected utility based on the Quadratic voting rule and the following cardinal utilities:
+Voter 1: -1058931661, -1609209068
+Voter 2: -2064992713, -603148016
+
+Social welfare function: Average
+
+Number of possible game states: 4
+Number of pure Nash equilibria: 1
+
+Price of Anarchy: 2668140729 / 2212357084 (1.206)
+Price of Sinking: 2668140729 / 2212357084 (1.206)
+Price of Stability: 2668140729 / 2212357084 (1.206)
+
+Number of strongly connected components in best response graph: 4
+Number of components with cycles: 0
+Number of sink-equilibria: 1
+
+Social optimum: -1106178542
+Socially optimal states:
+1 - {V1 votes [C2 = 1325639602], V2 votes [C2 = 1325639602]}
+---------------------------------
+Sinks
+---------------------------------
+Sink #1
+Component id: 0
+Number of states: 1
+Average welfare: -2668140729 / 2 (-1334070364.5)
+Ratio to social optimum: 2668140729 / 2212357084 (1.206)
+
+States:
+S1 - {V1 votes [C1 = -1342501127], V2 votes [C2 = 1325639602]}
+
+Sink edges:
+N/A
+
+Longest path to sink length: 2
+Longest path to sink: {V1 votes [C2 = 1325639602], V2 votes [C1 = -1342501127]} => {V1 votes [C1 = -1342501127], V2 votes [C1 = -1342501127]} => {V1 votes [C1 = -1342501127], V2 votes [C2 = 1325639602]}
+---------------------------------
+
+Truthful profiles:
+
+1 - {V1 votes [C1 = -1342501127], V2 votes [C2 = 1325639602]}
+Original social welfare: -2668140729 / 2 (-1334070364.5)
+Randomized Dictatorship social welfare: -2668140729 / 2 (-1334070364.5)
+Randomized Dictatorship social welfare ratio to optimum: 2668140729 / 2212357084 (1.206)
+Randomized Dictatorship social welfare ratio to best original NE: 1
+
+End Analysis of Quadratic Voting Game 1.
+
+{
+    "numberOfGames" : 1,
+    "avgNeCount" : 1,
+    "percentageWithNe" : 100,
+    "convergingPercentage" : 100,
+    "avgPrices" : {
+        "socialOptimum" : -1106178542,
+        "priceOfSinking" : 1.206,
+        "priceOfAnarchy" : 1.206,
+        "priceOfStability" : 1.206
+    },
+    "betterPoSThanRandomizedDictatorshipPercentage" : 100
+}
+```
+With the `-q` option, you can analyize and aggregate many games without all the noise:
+```
+$ vga -r -n 100 -q
+{
+    "numberOfGames" : 100,
+    "avgNeCount" : 1.39,
+    "percentageWithNe" : 100,
+    "convergingPercentage" : 63,
+    "avgPrices" : {
+        "socialOptimum" : -968278497.588,
+        "priceOfSinking" : 1.1162,
+        "priceOfAnarchy" : 1.1162,
+        "priceOfStability" : 1.0872
+    },
+    "betterPoSThanRandomizedDictatorshipPercentage" : 98
+}
 ```
 
 ## Custom Voting Rule Example
@@ -126,8 +237,10 @@ public class PluralityVotingRule implements RandomizedVotingRule {
 ```
 
 In order to use it as a custom voting rule, after compiling, move the file `PluralityVotingRule.class` to the `lib` folder along with any required dependencies and
-run `vga -r -vr PluralityVotingRule`
-
+run 
+```
+$ vga -r -vr PluralityVotingRule
+```
 The output may look something like this:
 ```
 ************************************************************************************************
