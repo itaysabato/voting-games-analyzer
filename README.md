@@ -3,9 +3,10 @@ A command line tool for analyzing voting games, in particular, ones that use ran
 
 ## Custom Voting Rule Example
 The following is an implementation of the plurality voting rule with random tie-breaking.
-`PluralityVotingRule.java`:
 
 ```
+PluralityVotingRule.java:
+ 
 import java.util.*;
 import org.apache.commons.math3.fraction.BigFraction;
 import il.ac.huji.cs.itays04.voting.RandomizedVotingRule;
