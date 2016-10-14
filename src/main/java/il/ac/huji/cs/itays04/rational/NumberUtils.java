@@ -15,7 +15,8 @@ public class NumberUtils {
 
     public static String fractionToString(BigFraction fraction) {
         final String string = fraction.toString();
-        return string.contains("/") ? format(fraction.doubleValue()) : string;
+        return string + (string.contains("/") ?
+                " (" + format(fraction.doubleValue()) + ")" : "");
     }
 
     public static String format(Number value) {

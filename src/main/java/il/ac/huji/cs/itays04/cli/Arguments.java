@@ -9,8 +9,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 class Arguments {
+    private static final String VOTERS_NAME = "-v";
+    private static final String CANDIDATES_NAME = "-c";
+    public static final String UTILITIES_NAME = "-u";
+
     private static final String POS_DESC_PRE = "A comma-separated list of ";
-    private static final String POS_DESC_POST = " positions, as rational numbers of the form '1', '-2', '3/2', etc.";
+    private static final String POS_DESC_POST = " positions, as rational numbers of the form '1', '-2', '3/2', etc. " +
+            "If the " + UTILITIES_NAME + " option is set, " +
+            "only the first number will be read, and floored to an integer.";
+
     private static final String RAND_DESC_PRE = "The number of random ";
     private static final String RAND_DESC_POST = " to generate. It is also possible to give a range from " +
             "which the amount will be chosen uniformly, e.g. 2,4 or 1,3.";
@@ -29,7 +36,7 @@ class Arguments {
     private boolean quiet = false;
 
     @Parameter(
-            names = {"-v", "--voters"},
+            names = {VOTERS_NAME, "--voters"},
             description = POS_DESC_PRE + "voter" + POS_DESC_POST,
             converter = BigFractionConverter.class
     )
@@ -38,12 +45,13 @@ class Arguments {
     @Parameter(
             names = {"-nc", "--no-candidates"},
             description = "Use the voters as the only candidates. " +
-                    "Other options regarding candidates are ignored if this flag is set."
+                    "Other options regarding candidates are ignored if this flag is set. If the " + UTILITIES_NAME +
+                    " option is set, this flag indicates that the number of candidates is equal to the number of voters."
     )
     private boolean noCandidates = false;
 
     @Parameter(
-            names = {"-c", "--candidates"},
+            names = {CANDIDATES_NAME, "--candidates"},
             description = POS_DESC_PRE + "candidate" + POS_DESC_POST,
             converter = BigFractionConverter.class
     )
@@ -51,8 +59,9 @@ class Arguments {
 
     @Parameter(
             names = {"-r", "--randomize"},
-            description = "Generate random participants. If this flag is not set, " +
-                    "voters and candidates must be explicitly specified."
+            description = "Generate random positions. If this flag is not set, " +
+                    "voters and candidates must be explicitly specified. If the " + UTILITIES_NAME + " option is set, " +
+                    "this flag will be ignored."
     )
     private boolean randomize = false;
 
@@ -71,6 +80,19 @@ class Arguments {
             validateValueWith = NonNegativeRangeValidator.class
     )
     private List<Integer> randomVotersRange = ImmutableList.of(2,5);
+
+
+    @Parameter(
+            names = {UTILITIES_NAME, "--utilities"},
+            description = "A comma-separated list of cardinal utilities, starting with the utilities the first voter " +
+                    "gets from the first candidates, then the second candidates, etc. followed by a list for the " +
+                    "second voter and so on until the last voter. For example, if we have 2 voters and 3 candidates " +
+                    "then \"1,2,1/3,4,23,7/5\" would be a valid list. If this option is set, the number of voters " +
+                    "and number of candidates should be given instead of their positions lists " +
+                    "via " + VOTERS_NAME + " and " + CANDIDATES_NAME + " respectively.",
+            converter = BigFractionConverter.class
+    )
+    private List<BigFraction> utilities = new LinkedList<>();
 
     @Parameter(
             names = {"-n", "--number-games"},
@@ -108,6 +130,10 @@ class Arguments {
 
     public List<Integer> getRandomVotersRange() {
         return randomVotersRange;
+    }
+
+    public List<BigFraction> getUtilities() {
+        return utilities;
     }
 
     public int getNumberOfGames() {

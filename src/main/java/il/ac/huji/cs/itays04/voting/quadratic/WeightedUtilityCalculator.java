@@ -14,7 +14,7 @@ public class WeightedUtilityCalculator<C> implements UtilityCalculator<VotingGam
     private final Set<List<C>> truthfulProfiles;
     private final List<LinkedHashMap<C, BigFraction>> individualUtilities;
 
-    WeightedUtilityCalculator(List<LinkedHashMap<C, BigFraction>> individualUtilities, boolean quadratic) {
+    public WeightedUtilityCalculator(List<LinkedHashMap<C, BigFraction>> individualUtilities, boolean quadratic) {
         this.quadratic = quadratic;
         this.individualUtilities = Collections.unmodifiableList(individualUtilities);
 

@@ -14,10 +14,7 @@ import il.ac.huji.cs.itays04.voting.quadratic.QuadraticFactory;
 import il.ac.huji.cs.itays04.voting.quadratic.WeightedUtilityCalculator;
 import org.apache.commons.math3.fraction.BigFraction;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class QuadraticAnalysisRunner {
@@ -26,6 +23,24 @@ public class QuadraticAnalysisRunner {
 
     public QuadraticAnalysisRunner(QuadraticFactory quadraticFactory) {
         this.quadraticFactory = quadraticFactory;
+    }
+
+
+    public AnalysisWithRandomDicComparison<?, BigFraction> analyzeAndReport(
+            List<LinkedHashMap<String, BigFraction>> allUtils,
+            String gameDescription,
+            boolean quiet) {
+
+        if (!quiet) {
+            logHeader(gameDescription);
+            log();
+            log("Using explicit cardinal utilities: " + allUtils);
+            log();
+        }
+
+        final VotingGame<String, BigFraction, BigFraction> game = quadraticFactory.createGame(allUtils);
+        final WeightedUtilityCalculator<String> randomDicCalc = new WeightedUtilityCalculator<>(allUtils, false);
+        return analyzeAndReport(game, randomDicCalc, gameDescription, quiet);
     }
 
     public AnalysisWithRandomDicComparison<VotingGameState<NamedRationalEntity>, BigFraction> analyzeAndReport(
@@ -38,11 +53,21 @@ public class QuadraticAnalysisRunner {
         synchronized (this) {
             game = getGame(voterPositions, candidatePositions, gameDescription, quiet);
         }
+        final WeightedUtilityCalculator<NamedRationalEntity> randomDicCalc = getRandomDicCalculator(voterPositions, candidatePositions);
+
+        return analyzeAndReport(game, randomDicCalc, gameDescription, quiet);
+    }
+
+    public <C> AnalysisWithRandomDicComparison<VotingGameState<C>, BigFraction> analyzeAndReport(
+            VotingGame<C, BigFraction, BigFraction> game,
+            WeightedUtilityCalculator<C> randomDicCalc,
+            String gameDescription,
+            boolean quiet) {
 
         final GameAnalyzer gameAnalyzer = StaticContext.getInstance().gameAnalyzer;
-        final ImmutableDirectedGraphWithScc<VotingGameState<NamedRationalEntity>> brg = gameAnalyzer.calculateBestResponseGraph(game);
+        final ImmutableDirectedGraphWithScc<VotingGameState<C>> brg = gameAnalyzer.calculateBestResponseGraph(game);
 
-        final GameAnalysis<VotingGameState<NamedRationalEntity>, BigFraction> gameAnalysis = gameAnalyzer.analyze(game, brg);
+        final GameAnalysis<VotingGameState<C>, BigFraction> gameAnalysis = gameAnalyzer.analyze(game, brg);
         Optional<BigFraction> randomDicPoSRatio = Optional.empty();
 
         synchronized (this) {
@@ -54,10 +79,8 @@ public class QuadraticAnalysisRunner {
                 log("Truthful profiles:");
             }
 
-            final WeightedUtilityCalculator<NamedRationalEntity> randomDicCalc = getRandomDicCalculator(voterPositions, candidatePositions);
-
             int i = 1;
-            for (Map.Entry<VotingGameState<NamedRationalEntity>, BigFraction> entry : game.getTruthfulStates()
+            for (Map.Entry<VotingGameState<C>, BigFraction> entry : game.getTruthfulStates()
                     .entrySet()) {
 
                 if (!quiet) {
@@ -107,7 +130,10 @@ public class QuadraticAnalysisRunner {
         return new AnalysisWithRandomDicComparison<>(randomDicPoSRatio, gameAnalysis);
     }
 
-    private WeightedUtilityCalculator<NamedRationalEntity> getRandomDicCalculator(LinkedHashSet<NamedRationalEntity> voterPositions, LinkedHashSet<NamedRationalEntity> candidatePositions) {
+    private WeightedUtilityCalculator<NamedRationalEntity> getRandomDicCalculator(
+            LinkedHashSet<NamedRationalEntity> voterPositions,
+            LinkedHashSet<NamedRationalEntity> candidatePositions) {
+
         return quadraticFactory.createWeightedCalculator(
                 voterPositions, candidatePositions, false);
     }
@@ -119,9 +145,7 @@ public class QuadraticAnalysisRunner {
             boolean quiet) {
 
         if (!quiet) {
-            log("************************************************************************************************");
-            log("Analyzing " + gameDescription);
-            log("************************************************************************************************");
+            logHeader(gameDescription);
 
             log("with voters:");
             logEntities(voters);
@@ -134,6 +158,12 @@ public class QuadraticAnalysisRunner {
 
         return quadraticFactory.createDistanceBasedGame(
                 voters, candidates, welfareCalculator);
+    }
+
+    private void logHeader(String gameDescription) {
+        log("************************************************************************************************");
+        log("Analyzing " + gameDescription);
+        log("************************************************************************************************");
     }
 
     private void logEntities(Collection<NamedRationalEntity> entities) {

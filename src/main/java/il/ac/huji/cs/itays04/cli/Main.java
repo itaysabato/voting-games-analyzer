@@ -9,10 +9,7 @@ import il.ac.huji.cs.itays04.rational.RationalUtils;
 import il.ac.huji.cs.itays04.voting.quadratic.AnalysisWithRandomDicComparison;
 import org.apache.commons.math3.fraction.BigFraction;
 
-import java.util.Comparator;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class Main {
     private static final Main main = new Main();
@@ -32,25 +29,25 @@ public class Main {
 
         try {
             jCommander.parse(args);
-            validateVoters(arguments);
-            validateCandidates(arguments);
+
+            if (arguments.isHelp()) {
+                jCommander.usage();
+            }
+            else {
+                validateVoters(arguments);
+                validateCandidates(arguments);
+                run(arguments);
+            }
         }
         catch (ParameterException e) {
             System.out.println("Invalid command line arguments: " + e.getMessage());
             jCommander.usage();
-            return;
-        }
-
-        if (arguments.isHelp()) {
-            jCommander.usage();
-        }
-        else {
-            run(arguments);
+            System.exit(1);
         }
     }
 
     private void validateVoters(Arguments arguments) {
-        validatePositions(arguments.getVoters(), arguments.isRandomize(), arguments.getRandomVotersRange(),
+        validatePositions(arguments.getVoters(), arguments.getUtilities().isEmpty() && arguments.isRandomize(), arguments.getRandomVotersRange(),
                 "Voters");
     }
 
@@ -90,30 +87,92 @@ public class Main {
     }
 
     private void nextGame(int gameIndex, Arguments arguments, RationalAggregator aggregator) {
-        List<BigFraction> voterPositions = arguments.getVoters();
-
+        final String gameDescription = "Quadratic Voting Game " + gameIndex;
+        final boolean quiet = arguments.isQuiet();
         final boolean noCandidates = arguments.isNoCandidates();
+        List<BigFraction> voterPositions = arguments.getVoters();
+        final List<BigFraction> utilities = arguments.getUtilities();
         List<BigFraction> candidatePositions = arguments.getCandidates();
 
-        if (arguments.isRandomize()) {
-            voterPositions = generateMorePositions(arguments.getVoters(), arguments.getRandomVotersRange());
+        final AnalysisWithRandomDicComparison<?, BigFraction> analysis;
 
-            if (!noCandidates) {
-                candidatePositions = generateMorePositions(arguments.getCandidates(), arguments.getRandomCandidatesRange());
+        if (utilities.isEmpty()) {
+            if (arguments.isRandomize()) {
+                voterPositions = generateMorePositions(arguments.getVoters(), arguments.getRandomVotersRange());
+
+                if (!noCandidates) {
+                    candidatePositions = generateMorePositions(arguments.getCandidates(), arguments.getRandomCandidatesRange());
+                }
             }
+
+            final LinkedHashSet<NamedRationalEntity> voters = rationalUtils.toVoters(voterPositions);
+            final LinkedHashSet<NamedRationalEntity> candidates = noCandidates ?
+                    voters : rationalUtils.toCandidates(candidatePositions);
+
+            analysis = quadraticAnalysisRunner.analyzeAndReport(
+                    voters,
+                    candidates,
+                    gameDescription,
+                    quiet);
+        }
+        else {
+            int numVoters = floorFirst(voterPositions);
+            validateNum(numVoters, "voters");
+
+            int numCandidates = noCandidates ? numVoters : floorFirst(candidatePositions);
+            validateNum(numCandidates, "candidates");
+
+            final int expectedTotal = numVoters * numCandidates;
+            if (utilities.size() != expectedTotal) {
+                throw new ParameterException("Expected [" + expectedTotal +
+                        "] cardinal utility values: " + utilities);
+            }
+
+            boolean isPos = false;
+            boolean isNeg = false;
+            List<LinkedHashMap<String, BigFraction>> allUtils = new ArrayList<>(numVoters);
+            for (int i = 0; i < numVoters; i++) {
+                final LinkedHashMap<String, BigFraction> iUtils = new LinkedHashMap<>();
+                allUtils.add(iUtils);
+
+                for (int j = 0; j < numCandidates; j++) {
+                    final String candidateJ = "C" + (j + 1);
+                    final BigFraction uij = utilities.get((i * numCandidates) + j);
+
+                    iUtils.put(candidateJ, uij);
+
+                    final int sign = uij.compareTo(BigFraction.ZERO);
+                    if (sign > 0) {
+                        isPos = true;
+                    }
+                    else if (sign < 0) {
+                        isNeg = true;
+                    }
+
+                    if (isNeg && isPos) {
+                        throw new ParameterException("Cardinal utilities must be strictly non-negative or strictly " +
+                                "non-positive: " + utilities);
+                    }
+                }
+            }
+
+            analysis = quadraticAnalysisRunner.analyzeAndReport(
+                    allUtils,
+                    gameDescription,
+                    quiet);
         }
 
-        final LinkedHashSet<NamedRationalEntity> voters = rationalUtils.toVoters(voterPositions);
-        final LinkedHashSet<NamedRationalEntity> candidates = noCandidates ?
-                voters : rationalUtils.toCandidates(candidatePositions);
-
-        final AnalysisWithRandomDicComparison<?, BigFraction> analysis = quadraticAnalysisRunner.analyzeAndReport(
-                voters,
-                candidates,
-                "Quadratic Voting Game " + gameIndex,
-                arguments.isQuiet());
-
         aggregator.add(analysis);
+    }
+
+    private void validateNum(int num, String name) {
+        if (num <= 0) {
+            throw new ParameterException("Must provide number of " + name + " if cardinal utilities are specified.");
+        }
+    }
+
+    private int floorFirst(List<BigFraction> voterPositions) {
+        return voterPositions.get(0).intValue();
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")

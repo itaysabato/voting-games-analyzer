@@ -2,6 +2,7 @@ package il.ac.huji.cs.itays04.voting.quadratic;
 
 import il.ac.huji.cs.itays04.games.api.SocialWelfareCalculator;
 import il.ac.huji.cs.itays04.games.impl.CachedUtilityCalculator;
+import il.ac.huji.cs.itays04.rational.BigFractionAverageSocialWelfareCalculator;
 import il.ac.huji.cs.itays04.rational.NamedRationalEntity;
 import il.ac.huji.cs.itays04.voting.VotingGame;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
@@ -46,16 +47,32 @@ public class QuadraticFactory {
             LinkedHashSet<NamedRationalEntity> candidates,
             SocialWelfareCalculator<BigFraction, W> socialWelfareCalculator) {
 
-        final double numberOfStates = Math.ceil(Math.pow(candidates.size(), voters.size()));
-
         final WeightedUtilityCalculator<NamedRationalEntity> utilityCalculator = createWeightedCalculator(
                 voters, candidates, true);
-        
-        final Set<List<NamedRationalEntity>> truthfulProfiles = utilityCalculator.getTruthfulProfiles();
 
-        final CachedUtilityCalculator<VotingGameState<NamedRationalEntity>, BigFraction> cachedUtilityCalculator =
+        return getGame(voters.size(), candidates, utilityCalculator, socialWelfareCalculator);
+    }
+
+    public <C, W extends Number & Comparable<W>> VotingGame<C, BigFraction, W> getGame(
+            int numVoters,
+            LinkedHashSet<C> candidates,
+            WeightedUtilityCalculator<C> utilityCalculator,
+            SocialWelfareCalculator<BigFraction, W> socialWelfareCalculator) {
+
+        final double numberOfStates = Math.ceil(Math.pow(candidates.size(), numVoters));
+
+        final CachedUtilityCalculator<VotingGameState<C>, BigFraction> cachedUtilityCalculator =
                 new CachedUtilityCalculator<>(utilityCalculator, (int) numberOfStates);
 
+        final Set<List<C>> truthfulProfiles = utilityCalculator.getTruthfulProfiles();
         return new VotingGame<>(candidates, truthfulProfiles, cachedUtilityCalculator, socialWelfareCalculator);
+    }
+
+    public VotingGame<String, BigFraction, BigFraction> createGame(List<LinkedHashMap<String, BigFraction>> allUtils) {
+        return getGame(
+                allUtils.size(),
+                new LinkedHashSet<>(allUtils.get(0).keySet()),
+                new WeightedUtilityCalculator<>(allUtils, true),
+                new BigFractionAverageSocialWelfareCalculator());
     }
 }
