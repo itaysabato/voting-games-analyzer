@@ -67,10 +67,10 @@ public class PluralityVotingRule implements RandomizedVotingRule {
 }
 ```
 
-After compiling, move the file `PluralityVotingRule.class` to the `lib` folder along with any required dependencies and
+In order to use it as a custom voting rule, after compiling, move the file `PluralityVotingRule.class` to the `lib` folder along with any required dependencies and
 run `vga -r -vr PluralityVotingRule`
 
-The output may looks something like this:
+The output may look something like this:
 ```
 ************************************************************************************************
 Analyzing Plurality Voting Game 1
