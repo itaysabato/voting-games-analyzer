@@ -1,6 +1,64 @@
 # Voting Games Analyzer
 A command line tool for analyzing voting games, in particular, ones that use randomized voting rules.
 
+## Usage
+```
+$ vga -h
+Usage: vga [options]
+  Options:
+    -c, --candidates
+       A comma-separated list of candidate positions, as rational numbers of the
+       form '1', '-2', '3/2', etc. If the -u option is set, only the first number
+       will be read, and floored to an integer.
+       Default: []
+    -h, --help
+       Display help message.
+       Default: false
+    -nc, --no-candidates
+       Use the voters as the only candidates. Other options regarding candidates
+       are ignored if this flag is set. If the -u option is set, this flag indicates
+       that the number of candidates is equal to the number of voters.
+       Default: false
+    -n, --number-games
+       The number of games to analyze.
+       Default: 1
+    -q, --quiet
+       Do not output individual game analyses, only final aggregation.
+       Default: false
+    -rc, --random-candidates
+       The number of random candidates to generate. It is also possible to give
+       a range from which the amount will be chosen uniformly, e.g. 2,4 or 1,3.
+       Default: [2, 5]
+    -rv, --random-voters
+       The number of random voters to generate. It is also possible to give a
+       range from which the amount will be chosen uniformly, e.g. 2,4 or 1,3.
+       Default: [2, 5]
+    -r, --randomize
+       Generate random positions. If this flag is not set, voters and candidates
+       must be explicitly specified. If the -u option is set, this flag will be
+       ignored.
+       Default: false
+    -u, --utilities
+       A comma-separated list of cardinal utilities, starting with the utilities
+       the first voter gets from the first candidates, then the second candidates,
+       etc. followed by a list for the second voter and so on until the last voter.
+       For example, if we have 2 voters and 3 candidates then "1,2,1/3,4,23,7/5"
+       would be a valid list. If this option is set, the number of voters and number
+       of candidates should be given instead of their positions lists via -v and -c
+       respectively.
+       Default: []
+    -v, --voters
+       A comma-separated list of voter positions, as rational numbers of the
+       form '1', '-2', '3/2', etc. If the -u option is set, only the first number
+       will be read, and floored to an integer.
+       Default: []
+    -vr, --voting-rule
+       The fully qualified name of a java class implementing the interface
+       RandomizedVotingRule to be used instead of the Quadratic voting rule. The compiled class must
+       have a no-argument constructor and be present in the lib folder.
+       Default: il.ac.huji.cs.itays04.voting.weighted.QuadraticRandomizedVotingRule
+```
+
 ## Custom Voting Rule Example
 The following is an implementation of the plurality voting rule with random tie-breaking.
 ```java
