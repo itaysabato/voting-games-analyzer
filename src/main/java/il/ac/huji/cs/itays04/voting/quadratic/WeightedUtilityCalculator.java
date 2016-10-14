@@ -5,7 +5,6 @@ import il.ac.huji.cs.itays04.rational.NumberUtils;
 import il.ac.huji.cs.itays04.voting.VotingGameState;
 import org.apache.commons.math3.fraction.BigFraction;
 
-import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -74,60 +73,65 @@ public class WeightedUtilityCalculator<C> implements UtilityCalculator<VotingGam
 
     @Override
     public BigFraction calculateUtility(VotingGameState<C> gameState, int playerIndex) {
-        final Map<C, Integer> histogram = calculateHistogram(gameState);
-
-        final int total;
-        if (quadratic) {
-            total = QuadrifyHistogram(histogram);
-        }
-        else {
-            total = gameState.getVotes().size();
-        }
-
-        return calculateExpectedUtility(playerIndex, histogram, total);
+        final Map<C, BigFraction> distribution = getWinnerDistribution(gameState.getVotes());
+        return calculateExpectedUtility(distribution, playerIndex);
     }
 
-    private Map<C, Integer> calculateHistogram(VotingGameState<C> gameState) {
-        final List<C> votes = gameState.getVotes();
-        final Map<C, Integer> histogram = new HashMap<>();
+    public Map<C, BigFraction> getWinnerDistribution(List<C> votes) {
+        final Map<C, BigFraction> histogram = calculateHistogram(votes);
+
+        final BigFraction total;
+        if (quadratic) {
+            total = quadrifyHistogram(histogram);
+        }
+        else {
+            total = new BigFraction(votes.size());
+        }
+
+        for (Map.Entry<C, BigFraction> entry : histogram.entrySet()) {
+            entry.setValue(entry.getValue().divide(total));
+        }
+        return histogram;
+    }
+
+    private Map<C, BigFraction> calculateHistogram(List<C> votes) {
+        final Map<C, BigFraction> histogram = new HashMap<>();
 
         for (C candidate : votes) {
-            Integer count = histogram.getOrDefault(candidate, 0);
-            histogram.put(candidate, count + 1);
+            BigFraction count = histogram.getOrDefault(candidate, BigFraction.ZERO);
+            histogram.put(candidate, count.add(1));
         }
 
         return histogram;
     }
 
-    private int QuadrifyHistogram(Map<C, Integer> histogram) {
-        int total = 0;
+    private BigFraction quadrifyHistogram(Map<C, BigFraction> histogram) {
+        BigFraction total = BigFraction.ZERO;
 
-        for (Map.Entry<C, Integer> entry : histogram.entrySet()) {
-            int value = entry.getValue();
-            int newValue = value * value;
+        for (Map.Entry<C, BigFraction> entry : histogram.entrySet()) {
+            BigFraction value = entry.getValue();
+            BigFraction newValue = value.pow(2);
 
             entry.setValue(newValue);
-            total += newValue;
+            total = total.add(newValue);
         }
 
         return total;
     }
 
-    private BigFraction calculateExpectedUtility(int playerIndex, Map<C, Integer> weightsMap, int totalWeight) {
+    private BigFraction calculateExpectedUtility(Map<C, BigFraction> distribution, int playerIndex) {
         final Map<C, BigFraction> utilities = individualUtilities.get(playerIndex);
 
-        BigFraction numerator = BigFraction.ZERO;
+        BigFraction expectancy = BigFraction.ZERO;
 
-        for (Map.Entry<C, Integer> entry : weightsMap.entrySet()) {
+        for (Map.Entry<C, BigFraction> entry : distribution.entrySet()) {
             BigFraction util = utilities.get(entry.getKey());
+            final BigFraction probability = entry.getValue();
 
-            long weight = entry.getValue();
-            final BigInteger bigWeight = BigInteger.valueOf(weight);
-
-            numerator = numerator.add(util.multiply(bigWeight));
+            expectancy = expectancy.add(util.multiply(probability));
         }
 
-        return numerator.divide(totalWeight);
+        return expectancy;
     }
 
     public Set<List<C>> getTruthfulProfiles() {
