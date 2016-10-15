@@ -71,11 +71,17 @@
                 <version>1.6</version>
                 <executions>
                     <execution>
-                        <id>chmod-scripts</id>
+                        <id>duct-tape</id>
                         <phase>install</phase>
                         <configuration>
                             <target>
                                 <chmod file="${app.path}/vga" perm="755"/>
+                                <delete>
+                                    <fileset dir="${lib.path}">
+                                        <include name="*junit*.jar"/>
+                                        <include name="*hamcrest*.jar"/>
+                                    </fileset>
+                                </delete>
                             </target>
                         </configuration>
                         <goals>
