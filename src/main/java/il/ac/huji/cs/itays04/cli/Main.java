@@ -2,6 +2,8 @@ package il.ac.huji.cs.itays04.cli;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+import il.ac.huji.cs.itays04.cli.parsing.Arguments;
+import il.ac.huji.cs.itays04.cli.parsing.PriorityComparator;
 import il.ac.huji.cs.itays04.rational.NamedRationalEntity;
 import il.ac.huji.cs.itays04.rational.RandomUtils;
 import il.ac.huji.cs.itays04.rational.RationalAggregator;
@@ -25,8 +27,10 @@ public class Main {
 
     private void run(String[] args) {
         final Arguments arguments = new Arguments();
+
         final JCommander jCommander = new JCommander(arguments);
         jCommander.setProgramName("vga");
+        jCommander.setParameterDescriptionComparator(PriorityComparator.instance);
 
         try {
             jCommander.parse(args);

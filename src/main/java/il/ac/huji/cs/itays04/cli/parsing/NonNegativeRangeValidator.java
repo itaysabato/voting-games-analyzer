@@ -1,4 +1,4 @@
-package il.ac.huji.cs.itays04.cli;
+package il.ac.huji.cs.itays04.cli.parsing;
 
 import com.beust.jcommander.IValueValidator;
 import com.beust.jcommander.ParameterException;

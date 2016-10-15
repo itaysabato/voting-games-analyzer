@@ -1,4 +1,4 @@
-package il.ac.huji.cs.itays04.cli;
+package il.ac.huji.cs.itays04.cli.parsing;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.IntegerConverter;
@@ -10,7 +10,7 @@ import org.apache.commons.math3.fraction.BigFraction;
 import java.util.LinkedList;
 import java.util.List;
 
-class Arguments {
+public class Arguments {
     private static final String VOTERS_NAME = "-v";
     private static final String CANDIDATES_NAME = "-c";
     public static final String UTILITIES_NAME = "-u";
@@ -29,19 +29,38 @@ class Arguments {
             description = "Display help message.",
             help = true
     )
+    @ExtendedParameter()
     private boolean help = false;
+
+    @Parameter(
+            names = {"-r", "--randomize"},
+            description = "Generate random positions. If this flag is not set, " +
+                    "voters and candidates must be explicitly specified. If the " + UTILITIES_NAME + " option is set, " +
+                    "this flag will be ignored."
+    )
+    @ExtendedParameter(priority = 10)
+    private boolean randomize = false;
 
     @Parameter(
             names = {"-q", "--quiet"},
             description = "Do not output individual game analyses, only final aggregation."
     )
+    @ExtendedParameter(priority = 20)
     private boolean quiet = false;
+
+    @Parameter(
+            names = {"-n", "--number-games"},
+            description = "The number of games to analyze."
+    )
+    @ExtendedParameter(priority = 30)
+    private int numberOfGames = 1;
 
     @Parameter(
             names = {VOTERS_NAME, "--voters"},
             description = POS_DESC_PRE + "voter" + POS_DESC_POST,
             converter = BigFractionConverter.class
     )
+    @ExtendedParameter(priority = 40)
     private List<BigFraction> voters = new LinkedList<>();
 
     @Parameter(
@@ -50,6 +69,7 @@ class Arguments {
                     "Other options regarding candidates are ignored if this flag is set. If the " + UTILITIES_NAME +
                     " option is set, this flag indicates that the number of candidates is equal to the number of voters."
     )
+    @ExtendedParameter(priority = 50)
     private boolean noCandidates = false;
 
     @Parameter(
@@ -57,15 +77,8 @@ class Arguments {
             description = POS_DESC_PRE + "candidate" + POS_DESC_POST,
             converter = BigFractionConverter.class
     )
+    @ExtendedParameter(priority = 60)
     private List<BigFraction> candidates = new LinkedList<>();
-
-    @Parameter(
-            names = {"-r", "--randomize"},
-            description = "Generate random positions. If this flag is not set, " +
-                    "voters and candidates must be explicitly specified. If the " + UTILITIES_NAME + " option is set, " +
-                    "this flag will be ignored."
-    )
-    private boolean randomize = false;
 
     @Parameter(
             names = {"-rc", "--random-candidates"},
@@ -73,6 +86,7 @@ class Arguments {
             converter = IntegerConverter.class,
             validateValueWith = NonNegativeRangeValidator.class
     )
+    @ExtendedParameter(priority = 70)
     private List<Integer> randomCandidatesRange = ImmutableList.of(2,5);
 
     @Parameter(
@@ -81,8 +95,8 @@ class Arguments {
             converter = IntegerConverter.class,
             validateValueWith = NonNegativeRangeValidator.class
     )
+    @ExtendedParameter(priority = 80)
     private List<Integer> randomVotersRange = ImmutableList.of(2,5);
-
 
     @Parameter(
             names = {UTILITIES_NAME, "--utilities"},
@@ -94,13 +108,8 @@ class Arguments {
                     "via " + VOTERS_NAME + " and " + CANDIDATES_NAME + " respectively.",
             converter = BigFractionConverter.class
     )
+    @ExtendedParameter(priority = 90)
     private List<BigFraction> utilities = new LinkedList<>();
-
-    @Parameter(
-            names = {"-n", "--number-games"},
-            description = "The number of games to analyze."
-    )
-    private int numberOfGames = 1;
 
 
     @Parameter(
@@ -110,6 +119,7 @@ class Arguments {
                     "have a no-argument constructor and be present in the lib folder.",
             converter = VotingRuleConverter.class
     )
+    @ExtendedParameter(priority = 100)
     private RandomizedVotingRule votingRule = new QuadraticRandomizedVotingRule();
 
     public boolean isHelp() {
