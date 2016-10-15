@@ -35,6 +35,7 @@ public class ExpectedUtilityCalculator<C> implements UtilityCalculator<VotingGam
     @Override
     public BigFraction calculateUtility(VotingGameState<C> gameState, int playerIndex) {
         final Map<C, BigFraction> distribution = votingRule.getWinnerDistribution(gameState.getVotes(), allCandidates);
+        validate(distribution);
         return calculateExpectedUtility(distribution, playerIndex);
     }
 
@@ -66,6 +67,37 @@ public class ExpectedUtilityCalculator<C> implements UtilityCalculator<VotingGam
         }
 
         return builder.toString();
+    }
+
+    private void validate(Map<C, BigFraction> distribution) {
+        BigFraction sum = BigFraction.ZERO;
+
+        for (Map.Entry<C, BigFraction> entry : distribution.entrySet()) {
+            final C candidate = entry.getKey();
+
+            if (allCandidates.contains(candidate)) {
+                final BigFraction probability = entry.getValue();
+                validateProbability(candidate, probability);
+
+                sum = sum.add(probability);
+            }
+            else {
+                throw new IllegalStateException("Winner distribution contains a non-existing candidate: " + candidate);
+            }
+        }
+
+        if (!sum.equals(BigFraction.ONE)) {
+            throw new IllegalStateException("Winner distribution probabilities do not sum-up to one: " + sum);
+        }
+    }
+
+    private void validateProbability(C candidate, BigFraction probability) {
+        if (probability.compareTo(BigFraction.ZERO) < 0
+                || probability.compareTo(BigFraction.ONE) > 0) {
+
+            throw new IllegalStateException("Winner distribution contains an invalid probability value " +
+                    "[" + probability + "] for candidate: " + candidate);
+        }
     }
 
     private Set<List<C>> getAllTruthfulProfiles(List<? extends Map<C, BigFraction>> individualUtilities) {
