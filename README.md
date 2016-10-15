@@ -108,7 +108,6 @@ $ vga -h
 Usage: vga [options]
 
   Options:
-  
   -h, --help
        Display help message.
        Default: false
