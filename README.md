@@ -1,5 +1,6 @@
 # Voting Games Analyzer
 A command line tool for analyzing voting games, in particular, ones that use randomized voting rules.
+
 The quickest way to see it in action is to analyze a random game: 
 ```
 $ vga -r
@@ -84,7 +85,7 @@ End Analysis of Quadratic Voting Game 1.
     "betterPoSThanRandomizedDictatorshipPercentage" : 100
 }
 ```
-With the `-q` option, you can analyize and aggregate many games without all the noise:
+With the `-q` option, you can analyze and aggregate many games without all the extra output:
 ```
 $ vga -r -n 100 -q
 {
@@ -235,169 +236,169 @@ public class PluralityVotingRule implements RandomizedVotingRule {
 ```
 In order to use a custom voting rule, after compiling, move the `.class` file to the `lib` folder along with any other classes you need and pass the fully qualified class name via the command line, e.g.
 ```
-$ vga -v 1,2,3 -nc -vr PluralityVotingRule
-  ************************************************************************************************
-  Analyzing Plurality Voting Game 1
-  ************************************************************************************************
-  with voters:
-  V1 = 1
-  V2 = 2
-  V3 = 3
-  
-  and candidates:
-  V1 = 1
-  V2 = 2
-  V3 = 3
-  
-  ********************************
-  Game Analysis
-  ********************************
-  Type: Voting Game
-  Number of voters: 3
-  Number of candidates: 3
-  
-  Utility function: Expected utility based on the Plurality voting rule and the following cardinal utilities:
-  Voter 1: 0, -1, -2
-  Voter 2: -1, 0, -1
-  Voter 3: -2, -1, 0
-  
-  Social welfare function: Average
-  
-  Number of possible game states: 27
-  Number of pure Nash equilibria: 6
-  
-  Price of Anarchy: 3 / 2 (1.5)
-  Price of Sinking: 3 / 2 (1.5)
-  Price of Stability: 1
-  
-  Number of strongly connected components in best response graph: 27
-  Number of components with cycles: 0
-  Number of sink-equilibria: 6
-  
-  Social optimum: -2 / 3 (-0.6667)
-  Socially optimal states:
-  1 - {V1 votes [V2 = 2], V2 votes [V2 = 2], V3 votes [V1 = 1]}
-  2 - {V1 votes [V1 = 1], V2 votes [V2 = 2], V3 votes [V2 = 2]}
-  3 - {V1 votes [V2 = 2], V2 votes [V3 = 3], V3 votes [V2 = 2]}
-  4 - {V1 votes [V2 = 2], V2 votes [V2 = 2], V3 votes [V2 = 2]}
-  5 - {V1 votes [V2 = 2], V2 votes [V2 = 2], V3 votes [V3 = 3]}
-  6 - {V1 votes [V2 = 2], V2 votes [V1 = 1], V3 votes [V2 = 2]}
-  7 - {V1 votes [V3 = 3], V2 votes [V2 = 2], V3 votes [V2 = 2]}
-  ---------------------------------
-  Sinks
-  ---------------------------------
-  Sink #1
-  Component id: 16
-  Number of states: 1
-  Average welfare: -2 / 3 (-0.6667)
-  Ratio to social optimum: 1
-  
-  States:
-  S1 - {V1 votes [V2 = 2], V2 votes [V2 = 2], V3 votes [V2 = 2]}
-  
-  Sink edges:
-  N/A
-  
-  Longest path to sink length: 0
-  Longest path to sink: {V1 votes [V2 = 2], V2 votes [V2 = 2], V3 votes [V2 = 2]}
-  ---------------------------------
-  Sink #2
-  Component id: 0
-  Number of states: 1
-  Average welfare: -8 / 9 (-0.8889)
-  Ratio to social optimum: 4 / 3 (1.3333)
-  
-  States:
-  S1 - {V1 votes [V1 = 1], V2 votes [V2 = 2], V3 votes [V3 = 3]}
-  
-  Sink edges:
-  N/A
-  
-  Longest path to sink length: 5
-  Longest path to sink: {V1 votes [V2 = 2], V2 votes [V1 = 1], V3 votes [V1 = 1]} => {V1 votes [V2 = 2], V2 votes [V1 = 1], V3 votes [V2 = 2]} => {V1 votes [V1 = 1], V2 votes [V1 = 1], V3 votes [V2 = 2]} => {V1 votes [V1 = 1], V2 votes [V3 = 3], V3 votes [V2 = 2]} => {V1 votes [V1 = 1], V2 votes [V3 = 3], V3 votes [V3 = 3]} => {V1 votes [V1 = 1], V2 votes [V2 = 2], V3 votes [V3 = 3]}
-  ---------------------------------
-  Sink #3
-  Component id: 7
-  Number of states: 1
-  Average welfare: -2 / 3 (-0.6667)
-  Ratio to social optimum: 1
-  
-  States:
-  S1 - {V1 votes [V2 = 2], V2 votes [V2 = 2], V3 votes [V3 = 3]}
-  
-  Sink edges:
-  N/A
-  
-  Longest path to sink length: 4
-  Longest path to sink: {V1 votes [V2 = 2], V2 votes [V1 = 1], V3 votes [V1 = 1]} => {V1 votes [V2 = 2], V2 votes [V3 = 3], V3 votes [V1 = 1]} => {V1 votes [V2 = 2], V2 votes [V3 = 3], V3 votes [V3 = 3]} => {V1 votes [V2 = 2], V2 votes [V1 = 1], V3 votes [V3 = 3]} => {V1 votes [V2 = 2], V2 votes [V2 = 2], V3 votes [V3 = 3]}
-  ---------------------------------
-  Sink #4
-  Component id: 3
-  Number of states: 1
-  Average welfare: -1
-  Ratio to social optimum: 3 / 2 (1.5)
-  
-  States:
-  S1 - {V1 votes [V1 = 1], V2 votes [V1 = 1], V3 votes [V1 = 1]}
-  
-  Sink edges:
-  N/A
-  
-  Longest path to sink length: 0
-  Longest path to sink: {V1 votes [V1 = 1], V2 votes [V1 = 1], V3 votes [V1 = 1]}
-  ---------------------------------
-  Sink #5
-  Component id: 26
-  Number of states: 1
-  Average welfare: -1
-  Ratio to social optimum: 3 / 2 (1.5)
-  
-  States:
-  S1 - {V1 votes [V3 = 3], V2 votes [V3 = 3], V3 votes [V3 = 3]}
-  
-  Sink edges:
-  N/A
-  
-  Longest path to sink length: 0
-  Longest path to sink: {V1 votes [V3 = 3], V2 votes [V3 = 3], V3 votes [V3 = 3]}
-  ---------------------------------
-  Sink #6
-  Component id: 2
-  Number of states: 1
-  Average welfare: -2 / 3 (-0.6667)
-  Ratio to social optimum: 1
-  
-  States:
-  S1 - {V1 votes [V1 = 1], V2 votes [V2 = 2], V3 votes [V2 = 2]}
-  
-  Sink edges:
-  N/A
-  
-  Longest path to sink length: 4
-  Longest path to sink: {V1 votes [V2 = 2], V2 votes [V1 = 1], V3 votes [V1 = 1]} => {V1 votes [V2 = 2], V2 votes [V1 = 1], V3 votes [V2 = 2]} => {V1 votes [V1 = 1], V2 votes [V1 = 1], V3 votes [V2 = 2]} => {V1 votes [V1 = 1], V2 votes [V3 = 3], V3 votes [V2 = 2]} => {V1 votes [V1 = 1], V2 votes [V2 = 2], V3 votes [V2 = 2]}
-  ---------------------------------
-  
-  Truthful profiles:
-  
-  1 - {V1 votes [V1 = 1], V2 votes [V2 = 2], V3 votes [V3 = 3]}
-  Original social welfare: -8 / 9 (-0.8889)
-  Randomized Dictatorship social welfare: -8 / 9 (-0.8889)
-  Randomized Dictatorship social welfare ratio to optimum: 4 / 3 (1.3333)
-  Randomized Dictatorship social welfare ratio to best original NE: 3 / 4 (0.75)
-  
-  End Analysis of Plurality Voting Game 1.
-  
-  {
-      "numberOfGames" : 1,
-      "avgNeCount" : 6,
-      "percentageWithNe" : 100,
-      "convergingPercentage" : 100,
-      "avgPrices" : {
-          "socialOptimum" : -0.6667,
-          "priceOfSinking" : 1.5,
-          "priceOfAnarchy" : 1.5,
-          "priceOfStability" : 1
-      },
-      "betterPoSThanRandomizedDictatorshipPercentage" : 100
-  }
+$ vga/vga -v 1,2,3 -nc -vr PluralityVotingRule
+************************************************************************************************
+Analyzing Plurality Voting Game 1
+************************************************************************************************
+with voters:
+V1 = 1
+V2 = 2
+V3 = 3
+
+and candidates:
+V1 = 1
+V2 = 2
+V3 = 3
+
+********************************
+Game Analysis
+********************************
+Type: Voting Game
+Number of voters: 3
+Number of candidates: 3
+
+Utility function: Expected utility based on the Plurality voting rule and the following cardinal utilities:
+Voter 1: 0, -1, -2
+Voter 2: -1, 0, -1
+Voter 3: -2, -1, 0
+
+Social welfare function: Average
+
+Number of possible game states: 27
+Number of pure Nash equilibria: 6
+
+Price of Anarchy: 3 / 2 (1.5)
+Price of Sinking: 3 / 2 (1.5)
+Price of Stability: 1
+
+Number of strongly connected components in best response graph: 27
+Number of components with cycles: 0
+Number of sink-equilibria: 6
+
+Social optimum: -2 / 3 (-0.6667)
+Socially optimal states:
+1 - {V1 votes [V2 = 2], V2 votes [V2 = 2], V3 votes [V1 = 1]}
+2 - {V1 votes [V1 = 1], V2 votes [V2 = 2], V3 votes [V2 = 2]}
+3 - {V1 votes [V2 = 2], V2 votes [V3 = 3], V3 votes [V2 = 2]}
+4 - {V1 votes [V2 = 2], V2 votes [V2 = 2], V3 votes [V2 = 2]}
+5 - {V1 votes [V2 = 2], V2 votes [V2 = 2], V3 votes [V3 = 3]}
+6 - {V1 votes [V2 = 2], V2 votes [V1 = 1], V3 votes [V2 = 2]}
+7 - {V1 votes [V3 = 3], V2 votes [V2 = 2], V3 votes [V2 = 2]}
+---------------------------------
+Sinks
+---------------------------------
+Sink #1
+Component id: 16
+Number of states: 1
+Average welfare: -2 / 3 (-0.6667)
+Ratio to social optimum: 1
+
+States:
+S1 - {V1 votes [V2 = 2], V2 votes [V2 = 2], V3 votes [V2 = 2]}
+
+Sink edges:
+N/A
+
+Longest path to sink length: 0
+Longest path to sink: {V1 votes [V2 = 2], V2 votes [V2 = 2], V3 votes [V2 = 2]}
+---------------------------------
+Sink #2
+Component id: 0
+Number of states: 1
+Average welfare: -8 / 9 (-0.8889)
+Ratio to social optimum: 4 / 3 (1.3333)
+
+States:
+S1 - {V1 votes [V1 = 1], V2 votes [V2 = 2], V3 votes [V3 = 3]}
+
+Sink edges:
+N/A
+
+Longest path to sink length: 5
+Longest path to sink: {V1 votes [V2 = 2], V2 votes [V1 = 1], V3 votes [V1 = 1]} => {V1 votes [V2 = 2], V2 votes [V1 = 1], V3 votes [V2 = 2]} => {V1 votes [V1 = 1], V2 votes [V1 = 1], V3 votes [V2 = 2]} => {V1 votes [V1 = 1], V2 votes [V3 = 3], V3 votes [V2 = 2]} => {V1 votes [V1 = 1], V2 votes [V3 = 3], V3 votes [V3 = 3]} => {V1 votes [V1 = 1], V2 votes [V2 = 2], V3 votes [V3 = 3]}
+---------------------------------
+Sink #3
+Component id: 7
+Number of states: 1
+Average welfare: -2 / 3 (-0.6667)
+Ratio to social optimum: 1
+
+States:
+S1 - {V1 votes [V2 = 2], V2 votes [V2 = 2], V3 votes [V3 = 3]}
+
+Sink edges:
+N/A
+
+Longest path to sink length: 4
+Longest path to sink: {V1 votes [V2 = 2], V2 votes [V1 = 1], V3 votes [V1 = 1]} => {V1 votes [V2 = 2], V2 votes [V3 = 3], V3 votes [V1 = 1]} => {V1 votes [V2 = 2], V2 votes [V3 = 3], V3 votes [V3 = 3]} => {V1 votes [V2 = 2], V2 votes [V1 = 1], V3 votes [V3 = 3]} => {V1 votes [V2 = 2], V2 votes [V2 = 2], V3 votes [V3 = 3]}
+---------------------------------
+Sink #4
+Component id: 3
+Number of states: 1
+Average welfare: -1
+Ratio to social optimum: 3 / 2 (1.5)
+
+States:
+S1 - {V1 votes [V1 = 1], V2 votes [V1 = 1], V3 votes [V1 = 1]}
+
+Sink edges:
+N/A
+
+Longest path to sink length: 0
+Longest path to sink: {V1 votes [V1 = 1], V2 votes [V1 = 1], V3 votes [V1 = 1]}
+---------------------------------
+Sink #5
+Component id: 26
+Number of states: 1
+Average welfare: -1
+Ratio to social optimum: 3 / 2 (1.5)
+
+States:
+S1 - {V1 votes [V3 = 3], V2 votes [V3 = 3], V3 votes [V3 = 3]}
+
+Sink edges:
+N/A
+
+Longest path to sink length: 0
+Longest path to sink: {V1 votes [V3 = 3], V2 votes [V3 = 3], V3 votes [V3 = 3]}
+---------------------------------
+Sink #6
+Component id: 2
+Number of states: 1
+Average welfare: -2 / 3 (-0.6667)
+Ratio to social optimum: 1
+
+States:
+S1 - {V1 votes [V1 = 1], V2 votes [V2 = 2], V3 votes [V2 = 2]}
+
+Sink edges:
+N/A
+
+Longest path to sink length: 4
+Longest path to sink: {V1 votes [V2 = 2], V2 votes [V1 = 1], V3 votes [V1 = 1]} => {V1 votes [V2 = 2], V2 votes [V1 = 1], V3 votes [V2 = 2]} => {V1 votes [V1 = 1], V2 votes [V1 = 1], V3 votes [V2 = 2]} => {V1 votes [V1 = 1], V2 votes [V3 = 3], V3 votes [V2 = 2]} => {V1 votes [V1 = 1], V2 votes [V2 = 2], V3 votes [V2 = 2]}
+---------------------------------
+
+Truthful profiles:
+
+1 - {V1 votes [V1 = 1], V2 votes [V2 = 2], V3 votes [V3 = 3]}
+Original social welfare: -8 / 9 (-0.8889)
+Randomized Dictatorship social welfare: -8 / 9 (-0.8889)
+Randomized Dictatorship social welfare ratio to optimum: 4 / 3 (1.3333)
+Randomized Dictatorship social welfare ratio to best original NE: 3 / 4 (0.75)
+
+End Analysis of Plurality Voting Game 1.
+
+{
+    "numberOfGames" : 1,
+    "avgNeCount" : 6,
+    "percentageWithNe" : 100,
+    "convergingPercentage" : 100,
+    "avgPrices" : {
+        "socialOptimum" : -0.6667,
+        "priceOfSinking" : 1.5,
+        "priceOfAnarchy" : 1.5,
+        "priceOfStability" : 1
+    },
+    "betterPoSThanRandomizedDictatorshipPercentage" : 100
+}
 ```
