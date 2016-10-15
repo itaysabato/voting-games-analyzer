@@ -1,0 +1,86 @@
+************************************************************************************************
+Analyzing Quadratic Voting Game 1
+************************************************************************************************
+with voters:
+V1 = 1
+V2 = 4
+V3 = 7
+V4 = 16
+
+and candidates:
+C1 = 1
+C2 = 5
+C3 = 8
+C4 = 19
+
+********************************
+Game Analysis
+********************************
+Type: Voting Game
+Number of voters: 4
+Number of candidates: 4
+
+Utility function: Expected utility based on the Quadratic voting rule and the following cardinal utilities:
+Voter 1: 0, -4, -7, -18
+Voter 2: -3, -1, -4, -15
+Voter 3: -6, -2, -1, -12
+Voter 4: -15, -11, -8, -3
+
+Social welfare function: Average
+
+Number of possible game states: 256
+Number of pure Nash equilibria: 1
+
+Price of Anarchy: 7 / 6 (1.1667)
+Price of Sinking: 7 / 6 (1.1667)
+Price of Stability: 7 / 6 (1.1667)
+
+Number of strongly connected components in best response graph: 210
+Number of components with cycles: 7
+Number of sink-equilibria: 1
+
+Social optimum: -9 / 2 (-4.5)
+Socially optimal states:
+1 - {V1 votes [C2 = 5], V2 votes [C2 = 5], V3 votes [C2 = 5], V4 votes [C2 = 5]}
+---------------------------------
+Sinks
+---------------------------------
+Sink #1
+Component id: 0
+Number of states: 1
+Average welfare: -21 / 4 (-5.25)
+Ratio to social optimum: 7 / 6 (1.1667)
+
+States:
+S1 - {V1 votes [C2 = 5], V2 votes [C2 = 5], V3 votes [C2 = 5], V4 votes [C4 = 19]}
+
+Sink edges:
+N/A
+
+Longest path to sink length: 58
+Longest path to sink: {V1 votes [C4 = 19], V2 votes [C4 = 19], V3 votes [C4 = 19], V4 votes [C1 = 1]} => {V1 votes [C4 = 19], V2 votes [C4 = 19], V3 votes [C4 = 19], V4 votes [C2 = 5]} => {V1 votes [C4 = 19], V2 votes [C4 = 19], V3 votes [C4 = 19], V4 votes [C3 = 8]} => SCC#159 => {V1 votes [C4 = 19], V2 votes [C3 = 8], V3 votes [C1 = 1], V4 votes [C1 = 1]} => {V1 votes [C4 = 19], V2 votes [C2 = 5], V3 votes [C1 = 1], V4 votes [C1 = 1]} => {V1 votes [C4 = 19], V2 votes [C1 = 1], V3 votes [C1 = 1], V4 votes [C1 = 1]} => {V1 votes [C4 = 19], V2 votes [C1 = 1], V3 votes [C1 = 1], V4 votes [C2 = 5]} => {V1 votes [C4 = 19], V2 votes [C2 = 5], V3 votes [C1 = 1], V4 votes [C2 = 5]} => {V1 votes [C4 = 19], V2 votes [C2 = 5], V3 votes [C1 = 1], V4 votes [C3 = 8]} => {V1 votes [C4 = 19], V2 votes [C3 = 8], V3 votes [C1 = 1], V4 votes [C3 = 8]} => {V1 votes [C4 = 19], V2 votes [C1 = 1], V3 votes [C1 = 1], V4 votes [C3 = 8]} => {V1 votes [C4 = 19], V2 votes [C1 = 1], V3 votes [C2 = 5], V4 votes [C3 = 8]} => {V1 votes [C4 = 19], V2 votes [C3 = 8], V3 votes [C2 = 5], V4 votes [C3 = 8]} => {V1 votes [C4 = 19], V2 votes [C3 = 8], V3 votes [C2 = 5], V4 votes [C4 = 19]} => {V1 votes [C4 = 19], V2 votes [C1 = 1], V3 votes [C2 = 5], V4 votes [C4 = 19]} => {V1 votes [C4 = 19], V2 votes [C1 = 1], V3 votes [C3 = 8], V4 votes [C4 = 19]} => {V1 votes [C4 = 19], V2 votes [C1 = 1], V3 votes [C1 = 1], V4 votes [C4 = 19]} => SCC#87 => {V1 votes [C2 = 5], V2 votes [C3 = 8], V3 votes [C2 = 5], V4 votes [C2 = 5]} => {V1 votes [C2 = 5], V2 votes [C3 = 8], V3 votes [C3 = 8], V4 votes [C2 = 5]} => {V1 votes [C2 = 5], V2 votes [C1 = 1], V3 votes [C3 = 8], V4 votes [C2 = 5]} => {V1 votes [C2 = 5], V2 votes [C1 = 1], V3 votes [C2 = 5], V4 votes [C2 = 5]} => {V1 votes [C2 = 5], V2 votes [C1 = 1], V3 votes [C2 = 5], V4 votes [C3 = 8]} => SCC#21 => {V1 votes [C1 = 1], V2 votes [C3 = 8], V3 votes [C2 = 5], V4 votes [C4 = 19]} => {V1 votes [C2 = 5], V2 votes [C3 = 8], V3 votes [C2 = 5], V4 votes [C4 = 19]} => {V1 votes [C2 = 5], V2 votes [C1 = 1], V3 votes [C2 = 5], V4 votes [C4 = 19]} => {V1 votes [C1 = 1], V2 votes [C1 = 1], V3 votes [C2 = 5], V4 votes [C4 = 19]} => SCC#3 => {V1 votes [C1 = 1], V2 votes [C2 = 5], V3 votes [C2 = 5], V4 votes [C4 = 19]} => {V1 votes [C2 = 5], V2 votes [C2 = 5], V3 votes [C2 = 5], V4 votes [C4 = 19]}
+---------------------------------
+
+Truthful profiles:
+
+1 - {V1 votes [C1 = 1], V2 votes [C2 = 5], V3 votes [C3 = 8], V4 votes [C4 = 19]}
+Original social welfare: -55 / 8 (-6.875)
+Randomized Dictatorship social welfare: -55 / 8 (-6.875)
+Randomized Dictatorship social welfare ratio to optimum: 55 / 36 (1.5278)
+Randomized Dictatorship social welfare ratio to best original NE: 42 / 55 (0.7636)
+
+End Analysis of Quadratic Voting Game 1.
+
+{
+    "numberOfGames" : 1,
+    "avgNeCount" : 1,
+    "percentageWithNe" : 100,
+    "convergingPercentage" : 0,
+    "avgPrices" : {
+        "socialOptimum" : -4.5,
+        "priceOfSinking" : 1.1667,
+        "priceOfAnarchy" : 1.1667,
+        "priceOfStability" : 1.1667
+    },
+    "betterPoSThanRandomizedDictatorshipPercentage" : 100
+}

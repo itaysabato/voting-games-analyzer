@@ -1,0 +1,83 @@
+************************************************************************************************
+Analyzing Quadratic Voting Game 1
+************************************************************************************************
+with voters:
+V1 = 4
+V2 = 4
+V3 = 10
+
+and candidates:
+C1 = 0
+C2 = 10
+
+********************************
+Game Analysis
+********************************
+Type: Voting Game
+Number of voters: 3
+Number of candidates: 2
+
+Utility function: Expected utility based on the Quadratic voting rule and the following cardinal utilities:
+Voter 1: -4, -6
+Voter 2: -4, -6
+Voter 3: -10, 0
+
+Social welfare function: Average
+
+Number of possible game states: 8
+Number of pure Nash equilibria: 1
+
+Price of Anarchy: 7 / 5 (1.4)
+Price of Sinking: 7 / 5 (1.4)
+Price of Stability: 7 / 5 (1.4)
+
+Number of strongly connected components in best response graph: 8
+Number of components with cycles: 0
+Number of sink-equilibria: 1
+
+Social optimum: -4
+Socially optimal states:
+1 - {V1 votes [C2 = 10], V2 votes [C2 = 10], V3 votes [C2 = 10]}
+---------------------------------
+Sinks
+---------------------------------
+Sink #1
+Component id: 0
+Number of states: 1
+Average welfare: -28 / 5 (-5.6)
+Ratio to social optimum: 7 / 5 (1.4)
+
+States:
+S1 - {V1 votes [C1 = 0], V2 votes [C1 = 0], V3 votes [C2 = 10]}
+
+Sink edges:
+N/A
+
+Longest path to sink length: 3
+Longest path to sink: {V1 votes [C2 = 10], V2 votes [C2 = 10], V3 votes [C1 = 0]} => {V1 votes [C2 = 10], V2 votes [C1 = 0], V3 votes [C1 = 0]} => {V1 votes [C2 = 10], V2 votes [C1 = 0], V3 votes [C2 = 10]} => {V1 votes [C1 = 0], V2 votes [C1 = 0], V3 votes [C2 = 10]}
+---------------------------------
+
+Truthful profiles:
+
+1 - {V1 votes [C1 = 0], V2 votes [C1 = 0], V3 votes [C2 = 10]}
+Original social welfare: -28 / 5 (-5.6)
+Randomized Dictatorship social welfare: -16 / 3 (-5.3333)
+Randomized Dictatorship social welfare ratio to optimum: 4 / 3 (1.3333)
+Randomized Dictatorship social welfare ratio to best original NE: 21 / 20 (1.05)
+Randomized Dictatorship social welfare is better than best original NE!
+
+End Analysis of Quadratic Voting Game 1.
+
+{
+    "numberOfGames" : 1,
+    "avgNeCount" : 1,
+    "percentageWithNe" : 100,
+    "convergingPercentage" : 100,
+    "avgPrices" : {
+        "socialOptimum" : -4,
+        "priceOfSinking" : 1.4,
+        "priceOfAnarchy" : 1.4,
+        "priceOfStability" : 1.4
+    },
+    "betterPoSThanRandomizedDictatorshipPercentage" : 0
+}

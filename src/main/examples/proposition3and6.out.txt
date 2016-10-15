@@ -1,0 +1,161 @@
+************************************************************************************************
+Analyzing Quadratic Voting Game 1
+************************************************************************************************
+with voters:
+V1 = 0
+V2 = 8 / 3 (2.6667)
+V3 = 16 / 3 (5.3333)
+V4 = 8
+
+and candidates:
+V1 = 0
+V2 = 8 / 3 (2.6667)
+V3 = 16 / 3 (5.3333)
+V4 = 8
+
+********************************
+Game Analysis
+********************************
+Type: Voting Game
+Number of voters: 4
+Number of candidates: 4
+
+Utility function: Expected utility based on the Quadratic voting rule and the following cardinal utilities:
+Voter 1: 0, -8 / 3 (-2.6667), -16 / 3 (-5.3333), -8
+Voter 2: -8 / 3 (-2.6667), 0, -8 / 3 (-2.6667), -16 / 3 (-5.3333)
+Voter 3: -16 / 3 (-5.3333), -8 / 3 (-2.6667), 0, -8 / 3 (-2.6667)
+Voter 4: -8, -16 / 3 (-5.3333), -8 / 3 (-2.6667), 0
+
+Social welfare function: Average
+
+Number of possible game states: 256
+Number of pure Nash equilibria: 5
+
+Price of Anarchy: 3 / 2 (1.5)
+Price of Sinking: 3 / 2 (1.5)
+Price of Stability: 1
+
+Number of strongly connected components in best response graph: 250
+Number of components with cycles: 2
+Number of sink-equilibria: 5
+
+Social optimum: -8 / 3 (-2.6667)
+Socially optimal states:
+1 - {V1 votes [V3 = 16 / 3 (5.3333)], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V2 = 8 / 3 (2.6667)]}
+2 - {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V3 = 16 / 3 (5.3333)], V4 votes [V3 = 16 / 3 (5.3333)]}
+3 - {V1 votes [V3 = 16 / 3 (5.3333)], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V3 = 16 / 3 (5.3333)], V4 votes [V2 = 8 / 3 (2.6667)]}
+4 - {V1 votes [V3 = 16 / 3 (5.3333)], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V3 = 16 / 3 (5.3333)], V4 votes [V3 = 16 / 3 (5.3333)]}
+5 - {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V3 = 16 / 3 (5.3333)], V4 votes [V2 = 8 / 3 (2.6667)]}
+6 - {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V3 = 16 / 3 (5.3333)]}
+7 - {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V3 = 16 / 3 (5.3333)], V4 votes [V2 = 8 / 3 (2.6667)]}
+8 - {V1 votes [V3 = 16 / 3 (5.3333)], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V3 = 16 / 3 (5.3333)]}
+9 - {V1 votes [V3 = 16 / 3 (5.3333)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V2 = 8 / 3 (2.6667)]}
+10 - {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V3 = 16 / 3 (5.3333)]}
+11 - {V1 votes [V3 = 16 / 3 (5.3333)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V3 = 16 / 3 (5.3333)], V4 votes [V3 = 16 / 3 (5.3333)]}
+12 - {V1 votes [V3 = 16 / 3 (5.3333)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V3 = 16 / 3 (5.3333)]}
+13 - {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V2 = 8 / 3 (2.6667)]}
+14 - {V1 votes [V3 = 16 / 3 (5.3333)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V3 = 16 / 3 (5.3333)], V4 votes [V2 = 8 / 3 (2.6667)]}
+15 - {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V2 = 8 / 3 (2.6667)]}
+16 - {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V3 = 16 / 3 (5.3333)], V4 votes [V3 = 16 / 3 (5.3333)]}
+---------------------------------
+Sinks
+---------------------------------
+Sink #1
+Component id: 0
+Number of states: 1
+Average welfare: -26 / 9 (-2.8889)
+Ratio to social optimum: 13 / 12 (1.0833)
+
+States:
+S1 - {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V3 = 16 / 3 (5.3333)], V4 votes [V4 = 8]}
+
+Sink edges:
+N/A
+
+Longest path to sink length: 21
+Longest path to sink: {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V1 = 0], V4 votes [V1 = 0]} => {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V1 = 0], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V1 = 0]} => {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V4 = 8], V4 votes [V1 = 0]} => {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V4 = 8], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V3 = 16 / 3 (5.3333)], V2 votes [V4 = 8], V3 votes [V4 = 8], V4 votes [V2 = 8 / 3 (2.6667)]} => SCC#84 => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V1 = 0], V3 votes [V4 = 8], V4 votes [V1 = 0]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V1 = 0], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V1 = 0]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V1 = 0]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V4 = 8], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V4 = 8], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V1 = 0], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V4 = 8], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V1 = 0], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V4 = 8], V4 votes [V3 = 16 / 3 (5.3333)]} => {V1 votes [V1 = 0], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V4 = 8], V4 votes [V4 = 8]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V4 = 8], V4 votes [V4 = 8]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V3 = 16 / 3 (5.3333)], V4 votes [V4 = 8]}
+---------------------------------
+Sink #2
+Component id: 1
+Number of states: 1
+Average welfare: -26 / 9 (-2.8889)
+Ratio to social optimum: 13 / 12 (1.0833)
+
+States:
+S1 - {V1 votes [V1 = 0], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V3 = 16 / 3 (5.3333)], V4 votes [V3 = 16 / 3 (5.3333)]}
+
+Sink edges:
+N/A
+
+Longest path to sink length: 21
+Longest path to sink: {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V1 = 0], V4 votes [V1 = 0]} => {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V1 = 0], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V1 = 0]} => {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V4 = 8], V4 votes [V1 = 0]} => {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V4 = 8], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V3 = 16 / 3 (5.3333)], V2 votes [V4 = 8], V3 votes [V4 = 8], V4 votes [V2 = 8 / 3 (2.6667)]} => SCC#84 => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V1 = 0], V3 votes [V4 = 8], V4 votes [V1 = 0]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V1 = 0], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V1 = 0]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V1 = 0]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V4 = 8], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V3 = 16 / 3 (5.3333)], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V1 = 0], V3 votes [V3 = 16 / 3 (5.3333)], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V1 = 0], V2 votes [V1 = 0], V3 votes [V3 = 16 / 3 (5.3333)], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V1 = 0], V2 votes [V1 = 0], V3 votes [V3 = 16 / 3 (5.3333)], V4 votes [V4 = 8]} => {V1 votes [V1 = 0], V2 votes [V1 = 0], V3 votes [V3 = 16 / 3 (5.3333)], V4 votes [V3 = 16 / 3 (5.3333)]} => {V1 votes [V1 = 0], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V3 = 16 / 3 (5.3333)], V4 votes [V3 = 16 / 3 (5.3333)]}
+---------------------------------
+Sink #3
+Component id: 3
+Number of states: 1
+Average welfare: -10 / 3 (-3.3333)
+Ratio to social optimum: 5 / 4 (1.25)
+
+States:
+S1 - {V1 votes [V1 = 0], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V3 = 16 / 3 (5.3333)], V4 votes [V4 = 8]}
+
+Sink edges:
+N/A
+
+Longest path to sink length: 21
+Longest path to sink: {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V1 = 0], V4 votes [V1 = 0]} => {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V1 = 0], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V1 = 0]} => {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V4 = 8], V4 votes [V1 = 0]} => {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V4 = 8], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V3 = 16 / 3 (5.3333)], V2 votes [V4 = 8], V3 votes [V4 = 8], V4 votes [V2 = 8 / 3 (2.6667)]} => SCC#84 => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V1 = 0], V3 votes [V4 = 8], V4 votes [V1 = 0]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V1 = 0], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V1 = 0]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V1 = 0]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V4 = 8], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V4 = 8], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V1 = 0], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V4 = 8], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V1 = 0], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V1 = 0], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V3 = 16 / 3 (5.3333)]} => {V1 votes [V1 = 0], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V4 = 8]} => {V1 votes [V1 = 0], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V3 = 16 / 3 (5.3333)], V4 votes [V4 = 8]}
+---------------------------------
+Sink #4
+Component id: 6
+Number of states: 1
+Average welfare: -8 / 3 (-2.6667)
+Ratio to social optimum: 1
+
+States:
+S1 - {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V3 = 16 / 3 (5.3333)], V4 votes [V3 = 16 / 3 (5.3333)]}
+
+Sink edges:
+N/A
+
+Longest path to sink length: 19
+Longest path to sink: {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V1 = 0], V4 votes [V1 = 0]} => {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V1 = 0], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V1 = 0]} => {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V4 = 8], V4 votes [V1 = 0]} => {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V4 = 8], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V3 = 16 / 3 (5.3333)], V2 votes [V4 = 8], V3 votes [V4 = 8], V4 votes [V2 = 8 / 3 (2.6667)]} => SCC#84 => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V1 = 0], V3 votes [V4 = 8], V4 votes [V1 = 0]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V1 = 0], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V1 = 0]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V1 = 0]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V4 = 8], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V3 = 16 / 3 (5.3333)], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V1 = 0], V3 votes [V3 = 16 / 3 (5.3333)], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V1 = 0], V3 votes [V3 = 16 / 3 (5.3333)], V4 votes [V3 = 16 / 3 (5.3333)]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V3 = 16 / 3 (5.3333)], V4 votes [V3 = 16 / 3 (5.3333)]}
+---------------------------------
+Sink #5
+Component id: 26
+Number of states: 1
+Average welfare: -4
+Ratio to social optimum: 3 / 2 (1.5)
+
+States:
+S1 - {V1 votes [V1 = 0], V2 votes [V1 = 0], V3 votes [V4 = 8], V4 votes [V4 = 8]}
+
+Sink edges:
+N/A
+
+Longest path to sink length: 19
+Longest path to sink: {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V1 = 0], V4 votes [V1 = 0]} => {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V1 = 0], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V1 = 0]} => {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V4 = 8], V4 votes [V1 = 0]} => {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V4 = 8], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V3 = 16 / 3 (5.3333)], V2 votes [V4 = 8], V3 votes [V4 = 8], V4 votes [V2 = 8 / 3 (2.6667)]} => SCC#84 => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V1 = 0], V3 votes [V4 = 8], V4 votes [V1 = 0]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V1 = 0], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V1 = 0]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V1 = 0]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V2 = 8 / 3 (2.6667)], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V4 = 8], V4 votes [V2 = 8 / 3 (2.6667)]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V4 = 8], V4 votes [V3 = 16 / 3 (5.3333)]} => {V1 votes [V2 = 8 / 3 (2.6667)], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V4 = 8], V4 votes [V4 = 8]} => {V1 votes [V1 = 0], V2 votes [V3 = 16 / 3 (5.3333)], V3 votes [V4 = 8], V4 votes [V4 = 8]} => {V1 votes [V1 = 0], V2 votes [V1 = 0], V3 votes [V4 = 8], V4 votes [V4 = 8]}
+---------------------------------
+
+Truthful profiles:
+
+1 - {V1 votes [V1 = 0], V2 votes [V2 = 8 / 3 (2.6667)], V3 votes [V3 = 16 / 3 (5.3333)], V4 votes [V4 = 8]}
+Original social welfare: -10 / 3 (-3.3333)
+Randomized Dictatorship social welfare: -10 / 3 (-3.3333)
+Randomized Dictatorship social welfare ratio to optimum: 5 / 4 (1.25)
+Randomized Dictatorship social welfare ratio to best original NE: 4 / 5 (0.8)
+
+End Analysis of Quadratic Voting Game 1.
+
+{
+    "numberOfGames" : 1,
+    "avgNeCount" : 5,
+    "percentageWithNe" : 100,
+    "convergingPercentage" : 0,
+    "avgPrices" : {
+        "socialOptimum" : -2.6667,
+        "priceOfSinking" : 1.5,
+        "priceOfAnarchy" : 1.5,
+        "priceOfStability" : 1
+    },
+    "betterPoSThanRandomizedDictatorshipPercentage" : 100
+}

@@ -1,0 +1,104 @@
+************************************************************************************************
+Analyzing Quadratic Voting Game 1
+************************************************************************************************
+with voters:
+V1 = 5
+V2 = 5
+V3 = 5
+V4 = 7
+V5 = 7
+V6 = 7
+
+and candidates:
+C1 = 0
+C2 = 6
+C3 = 12
+
+********************************
+Game Analysis
+********************************
+Type: Voting Game
+Number of voters: 6
+Number of candidates: 3
+
+Utility function: Expected utility based on the Quadratic voting rule and the following cardinal utilities:
+Voter 1: -5, -1, -7
+Voter 2: -5, -1, -7
+Voter 3: -5, -1, -7
+Voter 4: -7, -1, -5
+Voter 5: -7, -1, -5
+Voter 6: -7, -1, -5
+
+Social welfare function: Average
+
+Number of possible game states: 729
+Number of pure Nash equilibria: 2
+
+Price of Anarchy: 6
+Price of Sinking: 6
+Price of Stability: 1
+
+Number of strongly connected components in best response graph: 729
+Number of components with cycles: 0
+Number of sink-equilibria: 2
+
+Social optimum: -1
+Socially optimal states:
+1 - {V1 votes [C2 = 6], V2 votes [C2 = 6], V3 votes [C2 = 6], V4 votes [C2 = 6], V5 votes [C2 = 6], V6 votes [C2 = 6]}
+---------------------------------
+Sinks
+---------------------------------
+Sink #1
+Component id: 497
+Number of states: 1
+Average welfare: -6
+Ratio to social optimum: 6
+
+States:
+S1 - {V1 votes [C1 = 0], V2 votes [C1 = 0], V3 votes [C1 = 0], V4 votes [C3 = 12], V5 votes [C3 = 12], V6 votes [C3 = 12]}
+
+Sink edges:
+N/A
+
+Longest path to sink length: 6
+Longest path to sink: {V1 votes [C3 = 12], V2 votes [C3 = 12], V3 votes [C3 = 12], V4 votes [C1 = 0], V5 votes [C1 = 0], V6 votes [C1 = 0]} => {V1 votes [C3 = 12], V2 votes [C3 = 12], V3 votes [C3 = 12], V4 votes [C1 = 0], V5 votes [C3 = 12], V6 votes [C1 = 0]} => {V1 votes [C3 = 12], V2 votes [C3 = 12], V3 votes [C1 = 0], V4 votes [C1 = 0], V5 votes [C3 = 12], V6 votes [C1 = 0]} => {V1 votes [C3 = 12], V2 votes [C3 = 12], V3 votes [C1 = 0], V4 votes [C1 = 0], V5 votes [C3 = 12], V6 votes [C3 = 12]} => {V1 votes [C3 = 12], V2 votes [C1 = 0], V3 votes [C1 = 0], V4 votes [C1 = 0], V5 votes [C3 = 12], V6 votes [C3 = 12]} => {V1 votes [C3 = 12], V2 votes [C1 = 0], V3 votes [C1 = 0], V4 votes [C3 = 12], V5 votes [C3 = 12], V6 votes [C3 = 12]} => {V1 votes [C1 = 0], V2 votes [C1 = 0], V3 votes [C1 = 0], V4 votes [C3 = 12], V5 votes [C3 = 12], V6 votes [C3 = 12]}
+---------------------------------
+Sink #2
+Component id: 0
+Number of states: 1
+Average welfare: -1
+Ratio to social optimum: 1
+
+States:
+S1 - {V1 votes [C2 = 6], V2 votes [C2 = 6], V3 votes [C2 = 6], V4 votes [C2 = 6], V5 votes [C2 = 6], V6 votes [C2 = 6]}
+
+Sink edges:
+N/A
+
+Longest path to sink length: 18
+Longest path to sink: {V1 votes [C3 = 12], V2 votes [C3 = 12], V3 votes [C3 = 12], V4 votes [C1 = 0], V5 votes [C1 = 0], V6 votes [C1 = 0]} => {V1 votes [C3 = 12], V2 votes [C3 = 12], V3 votes [C3 = 12], V4 votes [C1 = 0], V5 votes [C3 = 12], V6 votes [C1 = 0]} => {V1 votes [C3 = 12], V2 votes [C3 = 12], V3 votes [C1 = 0], V4 votes [C1 = 0], V5 votes [C3 = 12], V6 votes [C1 = 0]} => {V1 votes [C3 = 12], V2 votes [C3 = 12], V3 votes [C1 = 0], V4 votes [C1 = 0], V5 votes [C3 = 12], V6 votes [C3 = 12]} => {V1 votes [C3 = 12], V2 votes [C3 = 12], V3 votes [C2 = 6], V4 votes [C1 = 0], V5 votes [C3 = 12], V6 votes [C3 = 12]} => {V1 votes [C3 = 12], V2 votes [C3 = 12], V3 votes [C2 = 6], V4 votes [C3 = 12], V5 votes [C3 = 12], V6 votes [C3 = 12]} => {V1 votes [C3 = 12], V2 votes [C3 = 12], V3 votes [C2 = 6], V4 votes [C2 = 6], V5 votes [C3 = 12], V6 votes [C3 = 12]} => {V1 votes [C3 = 12], V2 votes [C3 = 12], V3 votes [C2 = 6], V4 votes [C2 = 6], V5 votes [C3 = 12], V6 votes [C1 = 0]} => {V1 votes [C3 = 12], V2 votes [C1 = 0], V3 votes [C2 = 6], V4 votes [C2 = 6], V5 votes [C3 = 12], V6 votes [C1 = 0]} => {V1 votes [C3 = 12], V2 votes [C1 = 0], V3 votes [C2 = 6], V4 votes [C2 = 6], V5 votes [C3 = 12], V6 votes [C3 = 12]} => {V1 votes [C3 = 12], V2 votes [C2 = 6], V3 votes [C2 = 6], V4 votes [C2 = 6], V5 votes [C3 = 12], V6 votes [C3 = 12]} => {V1 votes [C3 = 12], V2 votes [C2 = 6], V3 votes [C2 = 6], V4 votes [C2 = 6], V5 votes [C1 = 0], V6 votes [C3 = 12]} => {V1 votes [C1 = 0], V2 votes [C2 = 6], V3 votes [C2 = 6], V4 votes [C2 = 6], V5 votes [C1 = 0], V6 votes [C3 = 12]} => {V1 votes [C1 = 0], V2 votes [C2 = 6], V3 votes [C2 = 6], V4 votes [C2 = 6], V5 votes [C3 = 12], V6 votes [C3 = 12]} => {V1 votes [C2 = 6], V2 votes [C2 = 6], V3 votes [C2 = 6], V4 votes [C2 = 6], V5 votes [C3 = 12], V6 votes [C3 = 12]} => {V1 votes [C2 = 6], V2 votes [C2 = 6], V3 votes [C2 = 6], V4 votes [C2 = 6], V5 votes [C1 = 0], V6 votes [C3 = 12]} => {V1 votes [C2 = 6], V2 votes [C2 = 6], V3 votes [C2 = 6], V4 votes [C2 = 6], V5 votes [C1 = 0], V6 votes [C2 = 6]} => {V1 votes [C2 = 6], V2 votes [C2 = 6], V3 votes [C2 = 6], V4 votes [C2 = 6], V5 votes [C3 = 12], V6 votes [C2 = 6]} => {V1 votes [C2 = 6], V2 votes [C2 = 6], V3 votes [C2 = 6], V4 votes [C2 = 6], V5 votes [C2 = 6], V6 votes [C2 = 6]}
+---------------------------------
+
+Truthful profiles:
+
+1 - {V1 votes [C2 = 6], V2 votes [C2 = 6], V3 votes [C2 = 6], V4 votes [C2 = 6], V5 votes [C2 = 6], V6 votes [C2 = 6]}
+Original social welfare: -1
+Randomized Dictatorship social welfare: -1
+Randomized Dictatorship social welfare ratio to optimum: 1
+Randomized Dictatorship social welfare ratio to best original NE: 1
+
+End Analysis of Quadratic Voting Game 1.
+
+{
+    "numberOfGames" : 1,
+    "avgNeCount" : 2,
+    "percentageWithNe" : 100,
+    "convergingPercentage" : 100,
+    "avgPrices" : {
+        "socialOptimum" : -1,
+        "priceOfSinking" : 6,
+        "priceOfAnarchy" : 6,
+        "priceOfStability" : 1
+    },
+    "betterPoSThanRandomizedDictatorshipPercentage" : 100
+}

@@ -1,0 +1,101 @@
+************************************************************************************************
+Analyzing Quadratic Voting Game 1
+************************************************************************************************
+with voters:
+V1 = 0
+V2 = 3
+V3 = 5
+V4 = 8
+
+and candidates:
+V1 = 0
+V2 = 3
+V3 = 5
+V4 = 8
+
+********************************
+Game Analysis
+********************************
+Type: Voting Game
+Number of voters: 4
+Number of candidates: 4
+
+Utility function: Expected utility based on the Quadratic voting rule and the following cardinal utilities:
+Voter 1: 0, -3, -5, -8
+Voter 2: -3, 0, -2, -5
+Voter 3: -5, -2, 0, -3
+Voter 4: -8, -5, -3, 0
+
+Social welfare function: Average
+
+Number of possible game states: 256
+Number of pure Nash equilibria: 1
+
+Price of Anarchy: 13 / 10 (1.3)
+Price of Sinking: 13 / 10 (1.3)
+Price of Stability: 13 / 10 (1.3)
+
+Number of strongly connected components in best response graph: 210
+Number of components with cycles: 3
+Number of sink-equilibria: 1
+
+Social optimum: -5 / 2 (-2.5)
+Socially optimal states:
+1 - {V1 votes [V2 = 3], V2 votes [V2 = 3], V3 votes [V2 = 3], V4 votes [V3 = 5]}
+2 - {V1 votes [V2 = 3], V2 votes [V3 = 5], V3 votes [V2 = 3], V4 votes [V2 = 3]}
+3 - {V1 votes [V2 = 3], V2 votes [V3 = 5], V3 votes [V3 = 5], V4 votes [V3 = 5]}
+4 - {V1 votes [V3 = 5], V2 votes [V2 = 3], V3 votes [V3 = 5], V4 votes [V3 = 5]}
+5 - {V1 votes [V3 = 5], V2 votes [V3 = 5], V3 votes [V3 = 5], V4 votes [V2 = 3]}
+6 - {V1 votes [V3 = 5], V2 votes [V2 = 3], V3 votes [V2 = 3], V4 votes [V2 = 3]}
+7 - {V1 votes [V3 = 5], V2 votes [V2 = 3], V3 votes [V2 = 3], V4 votes [V3 = 5]}
+8 - {V1 votes [V3 = 5], V2 votes [V3 = 5], V3 votes [V3 = 5], V4 votes [V3 = 5]}
+9 - {V1 votes [V3 = 5], V2 votes [V3 = 5], V3 votes [V2 = 3], V4 votes [V2 = 3]}
+10 - {V1 votes [V2 = 3], V2 votes [V2 = 3], V3 votes [V3 = 5], V4 votes [V2 = 3]}
+11 - {V1 votes [V2 = 3], V2 votes [V3 = 5], V3 votes [V2 = 3], V4 votes [V3 = 5]}
+12 - {V1 votes [V3 = 5], V2 votes [V3 = 5], V3 votes [V2 = 3], V4 votes [V3 = 5]}
+13 - {V1 votes [V2 = 3], V2 votes [V2 = 3], V3 votes [V2 = 3], V4 votes [V2 = 3]}
+14 - {V1 votes [V2 = 3], V2 votes [V2 = 3], V3 votes [V3 = 5], V4 votes [V3 = 5]}
+15 - {V1 votes [V3 = 5], V2 votes [V2 = 3], V3 votes [V3 = 5], V4 votes [V2 = 3]}
+16 - {V1 votes [V2 = 3], V2 votes [V3 = 5], V3 votes [V3 = 5], V4 votes [V2 = 3]}
+---------------------------------
+Sinks
+---------------------------------
+Sink #1
+Component id: 0
+Number of states: 1
+Average welfare: -13 / 4 (-3.25)
+Ratio to social optimum: 13 / 10 (1.3)
+
+States:
+S1 - {V1 votes [V1 = 0], V2 votes [V2 = 3], V3 votes [V3 = 5], V4 votes [V4 = 8]}
+
+Sink edges:
+N/A
+
+Longest path to sink length: 68
+Longest path to sink: {V1 votes [V4 = 8], V2 votes [V4 = 8], V3 votes [V1 = 0], V4 votes [V1 = 0]} => {V1 votes [V3 = 5], V2 votes [V4 = 8], V3 votes [V1 = 0], V4 votes [V1 = 0]} => {V1 votes [V3 = 5], V2 votes [V1 = 0], V3 votes [V1 = 0], V4 votes [V1 = 0]} => {V1 votes [V3 = 5], V2 votes [V3 = 5], V3 votes [V1 = 0], V4 votes [V1 = 0]} => {V1 votes [V4 = 8], V2 votes [V3 = 5], V3 votes [V1 = 0], V4 votes [V1 = 0]} => {V1 votes [V4 = 8], V2 votes [V3 = 5], V3 votes [V4 = 8], V4 votes [V1 = 0]} => {V1 votes [V4 = 8], V2 votes [V1 = 0], V3 votes [V4 = 8], V4 votes [V1 = 0]} => {V1 votes [V3 = 5], V2 votes [V1 = 0], V3 votes [V4 = 8], V4 votes [V1 = 0]} => SCC#163 => {V1 votes [V3 = 5], V2 votes [V3 = 5], V3 votes [V1 = 0], V4 votes [V2 = 3]} => {V1 votes [V3 = 5], V2 votes [V3 = 5], V3 votes [V2 = 3], V4 votes [V2 = 3]} => {V1 votes [V3 = 5], V2 votes [V3 = 5], V3 votes [V4 = 8], V4 votes [V2 = 3]} => {V1 votes [V3 = 5], V2 votes [V2 = 3], V3 votes [V4 = 8], V4 votes [V2 = 3]} => {V1 votes [V3 = 5], V2 votes [V2 = 3], V3 votes [V2 = 3], V4 votes [V2 = 3]} => {V1 votes [V3 = 5], V2 votes [V2 = 3], V3 votes [V2 = 3], V4 votes [V3 = 5]} => {V1 votes [V3 = 5], V2 votes [V2 = 3], V3 votes [V4 = 8], V4 votes [V3 = 5]} => SCC#48 => {V1 votes [V1 = 0], V2 votes [V3 = 5], V3 votes [V1 = 0], V4 votes [V4 = 8]} => {V1 votes [V1 = 0], V2 votes [V3 = 5], V3 votes [V1 = 0], V4 votes [V3 = 5]} => {V1 votes [V1 = 0], V2 votes [V2 = 3], V3 votes [V1 = 0], V4 votes [V3 = 5]} => {V1 votes [V1 = 0], V2 votes [V2 = 3], V3 votes [V1 = 0], V4 votes [V2 = 3]} => {V1 votes [V1 = 0], V2 votes [V2 = 3], V3 votes [V4 = 8], V4 votes [V2 = 3]} => {V1 votes [V1 = 0], V2 votes [V2 = 3], V3 votes [V4 = 8], V4 votes [V3 = 5]} => {V1 votes [V1 = 0], V2 votes [V2 = 3], V3 votes [V4 = 8], V4 votes [V4 = 8]} => {V1 votes [V2 = 3], V2 votes [V2 = 3], V3 votes [V4 = 8], V4 votes [V4 = 8]} => {V1 votes [V2 = 3], V2 votes [V2 = 3], V3 votes [V2 = 3], V4 votes [V4 = 8]} => {V1 votes [V1 = 0], V2 votes [V2 = 3], V3 votes [V2 = 3], V4 votes [V4 = 8]} => {V1 votes [V1 = 0], V2 votes [V2 = 3], V3 votes [V3 = 5], V4 votes [V4 = 8]}
+---------------------------------
+
+Truthful profiles:
+
+1 - {V1 votes [V1 = 0], V2 votes [V2 = 3], V3 votes [V3 = 5], V4 votes [V4 = 8]}
+Original social welfare: -13 / 4 (-3.25)
+Randomized Dictatorship social welfare: -13 / 4 (-3.25)
+Randomized Dictatorship social welfare ratio to optimum: 13 / 10 (1.3)
+Randomized Dictatorship social welfare ratio to best original NE: 1
+
+End Analysis of Quadratic Voting Game 1.
+
+{
+    "numberOfGames" : 1,
+    "avgNeCount" : 1,
+    "percentageWithNe" : 100,
+    "convergingPercentage" : 0,
+    "avgPrices" : {
+        "socialOptimum" : -2.5,
+        "priceOfSinking" : 1.3,
+        "priceOfAnarchy" : 1.3,
+        "priceOfStability" : 1.3
+    },
+    "betterPoSThanRandomizedDictatorshipPercentage" : 100
+}
