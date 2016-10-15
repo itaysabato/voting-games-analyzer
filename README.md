@@ -1,5 +1,5 @@
 # Voting Games Analyzer
-A command line tool for analyzing voting games, in particular, ones that use randomized voting rules.
+A command line tool for analyzing randomized voting games. It defaults to using the Quadratic voting rule and the 1-euclidian preferences domain but can be customized easily.
 
 [First Official Release v0.1](https://github.com/itaysabato/voting-games-analyzer/releases/tag/v0.1) is ready!
 ## Getting Started
