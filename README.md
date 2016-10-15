@@ -1,7 +1,7 @@
 # Voting Games Analyzer
 A command line tool for analyzing voting games, in particular, ones that use randomized voting rules.
-
-The quickest way to see it in action is to analyze a random game: 
+## Getting Started
+The quickest way to see it in action is to analyze a random game:
 ```
 $ vga -r
 ************************************************************************************************
@@ -102,7 +102,7 @@ $ vga -r -n 100 -q
     "betterPoSThanRandomizedDictatorshipPercentage" : 98
 }
 ```
-## Usage
+You can use `-h` or `--help` to get a detailed specification of the various options:
 ```
 $ vga -h
 Usage: vga [options]
@@ -171,8 +171,6 @@ Usage: vga [options]
 ```
 ## Custom Voting Rule Example
 The following is an implementation of the plurality voting rule with random tie-breaking.
-
-PluralityVotingRule.java:
 ```java
 import java.util.*;
 import org.apache.commons.math3.fraction.BigFraction;
@@ -236,7 +234,7 @@ public class PluralityVotingRule implements RandomizedVotingRule {
 ```
 In order to use a custom voting rule, after compiling, move the `.class` file to the `lib` folder along with any other classes you need and pass the fully qualified class name via the command line, e.g.
 ```
-$ vga/vga -v 1,2,3 -nc -vr PluralityVotingRule
+$ vga -v 1,2,3 -nc -vr PluralityVotingRule
 ************************************************************************************************
 Analyzing Plurality Voting Game 1
 ************************************************************************************************
