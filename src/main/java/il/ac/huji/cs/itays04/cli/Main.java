@@ -13,6 +13,7 @@ import il.ac.huji.cs.itays04.voting.RandomizedVotingRule;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class Main {
     private static final Main main = new Main();
@@ -36,7 +37,7 @@ public class Main {
             jCommander.parse(args);
 
             if (arguments.isHelp()) {
-                jCommander.usage();
+                printUsage(jCommander);
             }
             else {
                 validateVoters(arguments);
@@ -47,9 +48,20 @@ public class Main {
         catch (ParameterException e) {
             System.out.println("Invalid command line arguments: " + e.getMessage());
             System.out.println();
-            jCommander.usage();
+            printUsage(jCommander);
             System.exit(1);
         }
+    }
+
+    private void printUsage(JCommander jCommander) {
+        final StringBuilder builder = new StringBuilder();
+        jCommander.usage(builder);
+
+        final String lineSpaced = builder.toString()
+                .replaceAll(Pattern.quote("  -"), "\n  -")
+                .replaceAll(Pattern.quote("[options]"), "[options]\n");
+
+        System.out.println(lineSpaced);
     }
 
     private void validateVoters(Arguments arguments) {
