@@ -16,9 +16,9 @@ public class Arguments {
     public static final String UTILITIES_NAME = "-u";
 
     private static final String POS_DESC_PRE = "A comma-separated list of ";
-    private static final String POS_DESC_POST = " positions, as rational numbers of the form '1', '-2', '3/2', etc. " +
+    private static final String POS_DESC_POST = " positions as rational numbers of the form '1', '-2', '3/2', etc. " +
             "If the " + UTILITIES_NAME + " option is set, " +
-            "only the first number will be read, and floored to an integer.";
+            "the first number will be read as the number of ";
 
     private static final String RAND_DESC_PRE = "The number of random ";
     private static final String RAND_DESC_POST = " to generate. It is also possible to give a range from " +
@@ -57,11 +57,19 @@ public class Arguments {
 
     @Parameter(
             names = {VOTERS_NAME, "--voters"},
-            description = POS_DESC_PRE + "voter" + POS_DESC_POST,
+            description = POS_DESC_PRE + "voter" + POS_DESC_POST + "voters.",
             converter = BigFractionConverter.class
     )
     @ExtendedParameter(priority = 40)
     private List<BigFraction> voters = new LinkedList<>();
+
+    @Parameter(
+            names = {CANDIDATES_NAME, "--candidates"},
+            description = POS_DESC_PRE + "candidate" + POS_DESC_POST  + "candidates.",
+            converter = BigFractionConverter.class
+    )
+    @ExtendedParameter(priority = 50)
+    private List<BigFraction> candidates = new LinkedList<>();
 
     @Parameter(
             names = {"-nc", "--no-candidates"},
@@ -69,25 +77,8 @@ public class Arguments {
                     "Other options regarding candidates are ignored if this flag is set. If the " + UTILITIES_NAME +
                     " option is set, this flag indicates that the number of candidates is equal to the number of voters."
     )
-    @ExtendedParameter(priority = 50)
-    private boolean noCandidates = false;
-
-    @Parameter(
-            names = {CANDIDATES_NAME, "--candidates"},
-            description = POS_DESC_PRE + "candidate" + POS_DESC_POST,
-            converter = BigFractionConverter.class
-    )
     @ExtendedParameter(priority = 60)
-    private List<BigFraction> candidates = new LinkedList<>();
-
-    @Parameter(
-            names = {"-rc", "--random-candidates"},
-            description = RAND_DESC_PRE + "candidates" + RAND_DESC_POST,
-            converter = IntegerConverter.class,
-            validateValueWith = NonNegativeRangeValidator.class
-    )
-    @ExtendedParameter(priority = 70)
-    private List<Integer> randomCandidatesRange = ImmutableList.of(2,5);
+    private boolean noCandidates = false;
 
     @Parameter(
             names = {"-rv", "--random-voters"},
@@ -95,17 +86,26 @@ public class Arguments {
             converter = IntegerConverter.class,
             validateValueWith = NonNegativeRangeValidator.class
     )
-    @ExtendedParameter(priority = 80)
+    @ExtendedParameter(priority = 70)
     private List<Integer> randomVotersRange = ImmutableList.of(2,5);
 
     @Parameter(
+            names = {"-rc", "--random-candidates"},
+            description = RAND_DESC_PRE + "candidates" + RAND_DESC_POST,
+            converter = IntegerConverter.class,
+            validateValueWith = NonNegativeRangeValidator.class
+    )
+    @ExtendedParameter(priority = 80)
+    private List<Integer> randomCandidatesRange = ImmutableList.of(2,5);
+
+    @Parameter(
             names = {UTILITIES_NAME, "--utilities"},
-            description = "A comma-separated list of cardinal utilities, starting with the utilities the first voter " +
-                    "gets from the first candidates, then the second candidates, etc. followed by a list for the " +
+            description = "A comma-separated list of cardinal utilities, starting with the utility the first voter " +
+                    "gets from the first candidate, then the second candidate, etc. followed by a list for the " +
                     "second voter and so on until the last voter. For example, if we have 2 voters and 3 candidates " +
                     "then \"1,2,1/3,4,23,7/5\" would be a valid list. If this option is set, the number of voters " +
-                    "and number of candidates should be given instead of their positions lists " +
-                    "via " + VOTERS_NAME + " and " + CANDIDATES_NAME + " respectively.",
+                    "and number of candidates should be given via " + VOTERS_NAME + " and " + CANDIDATES_NAME +
+                    ", respectively, instead of the position lists.",
             converter = BigFractionConverter.class
     )
     @ExtendedParameter(priority = 90)
