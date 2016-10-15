@@ -3,11 +3,9 @@ A command line tool for analyzing voting games, in particular, ones that use ran
 
 [First Official Release v0.1](https://github.com/itaysabato/voting-games-analyzer/releases/tag/v0.1) is ready!
 ## Getting Started
-First make sure you have an up-to-date [Java Runtime Environment](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
-
-Then download and extract the [binaries](https://github.com/itaysabato/voting-games-analyzer/releases/download/v0.1/vga.zip)
-
-No further installation is required --- simply invoke the `vga` executable from any terminal.
+- First make sure you have an up-to-date [Java Runtime Environment](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+- Then download and extract the [binaries](https://github.com/itaysabato/voting-games-analyzer/releases/download/v0.1/vga.zip)
+- No further installation is required --- simply invoke the `vga` executable from any terminal
 
 The quickest way to see it in action is to analyze a random game:
 ```
@@ -179,6 +177,12 @@ Usage: vga [options]
        have a no-argument constructor and be present in the lib folder.
        Default: il.ac.huji.cs.itays04.voting.weighted.QuadraticRandomizedVotingRule
 ```
+## Partly Random Games
+You can mix random and explicitly specified voters and candidates. The way it works is that once the `-r` flag is set, the generated voters/candidates are _added_ to the explicitly specified ones, for example:
+
+- Running `$ vga -r -v 1,2,3 -rv 0` will generate random candidates but only the three specified voters will be used.
+- Running `$ vga -r -v 1,2,3 -rv 0,1` will add a fourth random voter with 50% probability.
+
 ## Custom Voting Rule Example
 The following is an implementation of the plurality voting rule with random tie-breaking.
 ```java
