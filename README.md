@@ -1,6 +1,14 @@
 # Voting Games Analyzer
 A command line tool for analyzing voting games, in particular, ones that use randomized voting rules.
+
+[First Official Release v0.1](https://github.com/itaysabato/voting-games-analyzer/releases/tag/v0.1) is ready!
 ## Getting Started
+First make sure you have an up-to-date [Java Runtime Environment](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+
+Then download and extract the [binaries](https://github.com/itaysabato/voting-games-analyzer/releases/download/v0.1/vga.zip)
+
+No further installation is required --- simply invoke the `vga` executable from any terminal.
+
 The quickest way to see it in action is to analyze a random game:
 ```
 $ vga -r
