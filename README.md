@@ -106,8 +106,8 @@ You can use `-h` or `--help` to get a detailed specification of the various opti
 ```
 $ vga -h
 Usage: vga [options]
-
   Options:
+  
   -h, --help
        Display help message.
        Default: false
