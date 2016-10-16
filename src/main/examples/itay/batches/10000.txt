@@ -1,0 +1,13 @@
+{
+    "numberOfGames" : 10000,
+    "avgNeCount" : 1.4411,
+    "percentageWithNe" : 100,
+    "convergingPercentage" : 54.77,
+    "avgPrices" : {
+        "socialOptimum" : -987540380.7006,
+        "priceOfSinking" : 1.1195,
+        "priceOfAnarchy" : 1.1195,
+        "priceOfStability" : 1.0838
+    },
+    "betterPoSThanRandomizedDictatorshipPercentage" : 98.06
+}
